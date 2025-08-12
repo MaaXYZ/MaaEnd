@@ -1,5 +1,4 @@
-# MeaEndfieldAsst
+# MaaEnd
 
-《明日方舟：终末地》小助手
-
-Mea 是 Mea Endfield Assistant 的缩写
+MAA - 终  
+~~MAA 完蛋了（bushi~~
