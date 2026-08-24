@@ -15,6 +15,8 @@ import (
 const usage = "Usage: go-service <identifier> | go-service --pretask <taskname> [args...]"
 
 func main() {
+	disableAsyncPreempt()
+
 	if _, ok := os.LookupEnv("GOTRACEBACK"); !ok {
 		debug.SetTraceback("crash")
 	}
