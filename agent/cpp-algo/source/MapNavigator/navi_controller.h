@@ -29,6 +29,9 @@ struct NaviParam
     // 这条路线允许不允许借滑索。默认关：没有显式写 zip 的请求一律纯走路，既不去找最近的
     // 滑索也不做加速，规划结果与没有滑索这件事时逐位相同。
     bool zipline_enabled = false;
+    // Scene 初始化时由 CaptureUid 写入隐藏 Pipeline 节点的伪匿名账号标识。滑索记录必须先按
+    // 此字段隔离，再按地图筛选；空值时宁可步行，也不能猜一个账号的数据。
+    std::string zipline_account_id;
     // 展开前的原始作者路线。执行侧拿到的 path 是全局展开后的；滑索链半路失败时要靠它重新展开
     // 剩余路线，而不是沿着按链尾落点规划的旧展开走。
     std::vector<Waypoint> authored_path;
