@@ -292,9 +292,20 @@
                     disabled>
                     取当前位置
                   </button>
+                </div>
+                <!-- 滑索记录按账号隔离：这里选的账号同时决定离线预览用哪份记录和滑索架图层画哪份 -->
+                <div class="start-zipline">
                   <label class="chk" title="按运行时语义规划当前区域片段的滑索；触屏控制器不会执行滑索">
                     <input id="chk-edit-zipline" type="checkbox" /> 滑索规划
                   </label>
+                  <select
+                    id="edit-zipline-account"
+                    class="combo"
+                    title="滑索账号：只影响离线路线预览与当前安装目录的滑索架图层"
+                    aria-label="滑索账号"
+                    disabled>
+                    <option value="">正在读取账号…</option>
+                  </select>
                 </div>
                 <div class="start-plan">
                   <label class="chk" title="路点或起点变化后自动重新展开 NAVMESH 线路">

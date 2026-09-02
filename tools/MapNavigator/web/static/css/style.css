@@ -956,8 +956,23 @@ body.mode-log .sidebar-dock {
   min-width: 0;
 }
 
-.start-actions .chk {
+/* 滑索开关与账号下拉并排：开关定宽，下拉吃掉剩余宽度并压到同块小按钮的高度 */
+.start-zipline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.start-zipline .chk {
   flex: 0 0 auto;
+}
+
+.start-zipline .combo {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--h-control-sm);
+  border-radius: var(--r-sm);
+  font-size: 11px;
 }
 
 /* 「在地图上点选」按下后要看得出来自己正处在点选起点的状态 */
