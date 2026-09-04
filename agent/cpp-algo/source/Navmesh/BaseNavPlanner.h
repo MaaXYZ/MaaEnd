@@ -49,6 +49,8 @@ enum class BaseNavRouteStatus
     Success,
     ZoneNotFound,
     Unreachable,
+    // An endpoint sits inside an authored virtual no-go zone. Terminal: no fallback may route around it.
+    NoGo,
 };
 
 struct BaseNavRouteResult

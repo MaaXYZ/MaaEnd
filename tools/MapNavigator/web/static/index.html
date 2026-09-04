@@ -181,6 +181,21 @@
               </svg>
               日志分析
             </button>
+            <button id="tab-nogo" class="rail-item" type="button" aria-pressed="false" title="虚拟禁区">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 3 21 8v8l-9 5-9-5V8Z" stroke-dasharray="3 2.5"></path>
+                <path d="m8.5 8.5 7 7M15.5 8.5l-7 7"></path>
+              </svg>
+              禁区
+            </button>
           </nav>
 
           <div id="sidebar">
@@ -232,6 +247,11 @@
               </button>
               <!-- 隐藏取值控件：由层级选择弹窗/定位写入 -->
               <select id="assert-zone-combo" class="combo combo-zone" hidden></select>
+            </div>
+
+            <!-- 禁区圈在哪张图上：底图与编辑工作区共用，层级仍在画布顶部的工具条上选 -->
+            <div class="sidebar-section panel-map" id="panel-nogo-map" hidden>
+              <div id="nogo-zone-name" class="zone-label">未选择地图</div>
             </div>
 
             <!-- 路径编辑主面板：规划起点 → 路点 → 属性，自上而下就是编辑顺序 -->
@@ -447,6 +467,16 @@
                 ZIP 中的滑索架只作候选背景，可能包含未供电或运行时排除项；本次选择仍以运行日志为准
               </div>
             </section>
+
+            <!-- 虚拟禁区：圈出规划器绝不进入的区域，写回 data/MapNavigator 下的禁区表 -->
+            <section class="sidebar-section panel-main" id="panel-nogo" hidden>
+              <div class="sidebar-hint">
+                单击落点，双击/回车闭合，Esc 取消，按住拖动平移。选中后：拖顶点改形，拖边插点，拖内部移动，Delete
+                删顶点/禁区。底图上画的全层生效；仅禁某层先切到该 tier 再画。
+              </div>
+              <div id="nogo-list" class="nogo-list"></div>
+              <button id="btn-nogo-save" class="btn btn-primary btn-block" type="button">保存并重载</button>
+            </section>
           </div>
         </div>
       </aside>
@@ -546,6 +576,44 @@
                   <rect x="3" y="3" width="18" height="18" rx="2"></rect>
                 </svg>
                 <span>绘制/调整</span>
+              </button>
+              <button
+                id="tool-nogo-pan"
+                class="btn btn-tool group-nogo"
+                type="button"
+                title="临时按住 Alt 键也可以平移视角 (2)">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0M6 14V9a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5c0 4.4 3.6 8 8 8h3a8 8 0 0 0 8-8v-3M22 13a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
+                </svg>
+                <span>平移</span>
+              </button>
+              <button
+                id="tool-nogo-draw"
+                class="btn btn-tool group-nogo"
+                type="button"
+                title="逐点圈出禁区，双击或回车闭合，Esc 取消；点进已有禁区可选中 (1)">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M12 3 21 8v8l-9 5-9-5V8Z" stroke-dasharray="3 3"></path>
+                  <path d="m8.5 8.5 7 7M15.5 8.5l-7 7"></path>
+                </svg>
+                <span>圈禁区</span>
               </button>
               <button
                 id="tool-route-test"

@@ -124,7 +124,7 @@ QueryContext* AcquireContext(const std::string& configured_path, std::string& er
     auto context = std::make_unique<QueryContext>();
     context->pack = std::move(*loaded.pack);
     context->planner.emplace(context->pack);
-    context->engine.emplace(context->pack, *context->planner);
+    context->engine.emplace(context->pack, *context->planner, mapnavigator::NoGoTablePath());
     context->pack.releaseLinks();
     QueryContext* raw = context.get();
     g_contexts.emplace(key, std::move(context));

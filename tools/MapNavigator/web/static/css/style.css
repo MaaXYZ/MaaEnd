@@ -530,9 +530,9 @@ input[type="range"]:focus-visible::-moz-range-thumb {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   height: var(--h-control);
-  padding: 0 8px;
+  padding: 0 4px;
   border: 0;
   border-radius: 10px;
   background: transparent;
@@ -1544,7 +1544,8 @@ canvas {
 /* 模式分组门控。只作用于带 group-* 的两组；两点测线 / 滑索测距 / 删除由 JS 的
    hidden 决定，绝不能进带 !important 的 display 规则，否则 [hidden] 压不住。 */
 .map-tools .btn-tool.group-edit,
-.map-tools .btn-tool.group-assert {
+.map-tools .btn-tool.group-assert,
+.map-tools .btn-tool.group-nogo {
   display: none !important;
 }
 
@@ -1558,9 +1559,70 @@ canvas {
   display: flex !important;
 }
 
+.mode-nogo .btn-tool.group-nogo,
+#canvas-wrap.mode-nogo .btn-tool.group-nogo {
+  display: flex !important;
+}
+
 /* 日志模式工具栏只剩滑索测距一个按钮, 分隔线会孤零零挂在最前面 */
 .mode-log .map-tools .tool-divider {
   display: none;
+}
+
+/* ===== 虚拟禁区列表：一行一个多边形, 编号 + 高度区间 + 删除 ===== */
+.nogo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nogo-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nogo-row.selected {
+  border-color: rgba(251, 113, 133, 0.75);
+  background: rgba(244, 63, 94, 0.12);
+}
+
+/* 禁区页表头带着所在层和未保存标记, 一行放不下就折行, 不能把「未保存」省略掉 */
+#nogo-zone-name {
+  white-space: normal;
+  line-height: 1.4;
+}
+
+/* 画在别的层上的禁区此刻不在画布上, 行淡一档; 点它会切过去 */
+.nogo-row.off-layer {
+  opacity: 0.6;
+}
+
+.nogo-row .entry.nogo-name {
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+.nogo-row-layer {
+  flex: none;
+  max-width: 45%;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nogo-empty {
+  color: var(--text-muted);
+  font-size: 11px;
 }
 
 /* ===== 视图控制：只改怎么看，跟工具同处一条 ===== */

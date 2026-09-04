@@ -47,6 +47,8 @@ inline constexpr double kStartRecoveryMaxBlindWalk = 32.0;
 inline constexpr double kBlindTargetMaxExtension = 30.0;
 
 std::filesystem::path ResolveNavmeshFilePath(const std::string& configured_path = {});
+// 虚拟禁区表锚在 exe 上 (<exe>/../data/MapNavigator/nogo_zones.json), 与 zipline_frames.json 同一规则。
+std::filesystem::path NoGoTablePath();
 std::string InitialExpectedZone(const NaviParam& param);
 // Maps a live locator fix onto the navmesh base-pixel frame using the navmesh's OWN baked tier affine
 // (the same is_tier / base = s*tier + t the python tool uses), in place. A geometry / base-matched /

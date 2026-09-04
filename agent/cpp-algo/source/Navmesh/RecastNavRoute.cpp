@@ -530,6 +530,7 @@ std::optional<WindowInfo> buildWindow(
     double y0,
     double x1,
     double y1,
+    const std::vector<NoGoPoly>* no_go,
     const std::vector<int32_t>& blocked_local,
     const std::vector<WorldPoint>& blocked_points,
     std::string& err)
@@ -690,6 +691,11 @@ std::optional<WindowInfo> buildWindow(
         }
     }
     brc = RasterCells();
+    // 虚拟禁区盖格并把净空清零: 净空是弦判据的开关, 留着的话拐角还能从禁区上空拉直过去。
+    // 净空与中轴照旧采旁包烘好的值, 于是禁区不把这条腿推下预烘快路, 代价只有窗口内那几行格的写入。
+    if (no_go != nullptr) {
+        StampNoGo(*no_go, x0, y0, nx, ny, lh, info.core, info.lay, info.dist);
+    }
     lh = Grid<float>();
 
     // 封堵点无自带高度;窗口层已按起点层高筛过,直接按平面距离盖格即可
@@ -2236,7 +2242,7 @@ std::optional<std::vector<WorldPoint>> routeWindow(
 
 } // namespace
 
-RecastNavEngine::RecastNavEngine(const BaseNavPack& pack, const BaseNavPlanner& planner)
+RecastNavEngine::RecastNavEngine(const BaseNavPack& pack, const BaseNavPlanner& planner, const std::filesystem::path& nogo_table)
     : pack_(pack)
     , planner_(planner)
 {
@@ -2251,6 +2257,12 @@ RecastNavEngine::RecastNavEngine(const BaseNavPack& pack, const BaseNavPlanner& 
     }
     // 旁包与主包同目录同名配对; 缺了或对不上就整个引擎不可用, 不退回运行期重建。
     if (!fields_.load(FieldsSidecarPath(pack_.path()), pack_, grid_, grid_error_)) {
+        grid_ = GridPack();
+        return;
+    }
+    // 没有禁区表就是没有禁区; 有而读不通就整个引擎不可用 ——
+    // 判据对不上的禁区比没有禁区更糟, 作者会以为封住的地方其实通着。
+    if (!nogo_.load(nogo_table, pack_, grid_error_)) {
         grid_ = GridPack();
     }
 }
@@ -2420,11 +2432,28 @@ RecastPlanResult RecastNavEngine::planLocked(
         res.error = "起点不在网格附近";
         return res;
     }
-    if (!zc.snap(goal, kSnapRadius, gfl).has_value()) {
+    const auto gs = zc.snap(goal, kSnapRadius, gfl);
+    if (!gs.has_value()) {
         res.error = "终点不在网格附近";
         return res;
     }
     const double h0 = triHeightOf(zc.mesh, ss->tri);
+
+    const std::vector<NoGoPoly>* nogo = nogo_.zone(zone_name);
+    // 任一端点落在禁区里都当场判掉, 并把原因交给调用方: 吸附只会把端点挪到禁区边上就地"到达",
+    // 交出条假路线; 而滑索、盲走一类兜底压根不看可走面, 放它们接手就是径直穿过禁区。
+    if (nogo != nullptr) {
+        std::string hit;
+        const bool in_start = NoGoContains(*nogo, start, h0, hit);
+        if (in_start || NoGoContains(*nogo, goal, triHeightOf(zc.mesh, gs->tri), hit)) {
+            res.no_go = true;
+            res.error = std::string(in_start ? "起点" : "终点") + "在虚拟禁区内";
+            if (!hit.empty()) {
+                res.error += " (" + hit + ")";
+            }
+            return res;
+        }
+    }
 
     // 端点接不上可走层的腿在全区图上就能判掉。全区核心是任何窗口内核心的超集,
     // 量出来的锚距是窗口里那把尺子的下界,过不了这道闸的腿换多大的窗口也接不上。
@@ -2639,6 +2668,7 @@ RecastPlanResult RecastNavEngine::planLocked(
             y0,
             x1,
             y1,
+            nogo,
             blocked_local,
             blocked_points,
             err);
