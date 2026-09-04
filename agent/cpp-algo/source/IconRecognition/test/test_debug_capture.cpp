@@ -101,14 +101,14 @@ void TestDebugCaptureKeepsSynchronizedGroups()
         .column = 1,
     });
     const cv::Mat image(32, 32, CV_8UC3, cv::Scalar(10, 20, 30));
-    for (std::uint64_t reco_id = 1; reco_id <= 21; ++reco_id) {
+    for (std::uint64_t reco_id = 1; reco_id <= 101; ++reco_id) {
         Require(iconrecognition::detail::SaveDebugCapture(root, image, result, reco_id), "debug capture must report successful writes");
     }
 
     const auto raw_stems = Stems(root / "raw");
     const auto annotated_stems = Stems(root / "annotated");
     const auto detail_stems = Stems(root / "detail");
-    Require(raw_stems.size() == 20, "raw captures must retain at most 20 groups");
+    Require(raw_stems.size() == 100, "raw captures must retain at most 100 groups");
     Require(annotated_stems == raw_stems, "annotated captures must be trimmed by raw group stem");
     Require(detail_stems == raw_stems, "detail captures must be trimmed by raw group stem");
 
