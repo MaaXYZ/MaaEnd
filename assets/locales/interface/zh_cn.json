@@ -1441,7 +1441,6 @@
     "option.TrialOfSwordmancyOverflow.cases.Once.label": "接受至多1次溢出",
     "option.TrialOfSwordmancyOverflow.cases.Twice.label": "接受至多2次溢出",
     "option.TrialOfSwordmancyStopOnOverflow.label": "仅未溢出时自动战斗",
-    "option.TrialOfSwordmancyStopOnOverflow.description": "需同时开启“启用自动战斗”。未溢出时自动战斗；发生任意溢出时保留当前手牌，停在抽牌页并正常结束本次选剑演武，后续任务继续执行。即使抽满5张牌、总分仅13点，也会结束任务。\n\n若希望保留抽牌页供手动接管，请将选剑演武放在任务队列最后。",
     "task.TrialOfSwordmancy.focus.overflow_stopped": "本局已溢出，已保留手牌并结束选剑演武，可手动开始演算",
     "option.TrialOfSwordmancyAutoFight.label": "启用自动战斗",
     "option.TrialOfSwordmancyAutoFight.description": "开启后由 MaaEnd 自动进行战斗\n\n不接受溢出+自动战斗，可放入全自动日常",

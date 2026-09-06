@@ -1441,7 +1441,6 @@
     "option.TrialOfSwordmancyOverflow.cases.Once.label": "Accept at most 1 overflow",
     "option.TrialOfSwordmancyOverflow.cases.Twice.label": "Accept at most 2 overflows",
     "option.TrialOfSwordmancyStopOnOverflow.label": "Auto-battle only without overflow",
-    "option.TrialOfSwordmancyStopOnOverflow.description": "Requires Enable auto-battle. Battles automatically when there is no overflow. Any overflow preserves the current hand, leaves the card screen open, and completes this Trial of Swordmancy task normally. Queued tasks continue. Even a full five-card hand totaling only 13 points will end the task.\n\nTo keep the card screen open for manual play, place Trial of Swordmancy last in the task queue.",
     "task.TrialOfSwordmancy.focus.overflow_stopped": "This hand has overflowed. Your cards have been preserved and the Trial of Swordmancy task has ended. You can start the trial manually.",
     "option.TrialOfSwordmancyAutoFight.label": "Enable auto-battle",
     "option.TrialOfSwordmancyAutoFight.description": "When enabled, MaaEnd fights battles automatically\n\nNo overflow + auto-battle, can be included in full-auto dailies",

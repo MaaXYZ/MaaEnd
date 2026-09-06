@@ -1441,7 +1441,6 @@
     "option.TrialOfSwordmancyOverflow.cases.Once.label": "最大1回オーバーフローを許可",
     "option.TrialOfSwordmancyOverflow.cases.Twice.label": "最大2回オーバーフローを許可",
     "option.TrialOfSwordmancyStopOnOverflow.label": "オーバーフローしていない場合のみ自動戦闘",
-    "option.TrialOfSwordmancyStopOnOverflow.description": "「自動戦闘を有効化」もオンにする必要があります。オーバーフローしていない場合は自動で戦闘します。オーバーフローが発生した場合は手札を保持し、カード画面を開いたまま今回の剣術演武タスクを正常終了します。後続のタスクは引き続き実行されます。5枚引き切った手札の合計が13点の場合もタスクを終了します。\n\n手動で引き継ぐためにカード画面を残したい場合は、剣術演武をタスクキューの最後に配置してください。",
     "task.TrialOfSwordmancy.focus.overflow_stopped": "今回の手札はオーバーフローしています。手札を保持して剣術演武タスクを終了しました。手動で演算を開始できます。",
     "option.TrialOfSwordmancyAutoFight.label": "自動戦闘を有効化",
     "option.TrialOfSwordmancyAutoFight.description": "有効にすると、MaaEnd が自動で戦闘を行います\n\nオーバーフローなし＋自動戦闘なら、フルオートデイリーに組み込めます",

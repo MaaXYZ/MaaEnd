@@ -127,7 +127,6 @@
         "TrialOfSwordmancyStopOnOverflow": {
             "type": "switch",
             "label": "$option.TrialOfSwordmancyStopOnOverflow.label",
-            "description": "$option.TrialOfSwordmancyStopOnOverflow.description",
             "default_case": "No",
             "cases": [
                 {
