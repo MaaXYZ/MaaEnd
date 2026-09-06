@@ -632,7 +632,12 @@ body.mode-log .sidebar-dock {
   height: var(--h-control-sm);
   padding: 0 8px;
   margin: 0 -8px;
+  border: 0;
   border-radius: var(--r-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
   transition: background-color var(--motion);
 }

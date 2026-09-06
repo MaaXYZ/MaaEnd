@@ -20,7 +20,13 @@
         <section class="sidebar-dock" id="panel-live" aria-label="实机">
           <div class="live-block">
             <div class="conn-pill collapsed" id="panel-connection">
-              <div id="connection-header-toggle" class="conn-header-toggle" title="点击展开/折叠连接设置">
+              <button
+                id="connection-header-toggle"
+                class="conn-header-toggle"
+                type="button"
+                title="点击展开/折叠连接设置"
+                aria-controls="connection-body"
+                aria-expanded="false">
                 <span class="status-dot" id="status-dot"></span>
                 <span class="section-title" id="connection-status-title">连接状态</span>
                 <span id="connection-summary" class="status-text">未连接</span>
@@ -36,7 +42,7 @@
                   stroke-linejoin="round">
                   <path d="M6 9l6 6 6-6" />
                 </svg>
-              </div>
+              </button>
               <button id="btn-refresh-connection" class="btn-ghost" type="button" title="重试连接">
                 <svg
                   width="12"
@@ -930,7 +936,7 @@
     </div>
 
     <!-- 现代化网格卡片层级选择弹窗 -->
-    <div id="tier-picker-dialog" class="modal" hidden>
+    <div id="tier-picker-dialog" class="modal" role="dialog" aria-labelledby="tier-picker-title" hidden>
       <div class="modal-panel tier-picker-panel">
         <h2 id="tier-picker-title" class="modal-title">选择底图与层级</h2>
         <div class="tier-picker-body">

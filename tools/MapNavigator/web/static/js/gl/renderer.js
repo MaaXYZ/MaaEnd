@@ -107,8 +107,12 @@ export class Renderer {
     /** @type {HTMLCanvasElement} */
     this.canvas = canvas;
 
+    // Shaders emit straight (non-premultiplied) colour, so tell the compositor that.
+    const attrs = {premultipliedAlpha: false};
     const gl = /** @type {WebGL2RenderingContext|WebGLRenderingContext|null} */ (
-      canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl")
+      canvas.getContext("webgl2", attrs) ||
+        canvas.getContext("webgl", attrs) ||
+        canvas.getContext("experimental-webgl", attrs)
     );
     if (!gl) throw new Error("Renderer: WebGL not available (webgl2/webgl both null)");
     /** @type {WebGL2RenderingContext|WebGLRenderingContext} */
@@ -197,7 +201,8 @@ export class Renderer {
     // --- static GL state --------------------------------------------------
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.CULL_FACE);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // Straight alpha: colour blends by source alpha, coverage accumulates without re-scaling.
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     // Clear to transparent so the page background is the single source of the map ground colour.
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
 

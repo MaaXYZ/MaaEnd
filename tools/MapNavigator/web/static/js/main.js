@@ -3892,6 +3892,7 @@ class MapNavigatorApp {
   /** Drop the runtime preview without changing any authored point. */
   _clearEditPreview() {
     this._editRouteToken += 1;
+    this._autoPlanKey = null;
     this.editRoute = null;
     this.editRouteFailure = null;
     this._editRoutePending = false;
@@ -3936,8 +3937,9 @@ class MapNavigatorApp {
     if (this._hasQuickRouteTest() || (this.recording && this.recording.recording)) return;
     if (!buildEditPreviewPlan(this._currentSegmentPoints(), this._activeEditPreviewStart()).ok) return;
 
+    // One attempt per signature, failed ones included: a retry is the explicit "重新展开" click.
     const key = this._editPlanSignature();
-    if (key === this._autoPlanKey && (this.editRoute || this._editRoutePending)) return;
+    if (key === this._autoPlanKey) return;
     this._autoPlanTimer = setTimeout(
       () => {
         this._autoPlanTimer = null;
@@ -5486,9 +5488,10 @@ class MapNavigatorApp {
     } else if (test?.start) {
       text = fmt(test.start);
       status = `📋 已复制测线起点: ${text}  (zone: ${test.start.positionZone})`;
-    } else if (this.state.mode === Mode.EDIT && this.editPreviewStart) {
-      text = fmt(this.editPreviewStart);
-      status = `📋 已复制规划起点: ${text}  (zone: ${this.editPreviewStart.positionZone})`;
+    } else if (this.state.mode === Mode.EDIT && this._activeEditPreviewStart()) {
+      const start = this._activeEditPreviewStart();
+      text = fmt(start);
+      status = `📋 已复制规划起点: ${text}  (zone: ${start.positionZone})`;
     } else {
       setStatus("请先选中一个点再按 C 复制坐标。", "#f59e0b");
       return;
