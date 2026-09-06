@@ -97,6 +97,19 @@ func (a *DecideAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool {
 		}
 	}
 
+	// 溢出叹号受抽牌动画影响；改用识别阶段从牌库推导的手牌总分。
+	// 每次开始演算都更新 inverse，enabled 仍由任务选项控制，避免覆盖自动战斗开关。
+	if best == solver.Calculate {
+		if err := ctx.OverridePipeline(map[string]any{
+			nodeFinishOnOverflow: map[string]any{
+				"inverse": solver.TotalScore(gs.State.Hand) < 11,
+			},
+		}); err != nil {
+			log.Error().Err(err).Str("component", component).Msg("override overflow state failed")
+			return false
+		}
+	}
+
 	// 按决策路由到执行节点（节点自行点击 + 等动画），完成后回到 Decide 形成单步循环。
 	if err := routeDecision(ctx, arg.CurrentTaskName, best); err != nil {
 		log.Error().Err(err).Str("component", component).Str("action", best.String()).Msg("failed to route decision")
@@ -111,6 +124,7 @@ func (a *DecideAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool {
 		Int("remainDouble", gs.State.RemainDouble).
 		Bool("isDoubled", gs.State.IsDoubled).
 		Ints("hand", gs.State.Hand[:]).
+		Int("totalScore", solver.TotalScore(gs.State.Hand)).
 		Str("overflowMode", cfg.OverflowMode.String()).
 		Msg("decision made")
 	maafocus.Print(ctx, formatFocus(gs, best))

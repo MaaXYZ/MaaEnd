@@ -27,6 +27,9 @@ const (
 	nodeGiveUp     = "TrialOfSwordmancyDailyGiveUp" // 放弃本局 → 确认 → 重置寻路 → 回主入口
 	nodeStartTrial = "TrialOfSwordmancyStartTrial"  // 开始演算 → 编队 → 战斗 → 领奖
 
+	// 溢出结束分支：enabled 由任务选项控制，inverse 由 Decide 按手牌总分覆盖。
+	nodeFinishOnOverflow = "TrialOfSwordmancyFinishOnOverflow"
+
 	// 第 N 张在场卡牌（定义在 Common.json 上半区，pipeline 可见）；+ "1".."5" 组成 EnemyCardN。
 	// Decide 覆盖 DoDrawCardSuccess 的 all_of 用，标识第 N 张牌已落地。
 	nodeEnemyCardPrefix = "TrialOfSwordmancyEnemyCard"
