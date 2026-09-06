@@ -351,7 +351,7 @@
         ]
     },
     "AutoDeliveryCheckSkipChatAfterMoveAway": {
-        "desc": "鼠标移到左上角脱离悬停态后，重新识别对话和跳过按钮，确认按钮仍可见并产出最新识别框",
+        "desc": "鼠标移到左上角后，重新识别对话和跳过按钮，确认按钮仍可见并产出最新识别框",
         "recognition": "And",
         "all_of": [
             "AutoDeliveryInChatDialog",
