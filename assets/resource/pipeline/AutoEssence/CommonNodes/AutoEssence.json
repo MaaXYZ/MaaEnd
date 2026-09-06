@@ -42,8 +42,7 @@
         "pre_delay": 0,
         "post_delay": 0,
         "next": [
-            "AutoEssenceLocationOptionsCheck",
-            "AutoEssenceApplyLocationEngraveOverride",
+            "AutoEssenceInitEngraveCondition1OCR",
             // 在 SetupLocation 节点的 max_hit 未耗尽时，先经过该节点进行初始化步骤
             "AutoEssenceSetupLocation",
             // 如果 SetupLocation 节点的 max_hit 已耗尽，则会直接进入交互分发
@@ -53,48 +52,34 @@
             "Node.Action.Starting": "▶️**准备开始本次基质刷取**"
         }
     },
-    "AutoEssenceLocationOptionsCheck": {
-        "desc": "地区模式：校验任务选项 attach（基础属性 3 项、附加 1 项）；非地区模式直接通过",
+    "AutoEssenceInitEngraveCondition1OCR": {
+        "desc": "地区模式：为已勾选的基础属性 OCR 节点初始化子串白名单（未勾选保持 DirectHit）",
         "max_hit": 1,
-        "pre_delay": 0,
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "AutoEssenceLocationOptionsCheckAction"
-            }
+        "recognition": {
+            "type": "DirectHit",
+            "param": {}
         },
-        "post_delay": 0,
-        "rate_limit": 0,
-        "next": [
-            "AutoEssenceApplyLocationEngraveOverride"
-        ],
-        "on_error": [
-            "AutoEssenceLocationEngraveOptionsInvalid"
-        ],
-        "attach": {
-            "menu_mode": "random",
-            "location_id": "",
-            "slot2_id": 0
-        }
-    },
-    "AutoEssenceApplyLocationEngraveOverride": {
-        "desc": "地区模式：合并覆写预刻写条件 1（三基础属性）；附加属性与属性选择 OCR 由任务选项 attach + InitEngraveOptionOCR 初始化",
-        "max_hit": 1,
         "pre_delay": 0,
         "action": {
             "type": "Custom",
             "param": {
-                "custom_action": "AutoEssenceApplyLocationEngraveOverrideAction",
+                "custom_action": "AttachToExpectedRegexAction",
                 "custom_action_param": {
-                    "source_node": "AutoEssenceLocationOptionsCheck"
+                    "substring": true,
+                    "targets": [
+                        "AutoEssenceEngraveCondition1Base_s1_1",
+                        "AutoEssenceEngraveCondition1Base_s1_2",
+                        "AutoEssenceEngraveCondition1Base_s1_3",
+                        "AutoEssenceEngraveCondition1Base_s1_4",
+                        "AutoEssenceEngraveCondition1Base_s1_5"
+                    ]
                 }
             }
         },
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
-            "AutoEssenceSetupLocation",
-            "AutoEssenceDispatcher"
+            "AutoEssenceInitEngraveOptionOCR"
         ]
     },
     "AutoEssenceInitEngraveOptionOCR": {
@@ -121,14 +106,11 @@
             }
         },
         "post_delay": 0,
-        "rate_limit": 0
-    },
-    "AutoEssenceLocationEngraveOptionsInvalid": {
-        "desc": "地区模式属性选项无效（例如基础属性勾选超过 3 项），结束任务",
-        "action": "StopTask",
-        "focus": {
-            "Node.Action.Starting": "🤔**地区模式属性选项无效**\n基础属性只能选择 3 项，请返回任务设置调整后重试~"
-        }
+        "rate_limit": 0,
+        "next": [
+            "AutoEssenceSetupLocation",
+            "AutoEssenceDispatcher"
+        ]
     },
     "AutoEssenceSetupLocation": {
         "desc": "抽取一个已启用的淤积点，调用其 Anchor 赋值节点，为自动导航的节点赋值（此节点默认最多执行 1 次）",
@@ -436,29 +418,54 @@
         }
     },
     "AutoEssenceEngraveCondition1Matched": {
-        "desc": "预刻写条件 1：高亮颜色 + 对应文字",
+        "desc": "预刻写条件 1：高亮颜色 + 五项基础属性（勾选 OCR，未勾选 DirectHit）",
         "recognition": {
             "type": "And",
             "param": {
                 "all_of": [
                     "__AutoEssenceEngraveConditionHighlightColor",
-                    "AutoEssenceEngraveCondition1OCR"
+                    "AutoEssenceEngraveCondition1Base_s1_1",
+                    "AutoEssenceEngraveCondition1Base_s1_2",
+                    "AutoEssenceEngraveCondition1Base_s1_3",
+                    "AutoEssenceEngraveCondition1Base_s1_4",
+                    "AutoEssenceEngraveCondition1Base_s1_5"
                 ]
             }
         }
     },
-    "AutoEssenceEngraveCondition1OCR": {
-        "desc": "预刻写条件 1 文字（占位）",
+    "AutoEssenceEngraveCondition1Base_s1_1": {
+        "desc": "预刻写条件 1：基础属性 s1_1（未勾选时 DirectHit）",
         "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": "__AutoEssenceEngraveConditionHighlightColor",
-                "expected": [
-                    // 占位：待补充完整属性文本
-                    // @i18n-skip
-                    "PLACEHOLDER_CONDITION_1"
-                ]
-            }
+            "type": "DirectHit",
+            "param": {}
+        }
+    },
+    "AutoEssenceEngraveCondition1Base_s1_2": {
+        "desc": "预刻写条件 1：基础属性 s1_2（未勾选时 DirectHit）",
+        "recognition": {
+            "type": "DirectHit",
+            "param": {}
+        }
+    },
+    "AutoEssenceEngraveCondition1Base_s1_3": {
+        "desc": "预刻写条件 1：基础属性 s1_3（未勾选时 DirectHit）",
+        "recognition": {
+            "type": "DirectHit",
+            "param": {}
+        }
+    },
+    "AutoEssenceEngraveCondition1Base_s1_4": {
+        "desc": "预刻写条件 1：基础属性 s1_4（未勾选时 DirectHit）",
+        "recognition": {
+            "type": "DirectHit",
+            "param": {}
+        }
+    },
+    "AutoEssenceEngraveCondition1Base_s1_5": {
+        "desc": "预刻写条件 1：基础属性 s1_5（未勾选时 DirectHit）",
+        "recognition": {
+            "type": "DirectHit",
+            "param": {}
         }
     },
     "AutoEssenceEngraveCondition2Matched": {

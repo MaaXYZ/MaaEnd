@@ -267,13 +267,29 @@
                     "label": "$option.AutoEssenceMenu.cases.Location.label",
                     "description": "$option.AutoEssenceMenu.cases.Location.description",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "s1_1": false,
-                                "s1_2": false,
-                                "s1_3": false,
-                                "s1_4": false,
-                                "s1_5": false
+                        "AutoEssenceEngraveCondition1Base_s1_1": {
+                            "recognition": {
+                                "type": "DirectHit"
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_2": {
+                            "recognition": {
+                                "type": "DirectHit"
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_3": {
+                            "recognition": {
+                                "type": "DirectHit"
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_4": {
+                            "recognition": {
+                                "type": "DirectHit"
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_5": {
+                            "recognition": {
+                                "type": "DirectHit"
                             }
                         }
                     },
@@ -1797,18 +1813,11 @@
                         "GotoTriggerPointSetAnchor_VFTheHub": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_VFTheHub",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "VFTheHub"
-                            }
                         }
                     },
                     "option": [
@@ -1823,18 +1832,11 @@
                         "GotoTriggerPointSetAnchor_VFOriginiumSciencePark": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_VFOriginiumSciencePark",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "VFOriginiumSciencePark"
-                            }
                         }
                     },
                     "option": [
@@ -1849,18 +1851,11 @@
                         "GotoTriggerPointSetAnchor_VFOriginLodespring": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_VFOriginLodespring",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "VFOriginLodespring"
-                            }
                         }
                     },
                     "option": [
@@ -1875,18 +1870,11 @@
                         "GotoTriggerPointSetAnchor_VFPowerPlateau": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_VFPowerPlateau",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "VFPowerPlateau"
-                            }
                         }
                     },
                     "option": [
@@ -1901,18 +1889,11 @@
                         "GotoTriggerPointSetAnchor_WLWulingCity": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_WLWulingCity",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "WLWulingCity"
-                            }
                         }
                     },
                     "option": [
@@ -1927,18 +1908,11 @@
                         "GotoTriggerPointSetAnchor_WLQingboStockade": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_WLQingboStockade",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "WLQingboStockade"
-                            }
                         }
                     },
                     "option": [
@@ -1953,18 +1927,11 @@
                         "GotoTriggerPointSetAnchor_WLMarkerStone": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_WLMarkerStone",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "WLMarkerStone"
-                            }
                         }
                     },
                     "option": [
@@ -1979,18 +1946,11 @@
                         "GotoTriggerPointSetAnchor_WLTestArea": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_WLTestArea",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "WLTestArea"
-                            }
                         }
                     },
                     "option": [
@@ -2005,18 +1965,11 @@
                         "GotoTriggerPointSetAnchor_WLSwordVaultDale": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_WLSwordVaultDale",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "WLSwordVaultDale"
-                            }
                         }
                     },
                     "option": [
@@ -2031,18 +1984,11 @@
                         "GotoTriggerPointSetAnchor_WLYinglungPass": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_WLYinglungPass",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "WLYinglungPass"
-                            }
                         }
                     },
                     "option": [
@@ -2057,18 +2003,11 @@
                         "GotoTriggerPointSetAnchor_WLNorthWulingExclusionZone": {
                             "enabled": true
                         },
-                        "AutoEssenceApplyLocationEngraveOverride": {
+                        "AutoEssenceInitEngraveOptionOCR": {
                             "next": [
-                                "AutoEssenceInitEngraveOptionOCR",
                                 "GotoTriggerPointSetAnchor_WLNorthWulingExclusionZone",
                                 "AutoEssenceDispatcher"
                             ]
-                        },
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "menu_mode": "location",
-                                "location_id": "WLNorthWulingExclusionZone"
-                            }
                         }
                     },
                     "option": [
@@ -2092,11 +2031,6 @@
                     "name": "s1_1",
                     "label": "$option.AutoEssenceSkill.s1_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "s1_1": true
-                            }
-                        },
                         "AutoEssenceSelectEngraveBaseCondition1": {
                             "attach": {
                                 "s1_1": [
@@ -2118,6 +2052,25 @@
                             }
                         },
                         "AutoEssenceSelectEngraveBaseCondition3": {
+                            "attach": {
+                                "s1_1": [
+                                    "主能力",
+                                    "Main Attribute",
+                                    "メイン能力",
+                                    "주요 능력치"
+                                ]
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_1": {
+                            "recognition": {
+                                "type": "OCR",
+                                "param": {
+                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
+                                    "expected": [
+                                        "a^"
+                                    ]
+                                }
+                            },
                             "attach": {
                                 "s1_1": [
                                     "主能力",
@@ -2133,11 +2086,6 @@
                     "name": "s1_2",
                     "label": "$option.AutoEssenceSkill.s1_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "s1_2": true
-                            }
-                        },
                         "AutoEssenceSelectEngraveBaseCondition1": {
                             "attach": {
                                 "s1_2": [
@@ -2159,6 +2107,25 @@
                             }
                         },
                         "AutoEssenceSelectEngraveBaseCondition3": {
+                            "attach": {
+                                "s1_2": [
+                                    "力量",
+                                    "Strength",
+                                    "筋力",
+                                    "힘"
+                                ]
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_2": {
+                            "recognition": {
+                                "type": "OCR",
+                                "param": {
+                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
+                                    "expected": [
+                                        "a^"
+                                    ]
+                                }
+                            },
                             "attach": {
                                 "s1_2": [
                                     "力量",
@@ -2174,11 +2141,6 @@
                     "name": "s1_3",
                     "label": "$option.AutoEssenceSkill.s1_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "s1_3": true
-                            }
-                        },
                         "AutoEssenceSelectEngraveBaseCondition1": {
                             "attach": {
                                 "s1_3": [
@@ -2198,6 +2160,24 @@
                             }
                         },
                         "AutoEssenceSelectEngraveBaseCondition3": {
+                            "attach": {
+                                "s1_3": [
+                                    "意志",
+                                    "Will",
+                                    "의지"
+                                ]
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_3": {
+                            "recognition": {
+                                "type": "OCR",
+                                "param": {
+                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
+                                    "expected": [
+                                        "a^"
+                                    ]
+                                }
+                            },
                             "attach": {
                                 "s1_3": [
                                     "意志",
@@ -2212,11 +2192,6 @@
                     "name": "s1_4",
                     "label": "$option.AutoEssenceSkill.s1_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "s1_4": true
-                            }
-                        },
                         "AutoEssenceSelectEngraveBaseCondition1": {
                             "attach": {
                                 "s1_4": [
@@ -2236,6 +2211,24 @@
                             }
                         },
                         "AutoEssenceSelectEngraveBaseCondition3": {
+                            "attach": {
+                                "s1_4": [
+                                    "敏捷",
+                                    "Agility",
+                                    "민첩"
+                                ]
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_4": {
+                            "recognition": {
+                                "type": "OCR",
+                                "param": {
+                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
+                                    "expected": [
+                                        "a^"
+                                    ]
+                                }
+                            },
                             "attach": {
                                 "s1_4": [
                                     "敏捷",
@@ -2250,11 +2243,6 @@
                     "name": "s1_5",
                     "label": "$option.AutoEssenceSkill.s1_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "s1_5": true
-                            }
-                        },
                         "AutoEssenceSelectEngraveBaseCondition1": {
                             "attach": {
                                 "s1_5": [
@@ -2278,6 +2266,26 @@
                             }
                         },
                         "AutoEssenceSelectEngraveBaseCondition3": {
+                            "attach": {
+                                "s1_5": [
+                                    "智识",
+                                    "Intellect",
+                                    "智識",
+                                    "知性",
+                                    "지능"
+                                ]
+                            }
+                        },
+                        "AutoEssenceEngraveCondition1Base_s1_5": {
+                            "recognition": {
+                                "type": "OCR",
+                                "param": {
+                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
+                                    "expected": [
+                                        "a^"
+                                    ]
+                                }
+                            },
                             "attach": {
                                 "s1_5": [
                                     "智识",
@@ -2302,11 +2310,6 @@
                     "name": "s2_2",
                     "label": "$option.AutoEssenceSkill.s2_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 2
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_2": [
@@ -2335,11 +2338,6 @@
                     "name": "s2_7",
                     "label": "$option.AutoEssenceSkill.s2_7",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 7
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_7": [
@@ -2366,11 +2364,6 @@
                     "name": "s2_10",
                     "label": "$option.AutoEssenceSkill.s2_10",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 10
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_10": [
@@ -2397,11 +2390,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -2426,11 +2414,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -2455,11 +2438,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -2488,11 +2466,6 @@
                     "name": "s2_11",
                     "label": "$option.AutoEssenceSkill.s2_11",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 11
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_11": [
@@ -2521,11 +2494,6 @@
                     "name": "s2_5",
                     "label": "$option.AutoEssenceSkill.s2_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 5
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_5": [
@@ -2562,11 +2530,6 @@
                     "name": "s2_2",
                     "label": "$option.AutoEssenceSkill.s2_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 2
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_2": [
@@ -2595,11 +2558,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -2624,11 +2582,6 @@
                     "name": "s2_10",
                     "label": "$option.AutoEssenceSkill.s2_10",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 10
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_10": [
@@ -2655,11 +2608,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -2684,11 +2632,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -2713,11 +2656,6 @@
                     "name": "s2_3",
                     "label": "$option.AutoEssenceSkill.s2_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 3
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_3": [
@@ -2746,11 +2684,6 @@
                     "name": "s2_11",
                     "label": "$option.AutoEssenceSkill.s2_11",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 11
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_11": [
@@ -2779,11 +2712,6 @@
                     "name": "s2_5",
                     "label": "$option.AutoEssenceSkill.s2_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 5
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_5": [
@@ -2820,11 +2748,6 @@
                     "name": "s2_9",
                     "label": "$option.AutoEssenceSkill.s2_9",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 9
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_9": [
@@ -2849,11 +2772,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -2878,11 +2796,6 @@
                     "name": "s2_7",
                     "label": "$option.AutoEssenceSkill.s2_7",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 7
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_7": [
@@ -2909,11 +2822,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -2938,11 +2846,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -2967,11 +2870,6 @@
                     "name": "s2_3",
                     "label": "$option.AutoEssenceSkill.s2_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 3
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_3": [
@@ -3000,11 +2898,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -3033,11 +2926,6 @@
                     "name": "s2_4",
                     "label": "$option.AutoEssenceSkill.s2_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 4
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_4": [
@@ -3074,11 +2962,6 @@
                     "name": "s2_2",
                     "label": "$option.AutoEssenceSkill.s2_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 2
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_2": [
@@ -3107,11 +2990,6 @@
                     "name": "s2_9",
                     "label": "$option.AutoEssenceSkill.s2_9",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 9
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_9": [
@@ -3136,11 +3014,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -3165,11 +3038,6 @@
                     "name": "s2_7",
                     "label": "$option.AutoEssenceSkill.s2_7",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 7
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_7": [
@@ -3196,11 +3064,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -3225,11 +3088,6 @@
                     "name": "s2_3",
                     "label": "$option.AutoEssenceSkill.s2_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 3
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_3": [
@@ -3258,11 +3116,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -3291,11 +3144,6 @@
                     "name": "s2_4",
                     "label": "$option.AutoEssenceSkill.s2_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 4
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_4": [
@@ -3332,11 +3180,6 @@
                     "name": "s2_2",
                     "label": "$option.AutoEssenceSkill.s2_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 2
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_2": [
@@ -3365,11 +3208,6 @@
                     "name": "s2_9",
                     "label": "$option.AutoEssenceSkill.s2_9",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 9
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_9": [
@@ -3394,11 +3232,6 @@
                     "name": "s2_10",
                     "label": "$option.AutoEssenceSkill.s2_10",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 10
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_10": [
@@ -3425,11 +3258,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -3454,11 +3282,6 @@
                     "name": "s2_3",
                     "label": "$option.AutoEssenceSkill.s2_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 3
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_3": [
@@ -3487,11 +3310,6 @@
                     "name": "s2_11",
                     "label": "$option.AutoEssenceSkill.s2_11",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 11
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_11": [
@@ -3520,11 +3338,6 @@
                     "name": "s2_5",
                     "label": "$option.AutoEssenceSkill.s2_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 5
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_5": [
@@ -3553,11 +3366,6 @@
                     "name": "s2_4",
                     "label": "$option.AutoEssenceSkill.s2_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 4
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_4": [
@@ -3594,11 +3402,6 @@
                     "name": "s2_9",
                     "label": "$option.AutoEssenceSkill.s2_9",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 9
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_9": [
@@ -3623,11 +3426,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -3652,11 +3450,6 @@
                     "name": "s2_10",
                     "label": "$option.AutoEssenceSkill.s2_10",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 10
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_10": [
@@ -3683,11 +3476,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -3712,11 +3500,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -3745,11 +3528,6 @@
                     "name": "s2_11",
                     "label": "$option.AutoEssenceSkill.s2_11",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 11
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_11": [
@@ -3778,11 +3556,6 @@
                     "name": "s2_5",
                     "label": "$option.AutoEssenceSkill.s2_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 5
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_5": [
@@ -3811,11 +3584,6 @@
                     "name": "s2_4",
                     "label": "$option.AutoEssenceSkill.s2_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 4
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_4": [
@@ -3852,11 +3620,6 @@
                     "name": "s2_2",
                     "label": "$option.AutoEssenceSkill.s2_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 2
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_2": [
@@ -3885,11 +3648,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -3914,11 +3672,6 @@
                     "name": "s2_7",
                     "label": "$option.AutoEssenceSkill.s2_7",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 7
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_7": [
@@ -3945,11 +3698,6 @@
                     "name": "s2_10",
                     "label": "$option.AutoEssenceSkill.s2_10",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 10
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_10": [
@@ -3976,11 +3724,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -4005,11 +3748,6 @@
                     "name": "s2_3",
                     "label": "$option.AutoEssenceSkill.s2_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 3
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_3": [
@@ -4038,11 +3776,6 @@
                     "name": "s2_11",
                     "label": "$option.AutoEssenceSkill.s2_11",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 11
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_11": [
@@ -4071,11 +3804,6 @@
                     "name": "s2_5",
                     "label": "$option.AutoEssenceSkill.s2_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 5
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_5": [
@@ -4112,11 +3840,6 @@
                     "name": "s2_9",
                     "label": "$option.AutoEssenceSkill.s2_9",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 9
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_9": [
@@ -4141,11 +3864,6 @@
                     "name": "s2_7",
                     "label": "$option.AutoEssenceSkill.s2_7",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 7
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_7": [
@@ -4172,11 +3890,6 @@
                     "name": "s2_10",
                     "label": "$option.AutoEssenceSkill.s2_10",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 10
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_10": [
@@ -4203,11 +3916,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -4232,11 +3940,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -4261,11 +3964,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -4294,11 +3992,6 @@
                     "name": "s2_11",
                     "label": "$option.AutoEssenceSkill.s2_11",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 11
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_11": [
@@ -4327,11 +4020,6 @@
                     "name": "s2_4",
                     "label": "$option.AutoEssenceSkill.s2_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 4
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_4": [
@@ -4368,11 +4056,6 @@
                     "name": "s2_2",
                     "label": "$option.AutoEssenceSkill.s2_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 2
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_2": [
@@ -4401,11 +4084,6 @@
                     "name": "s2_9",
                     "label": "$option.AutoEssenceSkill.s2_9",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 9
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_9": [
@@ -4430,11 +4108,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -4459,11 +4132,6 @@
                     "name": "s2_7",
                     "label": "$option.AutoEssenceSkill.s2_7",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 7
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_7": [
@@ -4490,11 +4158,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -4519,11 +4182,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -4548,11 +4206,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -4581,11 +4234,6 @@
                     "name": "s2_4",
                     "label": "$option.AutoEssenceSkill.s2_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 4
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_4": [
@@ -4622,11 +4270,6 @@
                     "name": "s2_2",
                     "label": "$option.AutoEssenceSkill.s2_2",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 2
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_2": [
@@ -4655,11 +4298,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -4684,11 +4322,6 @@
                     "name": "s2_10",
                     "label": "$option.AutoEssenceSkill.s2_10",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 10
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_10": [
@@ -4715,11 +4348,6 @@
                     "name": "s2_1",
                     "label": "$option.AutoEssenceSkill.s2_1",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 1
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_1": [
@@ -4744,11 +4372,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -4773,11 +4396,6 @@
                     "name": "s2_3",
                     "label": "$option.AutoEssenceSkill.s2_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 3
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_3": [
@@ -4806,11 +4424,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -4839,11 +4452,6 @@
                     "name": "s2_5",
                     "label": "$option.AutoEssenceSkill.s2_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 5
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_5": [
@@ -4880,11 +4488,6 @@
                     "name": "s2_9",
                     "label": "$option.AutoEssenceSkill.s2_9",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 9
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_9": [
@@ -4909,11 +4512,6 @@
                     "name": "s2_8",
                     "label": "$option.AutoEssenceSkill.s2_8",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 8
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_8": [
@@ -4938,11 +4536,6 @@
                     "name": "s2_7",
                     "label": "$option.AutoEssenceSkill.s2_7",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 7
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_7": [
@@ -4969,11 +4562,6 @@
                     "name": "s2_12",
                     "label": "$option.AutoEssenceSkill.s2_12",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 12
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_12": [
@@ -4998,11 +4586,6 @@
                     "name": "s2_3",
                     "label": "$option.AutoEssenceSkill.s2_3",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 3
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_3": [
@@ -5031,11 +4614,6 @@
                     "name": "s2_6",
                     "label": "$option.AutoEssenceSkill.s2_6",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 6
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_6": [
@@ -5064,11 +4642,6 @@
                     "name": "s2_5",
                     "label": "$option.AutoEssenceSkill.s2_5",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 5
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_5": [
@@ -5097,11 +4670,6 @@
                     "name": "s2_4",
                     "label": "$option.AutoEssenceSkill.s2_4",
                     "pipeline_override": {
-                        "AutoEssenceLocationOptionsCheck": {
-                            "attach": {
-                                "slot2_id": 4
-                            }
-                        },
                         "AutoEssenceEngraveCondition2OCR": {
                             "attach": {
                                 "s2_4": [
