@@ -41,11 +41,9 @@ struct WindowInfo
     // 就是让两张全窗口的图白白活过整个 routeWindow。
     Mask lay;
     Mask core;
-    Grid<float> dist;    // 无封堵: 旁包烘好的封缝净空; 有封堵: 按盖过的核心重算
-    Mask whit;           // 只在有封堵时算, 无封堵的腿不需要它
-    Mask medial;         // 旁包烘好的中轴, 有封堵时不可信、留空
-    EdgeBits step_edges; // 旁包烘好的台阶税边, 与封堵无关
-    bool blocked = false;
+    Grid<float> dist;    // 旁包烘好的封缝净空, 禁区内清零
+    Mask medial;         // 旁包烘好的中轴
+    EdgeBits step_edges; // 旁包烘好的台阶税边
     StepBarrier sev;
     std::vector<WorldPoint> segA;
     std::vector<WorldPoint> segB;
@@ -531,8 +529,7 @@ std::optional<WindowInfo> buildWindow(
     double x1,
     double y1,
     const std::vector<NoGoPoly>* no_go,
-    const std::vector<int32_t>& blocked_local,
-    const std::vector<WorldPoint>& blocked_points,
+    const std::vector<BaseNavNoGoDisc>& no_go_discs,
     std::string& err)
 {
     const int64_t nx = static_cast<int64_t>(std::ceil((x1 - x0) / kCS));
@@ -541,17 +538,8 @@ std::optional<WindowInfo> buildWindow(
     const int64_t wgx0 = std::llround(x0 / kCS);
     const int64_t wgy0 = std::llround(y0 / kCS);
 
-    // 区网格只有取墙与盖封堵面两个读者, 两者都只认窗口矩形, 与格图无关。
+    // 区网格只有取墙一个读者, 它只认窗口矩形, 与格图无关。
     BakedWalls walls = BakeWalls(zc, x0, y0, nx, ny);
-    RasterCells brc;
-    if (!blocked_local.empty()) {
-        std::vector<std::array<int32_t, 3>> bt;
-        bt.reserve(blocked_local.size());
-        for (const int32_t t : blocked_local) {
-            bt.push_back(zc.mesh.T[static_cast<size_t>(t)]);
-        }
-        brc = Rasterize(zc.mesh.verts(), bt, x0, y0, nx, ny);
-    }
     GridPatch pw;
     pw.x0 = x0;
     pw.y0 = y0;
@@ -583,11 +571,7 @@ std::optional<WindowInfo> buildWindow(
     info.lay = Mask(nx, ny, 0);
     info.core = Mask(nx, ny, 0);
     info.dist = Grid<float>(nx, ny, 0.0F);
-    info.blocked = !blocked_local.empty() || !blocked_points.empty();
-    // 中轴是从封缝净空推出来的窗口量, 封堵会改净空, 所以只有无封堵的腿才采烘好的
-    if (!info.blocked) {
-        info.medial = Mask(nx, ny, 0);
-    }
+    info.medial = Mask(nx, ny, 0);
     info.step_edges.resize(nx, ny);
     Grid<float> lh(nx, ny, std::numeric_limits<float>::quiet_NaN());
     std::vector<uint8_t> stepbits(static_cast<size_t>(nx * ny), 0);
@@ -621,7 +605,7 @@ std::optional<WindowInfo> buildWindow(
             stepbits[cell] |= r.steps;
             stepbits2[cell] |= gw.steps2[ri];
             segbits[cell] |= static_cast<uint8_t>(gw.seg[ri] & ~kGwMedialBit);
-            if (!info.blocked && (gw.seg[ri] & kGwMedialBit) != 0) {
+            if ((gw.seg[ri] & kGwMedialBit) != 0) {
                 info.medial.v[cell] = 1;
             }
             // 台阶税边: 方向 i 正向在 bit 2i, 反向在 bit 2i+1。EdgeBits 的反向位记在对端格上,
@@ -676,21 +660,6 @@ std::optional<WindowInfo> buildWindow(
         }
     }
     walls = BakedWalls();
-    // 挡线格图只喂接缝净空那一步, 而无封堵时净空直接采旁包, 不必再算
-    if (info.blocked) {
-        info.whit = WallHits(wP0, wP1, x0, y0, nx, ny);
-    }
-
-    for (size_t ci = 0; ci < brc.cell.size(); ++ci) {
-        const auto cell = static_cast<size_t>(brc.cell[ci]);
-        const float lf = lh.v[cell];
-        // 层高带内才盖掉,免得误伤其他楼层的格
-        if (!std::isnan(lf) && std::fabs(brc.h[ci] - lf) <= static_cast<float>(kClimb)) {
-            info.core.v[cell] = 0;
-            info.lay.v[cell] = 0;
-        }
-    }
-    brc = RasterCells();
     // 虚拟禁区盖格并把净空清零: 净空是弦判据的开关, 留着的话拐角还能从禁区上空拉直过去。
     // 净空与中轴照旧采旁包烘好的值, 于是禁区不把这条腿推下预烘快路, 代价只有窗口内那几行格的写入。
     if (no_go != nullptr) {
@@ -698,23 +667,22 @@ std::optional<WindowInfo> buildWindow(
     }
     lh = Grid<float>();
 
-    // 封堵点无自带高度;窗口层已按起点层高筛过,直接按平面距离盖格即可
-    if (!blocked_points.empty()) {
-        const int64_t pr = static_cast<int64_t>(std::ceil(kBlockedPointRadius / kCS));
-        for (const WorldPoint& bp : blocked_points) {
-            const int64_t cgx = static_cast<int64_t>(std::floor((bp.x - x0) / kCS));
-            const int64_t cgy = static_cast<int64_t>(std::floor((bp.y - y0) / kCS));
-            for (int64_t by = std::max<int64_t>(cgy - pr, 0); by <= std::min<int64_t>(cgy + pr, ny - 1); ++by) {
-                for (int64_t bx = std::max<int64_t>(cgx - pr, 0); bx <= std::min<int64_t>(cgx + pr, nx - 1); ++bx) {
-                    const double px = x0 + (static_cast<double>(bx) + 0.5) * kCS;
-                    const double py = y0 + (static_cast<double>(by) + 0.5) * kCS;
-                    if (std::hypot(px - bp.x, py - bp.y) > kBlockedPointRadius) {
-                        continue;
-                    }
-                    const size_t cell = static_cast<size_t>(by * nx + bx);
-                    info.core.v[cell] = 0;
-                    info.lay.v[cell] = 0;
+    // 运行期禁区不带高度; 窗口层已按起点层高筛过, 按平面距离盖格即可
+    for (const BaseNavNoGoDisc& disc : no_go_discs) {
+        const int64_t pr = static_cast<int64_t>(std::ceil(disc.radius / kCS));
+        const int64_t cgx = static_cast<int64_t>(std::floor((disc.center.x - x0) / kCS));
+        const int64_t cgy = static_cast<int64_t>(std::floor((disc.center.y - y0) / kCS));
+        for (int64_t by = std::max<int64_t>(cgy - pr, 0); by <= std::min<int64_t>(cgy + pr, ny - 1); ++by) {
+            for (int64_t bx = std::max<int64_t>(cgx - pr, 0); bx <= std::min<int64_t>(cgx + pr, nx - 1); ++bx) {
+                const double px = x0 + (static_cast<double>(bx) + 0.5) * kCS;
+                const double py = y0 + (static_cast<double>(by) + 0.5) * kCS;
+                if (std::hypot(px - disc.center.x, py - disc.center.y) > disc.radius) {
+                    continue;
                 }
+                const size_t cell = static_cast<size_t>(by * nx + bx);
+                info.core.v[cell] = 0;
+                info.lay.v[cell] = 0;
+                info.dist.v[cell] = 0.0F;
             }
         }
     }
@@ -874,10 +842,6 @@ std::optional<WindowInfo> buildWindow(
     info.segB.insert(info.segB.end(), info.sev.p1.begin(), info.sev.p1.end());
     info.sev.p0 = {};
     info.sev.p1 = {};
-    // 烘出来的净空是没封堵时的;盖掉格子会让通道变窄,代价场得按盖过的核心重算
-    if (info.blocked) {
-        info.dist = Clearance(info.core);
-    }
     return info;
 }
 
@@ -1079,58 +1043,11 @@ std::optional<std::vector<WorldPoint>> routeWindow(
     info.lay = Mask();
     // 边界边只用来算余量, 不用来禁步: 补洞封缝那一步已经判定这些细缝可以跨,
     // 回头再拿同一批边禁掉跨缝的一步, 等于在每道接缝上凭空立一堵墙
-    const EdgeBits& blocked_steps = info.sev.steps;
-    // 无封堵的腿: 封缝净空与中轴都是旁包按整类窗口烘好的, 直接采。
-    // 有封堵的腿: 净空已按盖过的核心重算, 接缝补偿与中轴只能在这里现算。
-    Grid<float> dist;
-    Mask rdg;
-    if (!info.blocked) {
-        dist = std::move(info.dist);
-        info.dist = Grid<float>();
-        rdg = std::move(info.medial);
-        info.medial = Mask();
-    }
-    else {
-        // 掩膜距离场对跨越边界边无感, 取到边界的距离的下确界补上
-        Mask wfree(nx, ny, 0);
-        for (size_t i = 0; i < wfree.v.size(); ++i) {
-            wfree.v[i] = info.whit.v[i] != 0 ? 0 : 1;
-        }
-        info.whit = Mask();
-        // 共面重叠片各自留着自己的边界, 落到格上是间距约 1px 的栅格, 开阔广场因此与窄巷读出同样的
-        // 宽度, 按宽度定价的拓扑层于是分辨不出宽路。摘法只放不加: 四邻全可走、且这四步都没被禁的
-        // 格子才回自由集, 建筑外轮廓恒有一侧没有面, 一根真墙边都摘不掉。
-        for (int64_t y = 1; y + 1 < ny; ++y) {
-            for (int64_t x = 1; x + 1 < nx; ++x) {
-                const int64_t c = y * nx + x;
-                if (wfree.v[static_cast<size_t>(c)] != 0 || walk.v[static_cast<size_t>(c)] == 0) {
-                    continue;
-                }
-                bool seam = true;
-                for (const int64_t d : { int64_t { 1 }, int64_t { -1 }, nx, -nx }) {
-                    const int64_t b = c + d;
-                    if (walk.v[static_cast<size_t>(b)] == 0 || blocked_steps.has(c, b) || blocked_steps.has(b, c)) {
-                        seam = false;
-                        break;
-                    }
-                }
-                if (seam) {
-                    wfree.v[static_cast<size_t>(c)] = 1;
-                }
-            }
-        }
-        dist = Clearance(wfree);
-        wfree = Mask();
-        // 取小就地写回接缝净空那张表: 另开一张同尺寸的只是让两张 36MB 的图在整个 routeWindow 里同时活着。
-        for (size_t i = 0; i < dist.v.size(); ++i) {
-            dist.v[i] = std::min(info.dist.v[i], dist.v[i]);
-        }
-        info.dist = Grid<float>();
-        // VV(c): 障碍按期望净空 c 膨胀后仍自由的格走可见图那一侧, 膨胀后被吃掉的窄处只留中脊,
-        // 对应论文里 V∩M(c) 的那段 Voronoi 弧。净空在这一层是掩膜: 开阔地没有贴墙这个选项, 窄缝
-        // 里没有偏一侧这个选项, 中途钻的一小段窄缝也就无法被整条路长平均掉。
-        rdg = MedialAxis(dist, kClrLambda);
-    }
+    // 封缝净空与中轴都是旁包按整类窗口烘好的, 直接采。
+    Grid<float> dist = std::move(info.dist);
+    info.dist = Grid<float>();
+    Mask rdg = std::move(info.medial);
+    info.medial = Mask();
     const double cpref = kClrPref;
     // 通道 = 障碍按 c 膨胀后仍自由的格, 并上中轴带。
     const auto chan = [&](double cc, const Mask& band) {
@@ -2070,7 +1987,7 @@ std::optional<std::vector<WorldPoint>> routeWindow(
         const int64_t ca = (*q)[k - 1].y * nx + (*q)[k - 1].x;
         const int64_t cb = (*q)[k].y * nx + (*q)[k].x;
         // 跳边一步不计为跨越立面
-        if (blocked_steps.has(ca, cb) && !info.links_cell.has(ca, cb)) {
+        if (info.sev.steps.has(ca, cb) && !info.links_cell.has(ca, cb)) {
             bad.push_back(k);
         }
     }
@@ -2312,12 +2229,11 @@ RecastPlanResult RecastNavEngine::plan(
     float start_floor_y,
     float goal_floor_y,
     float goal_deck_y,
-    const std::vector<uint32_t>& blocked,
-    const std::vector<WorldPoint>& blocked_points,
+    const std::vector<BaseNavNoGoDisc>& no_go_discs,
     const std::function<bool()>& should_stop)
 {
     const std::lock_guard<std::mutex> lock(mutex_);
-    return planLocked(zone_name, start, goal, start_floor_y, goal_floor_y, goal_deck_y, blocked, blocked_points, should_stop);
+    return planLocked(zone_name, start, goal, start_floor_y, goal_floor_y, goal_deck_y, no_go_discs, should_stop);
 }
 
 void RecastNavEngine::warm(const std::string& zone_name)
@@ -2387,8 +2303,7 @@ RecastPlanResult RecastNavEngine::planLocked(
     float start_floor_y,
     float goal_floor_y,
     float goal_deck_y,
-    const std::vector<uint32_t>& blocked,
-    const std::vector<WorldPoint>& blocked_points,
+    const std::vector<BaseNavNoGoDisc>& no_go_discs,
     const std::function<bool()>& should_stop)
 {
     const double t_all0 = nowMs();
@@ -2414,13 +2329,6 @@ RecastPlanResult RecastNavEngine::planLocked(
     }
     const FieldsZone* fz = ze.fz.get();
     ZoneClean& zc = *ze.zc;
-    std::vector<int32_t> blocked_local;
-    for (const uint32_t t : blocked) {
-        const int64_t local = static_cast<int64_t>(t) - zc.lo;
-        if (local >= 0 && local < static_cast<int64_t>(zc.mesh.T.size())) {
-            blocked_local.push_back(static_cast<int32_t>(local));
-        }
-    }
     const std::optional<double> sfl =
         start_floor_y > kBaseNavFloorYValidMin ? std::optional<double>(static_cast<double>(start_floor_y)) : std::nullopt;
     const std::optional<double> gfl =
@@ -2652,26 +2560,8 @@ RecastPlanResult RecastNavEngine::planLocked(
         const int64_t margin = local ? kTrustMargin : 0;
 
         const double t_win0 = nowMs();
-        info = buildWindow(
-            grid_,
-            *gz,
-            fields_,
-            *fzd,
-            *fz,
-            zc,
-            seed_gx,
-            seed_gy,
-            seed_h,
-            h0,
-            region,
-            x0,
-            y0,
-            x1,
-            y1,
-            nogo,
-            blocked_local,
-            blocked_points,
-            err);
+        info =
+            buildWindow(grid_, *gz, fields_, *fzd, *fz, zc, seed_gx, seed_gy, seed_h, h0, region, x0, y0, x1, y1, nogo, no_go_discs, err);
         const double window_ms = nowMs() - t_win0;
         const uint16_t zone_id = zc.zone_id;
         if (!info.has_value()) {

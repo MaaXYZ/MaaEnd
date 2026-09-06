@@ -34,8 +34,7 @@ inline constexpr double kBkt = 4.0;             // 挡线索引桶边长 px
 inline constexpr double kBktPad = 1e-6;         // 入桶时给挡线包围盒的放量 px, 需盖过相交判据放给挡线两端的余量
 inline constexpr double kSnapRadius = 8.0;      // 起终点吸附半径 px
 inline constexpr double kDeckBand = 2.0;        // 声明面高度匹配容差 px, 需远小于相邻面间距
-inline constexpr double kBlockedPointRadius = 1.0; // 封堵点盖章半径 px
-inline constexpr int64_t kHoleMaxCells = 32;       // 封闭小洞填充上限(格 = 2px²)
+inline constexpr int64_t kHoleMaxCells = 32;    // 封闭小洞填充上限(格 = 2px²)
 // 整类窗口在类范围外留的圈(格)。场都是局部算子, 依赖半径合起来不到这一圈, 留出它,
 // 类边缘那几格算出来的场就与在整区图上算的逐位相同。旁包按同一个值烘。
 inline constexpr int64_t kFieldHalo = 32;
@@ -204,9 +203,6 @@ std::vector<uint8_t> WallsAtLayer(
     const Grid<float>& lh,
     double ox,
     double oy);
-
-// 逐格一位: 这一格里落过边界边的采样点。距离场对跨边界无感, 用它把边所在的格从自由集里扣掉。
-Mask WallHits(const std::vector<WorldPoint>& p0, const std::vector<WorldPoint>& p1, double ox, double oy, int64_t nx, int64_t ny);
 
 // (dy+1)*3+(dx+1) → 位号 |(位存在终点格 ? 8 : 0), -1 表示这个位移不是八邻。
 // 表由 kGridStepDx/Dy 现推, 于是与包里 stepbits 的位序同一份定义。

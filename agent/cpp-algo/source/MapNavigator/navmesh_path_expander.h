@@ -58,16 +58,20 @@ void NormalizeLivePositionToBase(const NaviParam& param, NaviPosition& pos);
 void PreloadNavmeshWaypoints(const NaviParam& param);
 // `should_stop` is polled between waypoints and between fallback probes: expansion runs before the
 // state machine exists, so it is the only place a stop request can be honored during planning.
+// `no_go` carries the virtual no-go discs this navigation has stamped so far; every leg planned here
+// treats the discs of its zone as walls. Null on the initial expansion, when none exist yet.
 bool ExpandNavmeshWaypoints(
     const NaviParam& param,
     const NaviPosition& initial_pos,
     const std::function<bool()>& should_stop,
     std::vector<Waypoint>& out_path,
-    std::vector<NavmeshRouteDiagnostic>* out_diagnostics = nullptr);
+    std::vector<NavmeshRouteDiagnostic>* out_diagnostics = nullptr,
+    const std::vector<VirtualNoGoDisc>* no_go = nullptr);
 NavmeshExpansionFailure CurrentNavmeshExpansionFailure();
 // The goal deck pins which overlapping walkable surface the route must stop on; unset keeps the full span
 // set. `start_floor_y` overrides which floor the start snaps onto, for the rare caller that actually knows
 // the height it is standing at (a zipline dismount); unset keeps the zone's dominant floor, unchanged.
+// `no_go` is the navigation's virtual no-go discs; the ones stamped in `locator_zone` become walls.
 std::optional<navmesh::BaseNavRouteResult> PlanNavmeshRoute(
     const NaviParam& param,
     const std::string& locator_zone,
@@ -75,7 +79,8 @@ std::optional<navmesh::BaseNavRouteResult> PlanNavmeshRoute(
     const navmesh::WorldPoint& goal,
     std::optional<double> goal_deck_y = std::nullopt,
     std::optional<double> start_floor_y = std::nullopt,
-    NavmeshRouteDiagnostic* out_diagnostic = nullptr);
+    NavmeshRouteDiagnostic* out_diagnostic = nullptr,
+    const std::vector<VirtualNoGoDisc>* no_go = nullptr);
 
 // Which walkable surface `point` lands on: the planar distance to it, and its height on the same scale
 // as BaseNavRouteRequest::floor_y. Height matters as much as distance — a point directly above or below
@@ -135,12 +140,6 @@ double NavmeshOffMeshFraction(
     const std::string& locator_zone,
     const std::vector<navmesh::WorldPoint>& polyline,
     double step);
-std::optional<navmesh::BaseNavRouteResult> PlanNavmeshDetourRoute(
-    const NaviParam& param,
-    const NaviPosition& position,
-    const Waypoint& anchor,
-    double route_heading,
-    navmesh::WorldPoint* out_detour_vertex = nullptr);
 std::optional<navmesh::WorldPoint> PlanUnstickTarget(
     const NaviParam& param,
     const NaviPosition& position,

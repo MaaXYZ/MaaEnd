@@ -155,8 +155,20 @@ constexpr int32_t kDynamicRecoveryTotalTimeoutMs = 30000;
 // abandons the precise route.
 constexpr int32_t kRecoveryJumpAttemptsBeforeDetour = 2;
 constexpr double kDynamicRecoveryResetDistance = 2.0;
-constexpr double kCloseGoalDetourSuppressSlack = 6.0;
-constexpr int32_t kRecoveryDetourAttemptsBeforeUnstick = 1;
+// Each detour attempt places one virtual no-go disc and re-plans around it; a further stall at the same
+// spot places a larger one. After this many attempts at one anchor the ladder moves on to the physical
+// unstick.
+constexpr int32_t kRecoveryDetourAttemptsBeforeUnstick = 3;
+// Virtual no-go disc placed ahead of a stall. The first radius is an estimate of the unseen obstacle's
+// size; a further stall against an existing disc adds one step, up to the cap. The standoff keeps the
+// agent's own cell outside the disc so the replan has a start point; the goal clearance keeps the anchor
+// outside it.
+constexpr double kVirtualNoGoRadius = 2.0;
+constexpr double kVirtualNoGoRadiusStep = 1.5;
+constexpr double kVirtualNoGoRadiusMax = 6.5;
+constexpr double kVirtualNoGoRadiusMin = 1.0;
+constexpr double kVirtualNoGoStandoff = 1.0;
+constexpr double kVirtualNoGoGoalClearance = 1.0;
 constexpr double kUnstickSampleStepM = 0.5;  // per-ray on/off scan resolution (world units)
 constexpr double kUnstickMaxRockCrossingM =
     2.0;                                     // tolerate this much off-mesh (the rock) before solid ground; longer = water => reject bearing
