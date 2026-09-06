@@ -33,17 +33,17 @@ type Alias struct {
 
 // Match 是 IconRecognition 单个候选物品的识别结果。
 type Match struct {
-	ItemID       string   `json:"item_id"`
-	Name         string   `json:"name"`
-	Category     string   `json:"category"`
-	StorageKind  string   `json:"storage_kind"`
-	CategoryType string   `json:"category_type"`
-	Rarity       int      `json:"rarity"`
+	ItemID       string `json:"item_id"`
+	Name         string `json:"name"`
+	Category     string `json:"category"`
+	StorageKind  string `json:"storage_kind"`
+	CategoryType string `json:"category_type"`
+	Rarity       int    `json:"rarity"`
 	// Aliases 仅包含与代表物品共享图标身份的候选物品。
-	Aliases      []Alias  `json:"aliases,omitempty"`
-	CellBox      maa.Rect `json:"cell_box"`
-	ItemBox      maa.Rect `json:"item_box"`
-	Score        float64  `json:"score"`
+	Aliases []Alias  `json:"aliases,omitempty"`
+	CellBox maa.Rect `json:"cell_box"`
+	ItemBox maa.Rect `json:"item_box"`
+	Score   float64  `json:"score"`
 	// RegionUnavailable 仅标记当前地区无法使用的物品；false 没有必要导出。
 	RegionUnavailable bool `json:"region_unavailable,omitempty"`
 	Row               *int `json:"row,omitempty"`

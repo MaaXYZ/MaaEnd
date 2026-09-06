@@ -120,8 +120,7 @@ std::vector<PreparedTemplate> SelectCandidateTemplates(
             const IconIdentity key { templ.record.icon_id, templ.record.fluid_icon_id };
             for (const auto* alias : alias_candidates.at(key)) {
                 if (alias->record.item_id != templ.record.item_id) {
-                    templ.record.aliases.push_back(
-                        TemplateAlias { .item_id = alias->record.item_id, .name_key = alias->record.name_key });
+                    templ.record.aliases.push_back(TemplateAlias { .item_id = alias->record.item_id, .name_key = alias->record.name_key });
                 }
             }
         }
