@@ -260,6 +260,10 @@ constexpr double kRelocationResumeMinDistance = 3.0;
 // 一跳分三步: 站上架子(仅链首)、把镜头对准落点、按左键起滑。滑行途中人悬在半空, 位置一路在动,
 // 所以判完成只认「进了落点圈」这一条, 任何「动了就算走完」的判据都会在起滑瞬间成立
 constexpr double kZiplineLandingBandWu = 6.0;
+// 落地那一帧是冷启动, 把落点(和同一架子上其它索的落点)交给定位器当搜索先验, 每个点开这么大
+// 半径的小窗跟 YOLO 格窗比分。要装得下落点散布(band), 又小到错先验只能撞出弱峰；模板半宽由
+// 定位器自己补边, 这里不用算进去
+constexpr double kZiplineLandingHintRadiusWu = 24.0;
 constexpr int32_t kZiplineRideRetryIntervalMs = 150;
 constexpr int32_t kZiplineRideTimeoutMs = 30000;
 // 落点圈内还要连着读到这么多个非 held 定位才收工, 避免滑行途中恰好飞过落点上方就提前落地
@@ -289,11 +293,6 @@ constexpr int32_t kZiplineLaunchAttempts = 3;
 // 滑行中位置每拍都在变, 连着这么多拍几乎不动就说明这趟已经结束了
 constexpr double kZiplineSettleMoveWu = 1.5;
 constexpr int32_t kZiplineSettleFixes = 4;
-// 全局搜索偶尔会在同一区域错锁到远处的相似纹理。低分本身不能判错，滑到相邻索也可能真离开
-// 目标线段；只有「低于断言定位的常用及格线」且「距上索点远超当前索跨度」才拒绝这一帧。
-constexpr double kZiplineOutlierFixConfidence = 0.70;
-constexpr double kZiplineOutlierSpanFactorSquared = 9.0;
-constexpr double kZiplineOutlierDistanceSlackWu = 12.0;
 // 下索是一次右键。站在架子上时移动指令会被架子的选点状态吃掉, 所以走路之前必须先下来
 constexpr int32_t kZiplineDismountHoldMs = 80;
 // 索没通电、两端根本没挂索时起滑是空响, 人还站在架子上。滑一趟是大位移, 所以「过了确认时间

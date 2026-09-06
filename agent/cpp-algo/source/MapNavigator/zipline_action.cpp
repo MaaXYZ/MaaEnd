@@ -139,7 +139,25 @@ void ClearRideState(const Context& ctx)
     ctx.runtime_state->semantic.zipline_last_pos = {};
     ctx.runtime_state->semantic.zipline_settle_hits = 0;
     ctx.runtime_state->semantic.zipline_returning = false;
-    ctx.runtime_state->semantic.zipline_settle_relocated = false;
+}
+
+// 落地那一帧是冷启动。把这跳的落点、同一架子上其它索的落点、以及上索点本身都交给定位器当
+// 搜索先验：挂对了落在第一个, 挂错了落在其中一个, 空响没滑走就还在上索点。位置由匹配分决定。
+std::vector<maplocator::SearchHint> RideSearchHints(const NaviPosition& mount, const ZiplineTarget& landing)
+{
+    std::vector<maplocator::SearchHint> hints;
+    if (!mount.valid || mount.zone_id.empty()) {
+        return hints;
+    }
+    const auto add = [&hints, &mount](double x, double y) {
+        hints.push_back(maplocator::SearchHint { .zone_id = mount.zone_id, .x = x, .y = y, .radius = kZiplineLandingHintRadiusWu });
+    };
+    add(landing.x, landing.y);
+    for (const ZiplinePoint& other : landing.alternates) {
+        add(other.x, other.y);
+    }
+    add(mount.x, mount.y);
+    return hints;
 }
 
 // 一跳里第几次按左键该把镜头抬到多少度。俯仰读不回来, dy 的正负也没实机核过, 所以第二次直接
@@ -158,34 +176,6 @@ double PitchTargetForAttempt(double elevation_deg, int attempt)
     }
     return 0.0;
 }
-
-constexpr double SquaredDistance(double from_x, double from_y, double to_x, double to_y)
-{
-    const double dx = to_x - from_x;
-    const double dy = to_y - from_y;
-    return dx * dx + dy * dy;
-}
-
-// 不能只按距离拒绝：确实滑到同一架子上的另一根索时也会偏离预期落点，后面还要靠现有逻辑
-// 判断是否原路滑回。低分与异常位移同时成立才说明更像全局搜索错锁，而不是真实滑行结果。
-constexpr bool
-    IsPlausibleZiplineFix(double mount_x, double mount_y, double landing_x, double landing_y, double fix_x, double fix_y, double fix_score)
-{
-    if (fix_score >= kZiplineOutlierFixConfidence) {
-        return true;
-    }
-    const double span_squared = SquaredDistance(mount_x, mount_y, landing_x, landing_y);
-    const double moved_squared = SquaredDistance(mount_x, mount_y, fix_x, fix_y);
-    const double max_distance_squared =
-        kZiplineOutlierSpanFactorSquared * span_squared + kZiplineOutlierDistanceSlackWu * kZiplineOutlierDistanceSlackWu;
-    return moved_squared <= max_distance_squared;
-}
-
-// 2026-08-25 实机回归样本：低分的真实落点仍应接受，远处 (950, 542) 错锁必须拒绝。
-static_assert(IsPlausibleZiplineFix(906.04, 268.94, 925.3125, 291.796875, 927.0, 293.17, 0.68));
-static_assert(!IsPlausibleZiplineFix(906.04, 268.94, 925.3125, 291.796875, 950.2, 542.51, 0.680377));
-// 高置信度的远端结果仍交给既有错索/回索分支处理，避免几何门控吞掉真实的误滑。
-static_assert(IsPlausibleZiplineFix(906.04, 268.94, 925.3125, 291.796875, 950.2, 542.51, 0.90));
 
 std::string BuildPitchResetOverride(int units)
 {
@@ -446,7 +436,8 @@ Result StartZiplineHop(
     ctx.runtime_state->semantic.zipline_landing = landing;
     ctx.runtime_state->semantic.zipline_landing_hits = 0;
     ctx.runtime_state->semantic.zipline_settle_hits = 0;
-    ctx.runtime_state->semantic.zipline_settle_relocated = false;
+    // 滑行中小地图整个隐藏, 跟踪必然断; 落地帧离上索点一整跨, 若上索点的旧位置还留在跟踪器里,
+    // 分数不到直通线的真落点会被当远跳拒掉, 白等几帧。起滑就清掉, 落地直接走冷启动
     ctx.position_provider->ResetTracking();
 
     // 起滑那一刻人还在上索点, 这条链就算已经是路线的尾巴也不能在这里收工:
@@ -472,37 +463,14 @@ Result TickZiplineRide(const Context& ctx)
     const int64_t waited_ms =
         std::chrono::duration_cast<std::chrono::milliseconds>(now - ctx.runtime_state->semantic.zipline_ride_started).count();
 
-    if (!ctx.position_provider->Capture(ctx.position, false, {}) || ctx.position_provider->LastCaptureWasHeld()) {
+    const NaviPosition& mount = ctx.runtime_state->semantic.zipline_mount_pos;
+    const ZiplineTarget& landing = ctx.runtime_state->semantic.zipline_landing;
+    if (!ctx.position_provider->Capture(ctx.position, false, {}, RideSearchHints(mount, landing))
+        || ctx.position_provider->LastCaptureWasHeld()) {
         ctx.runtime_state->semantic.zipline_landing_hits = 0;
         ctx.runtime_state->semantic.zipline_settle_hits = 0;
         if (waited_ms > kZiplineRideTimeoutMs) {
             return AbandonZipline(ctx, "zipline_ride_timeout", "no usable locator fix for the whole ride");
-        }
-        result.stay_in_current_tick = true;
-        utils::SleepFor(kZiplineRideRetryIntervalMs);
-        return result;
-    }
-
-    const NaviPosition& mount = ctx.runtime_state->semantic.zipline_mount_pos;
-    const ZiplineTarget& landing = ctx.runtime_state->semantic.zipline_landing;
-    if (mount.valid
-        && !IsPlausibleZiplineFix(mount.x, mount.y, landing.x, landing.y, ctx.position->x, ctx.position->y, ctx.position->score)) {
-        ctx.runtime_state->semantic.zipline_landing_hits = 0;
-        ctx.runtime_state->semantic.zipline_last_pos = {};
-        ctx.runtime_state->semantic.zipline_settle_hits = 0;
-        ctx.runtime_state->semantic.zipline_settle_relocated = false;
-        ctx.position_provider->ResetTracking();
-
-        const double expected_span = std::hypot(landing.x - mount.x, landing.y - mount.y);
-        const double distance_to_mount = std::hypot(ctx.position->x - mount.x, ctx.position->y - mount.y);
-        const double max_distance = std::sqrt(
-            kZiplineOutlierSpanFactorSquared * expected_span * expected_span
-            + kZiplineOutlierDistanceSlackWu * kZiplineOutlierDistanceSlackWu);
-        LogWarn << "Action: ZIPLINE rejected an implausible locator fix; forcing a fresh global locate." << VAR(ctx.position->x)
-                << VAR(ctx.position->y) << VAR(ctx.position->score) << VAR(distance_to_mount) << VAR(expected_span) << VAR(max_distance)
-                << VAR(waited_ms);
-        if (waited_ms > kZiplineRideTimeoutMs) {
-            return AbandonZipline(ctx, "zipline_ride_timeout", "locator fixes stayed outside the plausible ride envelope");
         }
         result.stay_in_current_tick = true;
         utils::SleepFor(kZiplineRideRetryIntervalMs);
@@ -546,19 +514,6 @@ Result TickZiplineRide(const Context& ctx)
         // 滑走了, 人却停在既不是落点也不是架子的地方, 这趟就是滑岔了。离落点更近说明方向没错,
         // 就地退索走路; 离上索点更近说明滑反了, 索是双向的, 原路滑回去再走
         if (ctx.runtime_state->semantic.zipline_settle_hits >= kZiplineSettleFixes && moved >= kZiplineMountMinMoveWu) {
-            // 冷启动后的第一批低分错锁能连着几帧纹丝不动, 骗过上面的稳定判据(实测把滑到落点的
-            // 链整条判死过)。弃索是贵决定: 先扔掉跟踪状态强制一次全新全局定位, 用干净的锁定
-            // 重新数满稳定帧, 结论没变才作数; 新锁定落在落点圈里就顺着成功路径走。
-            if (!ctx.runtime_state->semantic.zipline_settle_relocated) {
-                ctx.runtime_state->semantic.zipline_settle_relocated = true;
-                ctx.runtime_state->semantic.zipline_settle_hits = 0;
-                ctx.position_provider->ResetTracking();
-                LogInfo << "Action: ZIPLINE settle verdict deferred for a fresh global locate." << VAR(distance_to_landing) << VAR(moved)
-                        << VAR(waited_ms);
-                result.stay_in_current_tick = true;
-                utils::SleepFor(kZiplineRideRetryIntervalMs);
-                return result;
-            }
             const double distance_to_mount = std::hypot(ctx.position->x - mount.x, ctx.position->y - mount.y);
             LogWarn << "Action: ZIPLINE stopped away from the landing point." << VAR(distance_to_landing) << VAR(distance_to_mount)
                     << VAR(waited_ms) << VAR(ctx.runtime_state->semantic.zipline_returning);
@@ -567,13 +522,15 @@ Result TickZiplineRide(const Context& ctx)
             }
             // 滑回去也是一根索, 仰角反过来只是个种子: 真正滑的是哪根索没人知道, 对不上就靠
             // 起滑那三档重试换角度
-            const ZiplineTarget back { .x = mount.x, .y = mount.y, .elevation_deg = -landing.elevation_deg };
+            ZiplineTarget back { .x = mount.x, .y = mount.y, .elevation_deg = -landing.elevation_deg };
+            // 滑回去的落地先验: 原上索点、原落点、原架子上的其它落点, 这趟不管挂到哪根都罩得住
+            back.alternates.push_back(ZiplinePoint { .x = landing.x, .y = landing.y });
+            back.alternates.insert(back.alternates.end(), landing.alternates.begin(), landing.alternates.end());
             ctx.runtime_state->semantic.zipline_returning = true;
             ctx.runtime_state->semantic.zipline_mount_pos = *ctx.position;
             ctx.runtime_state->semantic.zipline_landing = back;
             ctx.runtime_state->semantic.zipline_landing_hits = 0;
             ctx.runtime_state->semantic.zipline_settle_hits = 0;
-            ctx.runtime_state->semantic.zipline_settle_relocated = false;
             ctx.runtime_state->semantic.zipline_launch_attempts = 0;
             if (!AimAtLanding(ctx, back, 0, false)) {
                 return AbandonZipline(ctx, "zipline_aim_failed", "could not aim back at the mount tower");

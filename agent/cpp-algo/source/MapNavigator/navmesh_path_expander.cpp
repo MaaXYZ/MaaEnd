@@ -904,6 +904,11 @@ bool TryAppendZiplineLeg(
             .height = to.height,
             .elevation_deg = std::atan2(rise, std::hypot(span_x, span_z)) * 180.0 / kPi,
         };
+        if (hop < route->hop_alternates.size()) {
+            for (const zipline::ZiplineNode& other : route->hop_alternates[hop]) {
+                out_path.back().zipline_target->alternates.push_back(ZiplinePoint { .x = other.x, .y = other.y });
+            }
+        }
     }
 
     const size_t departure_index = out_path.size();

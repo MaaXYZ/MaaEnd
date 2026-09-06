@@ -58,6 +58,12 @@ enum class ActionType
     MEOJSON_ENUM_RANGE(RUN, ZIPLINE)
 };
 
+struct ZiplinePoint
+{
+    double x = 0.0;
+    double y = 0.0;
+};
+
 // 滑索的另一端。执行时先把镜头转向这里再交互上索，滑行结束后角色就落在这个点上。
 struct ZiplineTarget
 {
@@ -67,6 +73,9 @@ struct ZiplineTarget
     // 索的仰角，正数是往上滑。落差大的一跳镜头不抬到这个角度就起不了滑。规划时按两端的世界
     // 坐标算好，运行时不再碰单位——x/y 是缩放过的平面单位，跟 height 不同尺。
     double elevation_deg = 0.0;
+    // 上索那根架子上其它索通向的架子。两根索靠得近时游戏可能挂错一根，落地定位把这些点
+    // 也当搜索先验，滑错了也能立刻认出落在哪。
+    std::vector<ZiplinePoint> alternates;
 };
 
 // 上索认不出提示时的备用站位。面板给的是离身位最近的那台设备, 架子边上贴着供电桩时会被它抢走,

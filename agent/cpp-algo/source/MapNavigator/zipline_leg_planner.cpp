@@ -743,10 +743,23 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
 
     // 中间经过哪几根架子到这时才还原：候选是成对枚举出来的，逐个存下整条链纯属浪费。
     SolveZipChains(nodes, links, cost, best_candidate->mount, &chain_cost, &chain_prev);
+    std::vector<size_t> chain;
     for (size_t at = best_candidate->dismount; at != kNoTower; at = chain_prev[at]) {
-        best->towers.push_back(nodes[at]);
+        chain.push_back(at);
     }
-    std::reverse(best->towers.begin(), best->towers.end());
+    std::reverse(chain.begin(), chain.end());
+    for (size_t hop = 0; hop < chain.size(); ++hop) {
+        best->towers.push_back(nodes[chain[hop]]);
+        if (hop + 1 < chain.size()) {
+            std::vector<zipline::ZiplineNode> alternates;
+            for (const size_t other : links[chain[hop]]) {
+                if (other != chain[hop + 1]) {
+                    alternates.push_back(nodes[other]);
+                }
+            }
+            best->hop_alternates.push_back(std::move(alternates));
+        }
+    }
     if (capture_diagnostics) {
         const std::optional<PlannedLeg>* approach = approach_cache.get(best_candidate->mount);
         const std::optional<PlannedLeg>* departure = departure_cache.get(best_candidate->dismount);

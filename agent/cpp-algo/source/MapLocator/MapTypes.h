@@ -3,6 +3,7 @@
 #include <meojson/json.hpp>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include <MaaUtils/NoWarningCV.hpp>
 
@@ -28,6 +29,18 @@ struct MapLocatorConfig
     int yoloThreads = 1;
 };
 
+// 调用方对「人大概在哪」的先验，例如滑索落点、传送落点。只在全局搜索时多开一个以它为中心的
+// 小窗参与比分，位置仍由匹配分数决定；坐标是 zone_id 那张图自己的像素。
+struct SearchHint
+{
+    std::string zone_id;
+    double x = 0.0;
+    double y = 0.0;
+    double radius = 0.0;
+
+    MEO_JSONIZATION(zone_id, x, y, radius)
+};
+
 struct LocateOptions
 {
     double loc_threshold = 0.55;      // 最低分数线
@@ -35,13 +48,15 @@ struct LocateOptions
     bool force_global_search = false; // 是否强制放弃当前追踪，进行全局全图搜
     int max_lost_frames = 3;          // 允许丢失追踪的帧数
     std::string expected_zone_id;     // 非空时仅接受该区域的定位结果
+    std::vector<SearchHint> search_hints;
 
     MEO_JSONIZATION(
         MEO_OPT loc_threshold,
         MEO_OPT yolo_threshold,
         MEO_OPT force_global_search,
         MEO_OPT max_lost_frames,
-        MEO_OPT expected_zone_id)
+        MEO_OPT expected_zone_id,
+        MEO_OPT search_hints)
 };
 
 // --- 返回结果枚举与封装 ---

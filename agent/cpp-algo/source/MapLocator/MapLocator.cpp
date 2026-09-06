@@ -2013,6 +2013,33 @@ LocateResult MapLocator::Impl::locate(const cv::Mat& minimap, const LocateOption
     if (!prefetchedCandidatesConsumed) {
         globalResult = tryGlobalSearchWithFallback(minimap, targetZoneId, constraint, featureCache, &bestRawGlobal);
     }
+    // 调用方给了先验位置时，在每个先验附近再搜一小窗，跟 YOLO 格窗比原始峰分，高者胜出。
+    // YOLO 报到相邻格时正确位置根本不在它的窗里，窗内最优再高也是错的，分数门看不出来。
+    // 只在 YOLO 验过区域的帧上搜：区域都没认出来的帧上，小窗撞出的峰没有对照。
+    if (constraint.yolo_validated) {
+        for (const SearchHint& hint : options.search_hints) {
+            const int radius = static_cast<int>(std::lround(hint.radius));
+            if (hint.zone_id != targetZoneId || radius <= 0) {
+                continue;
+            }
+            SearchConstraint hintConstraint;
+            hintConstraint.mode = GlobalSearchMode::RoiFine;
+            hintConstraint.yolo_validated = true;
+            hintConstraint.roi = cv::Rect(
+                static_cast<int>(std::lround(hint.x)) - radius,
+                static_cast<int>(std::lround(hint.y)) - radius,
+                radius * 2 + 1,
+                radius * 2 + 1);
+            MapPosition hintRaw {};
+            auto hintResult = tryGlobalSearchWithFallback(minimap, targetZoneId, hintConstraint, featureCache, &hintRaw);
+            LogInfo << "Global Search: hint window." << VAR(hint.x) << VAR(hint.y) << VAR(hint.radius) << VAR(hintRaw.x) << VAR(hintRaw.y)
+                    << VAR(hintRaw.score) << VAR(bestRawGlobal.x) << VAR(bestRawGlobal.y) << VAR(bestRawGlobal.score);
+            if (hintRaw.score > bestRawGlobal.score) {
+                bestRawGlobal = hintRaw;
+                globalResult = hintResult;
+            }
+        }
+    }
     if (!globalResult) {
         if (bestRawGlobal.score > kSeamFallbackMinPeakScore) {
             bestRawGlobal.isHeld = true;

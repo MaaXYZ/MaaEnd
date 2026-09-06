@@ -83,9 +83,6 @@ struct SemanticState
     int zipline_settle_hits = 0;
     // 滑反了正在原路滑回上索点。回去了就退索走路, 不会再滑第二趟
     bool zipline_returning = false;
-    // 停稳判定要下"滑岔了"结论前, 是否已经扔掉跟踪状态强制重定位复核过一次。冷启动后的
-    // 低分错锁能连着几帧纹丝不动骗过稳定判据, 弃索这么贵的决定不能建立在它上面
-    bool zipline_settle_relocated = false;
     // 这一次上索是行进预筛叫停的, 人可能还差几步。此时认不出提示只说明预筛看错了, 不该丢链
     bool zipline_prompt_probe = false;
     // 人是不是站在架子上。链首上索时置位, 链尾下索或中途退索时清掉。站着时不能直接走路,
@@ -112,7 +109,6 @@ struct SemanticState
         zipline_last_pos = {};
         zipline_settle_hits = 0;
         zipline_returning = false;
-        zipline_settle_relocated = false;
         zipline_prompt_probe = false;
         zipline_mounted = false;
         held_zone_candidate.clear();
