@@ -1801,6 +1801,9 @@ GridLayout BuildTransferLayout(
     const auto boundary_y = RobustProjection(maps.horizontal, false);
     const int column_count = static_cast<int>(hint.x_starts.size());
     const auto refined_x = RefineFirstBoundary(hint.x_starts, boundary_x, hint.region.x, profile.cell_size);
+    // 背包和便捷存取站的观测都可能缺少中间格框：观测点数不等于列跨度，补洞时不能截掉已观测的末列。
+    // 共用面板容量约束；各侧面板宽度决定上限，不向观测跨度之外盲目补列。
+    const int maximum_columns = std::max(1, (hint.region.width - profile.cell_size) / profile.pitch_min + 1);
     const auto x_fit = FitTransferAxis(
         refined_x,
         boundary_x,
@@ -1808,7 +1811,7 @@ GridLayout BuildTransferLayout(
         profile.cell_size,
         { static_cast<double>(profile.pitch_min), static_cast<double>(profile.pitch_max) },
         profile.observed_pitch_tolerance,
-        static_cast<int>(refined_x.size()),
+        maximum_columns,
         !transfer,
         false);
     if (!x_fit) {
@@ -1858,7 +1861,7 @@ GridLayout BuildTransferLayout(
             profile.cell_size,
             { static_cast<double>(profile.pitch_min), static_cast<double>(profile.pitch_max) },
             profile.observed_pitch_tolerance,
-            column_count,
+            maximum_columns,
             true,
             true);
         const auto empty_grid = empty_x_fit ? FitTransferEmptyGrid(

@@ -1011,6 +1011,111 @@ void TestTransferGridDetectsSparseVisiblePhase()
         "transfer recognition must keep the target at its detected cell position");
 }
 
+void TestTransferGridKeepsTwoRowCandidate()
+{
+    constexpr int kCellSize = 64;
+    constexpr int kPitch = 69;
+    constexpr int kColumns = 8;
+    constexpr int kRows = 2;
+    const cv::Point origin(2, 12);
+    cv::Mat image(286, 550, CV_8UC3, cv::Scalar(24, 24, 24));
+    const auto draw_cell = [&](int x, int y) {
+        const cv::Rect cell(x, y, kCellSize, kCellSize);
+        image(cell).setTo(cv::Scalar(60, 60, 60));
+        cv::rectangle(image, cell, cv::Scalar(200, 200, 200), 1);
+        for (int local_y = 8; local_y < kCellSize - 8; ++local_y) {
+            for (int local_x = 8; local_x < kCellSize - 8; ++local_x) {
+                const auto value = static_cast<unsigned char>(80 + (local_x * 7 + local_y * 11) % 80);
+                image.at<cv::Vec3b>(y + local_y, x + local_x) = cv::Vec3b(value, value, value);
+            }
+        }
+    };
+    for (int row = 0; row < kRows; ++row) {
+        for (int column = 0; column < kColumns; ++column) {
+            draw_cell(origin.x + column * kPitch, origin.y + row * kPitch);
+        }
+    }
+    // 下方的单行纹理可以形成独立候选，但不能让完整两行候选失去参与筛选的机会。
+    for (int column = 0; column < 6; ++column) {
+        draw_cell(70 + column * kPitch, 180);
+    }
+    // 顶部上下文变化 1px 后仍覆盖相同格子，不应改变列数或丢掉两端。
+    for (int top : { 0, 1 }) {
+        const auto hints = iconrecognition::detail::DiscoverTransferGridHints(image.rowRange(top, image.rows), true);
+        Check(hints.size() == 1, "two-row transfer fixture must form one panel");
+        const auto& hint = hints.front();
+        Check(
+            hint.x_starts.size() == kColumns && hint.y_starts.size() == kRows,
+            "two-row transfer candidate must survive single-row competition; columns=" + std::to_string(hint.x_starts.size())
+                + " rows=" + std::to_string(hint.y_starts.size()));
+        Check(std::abs(hint.x_starts.front() - origin.x) <= 1, "two-row transfer must preserve the leftmost column");
+        Check(
+            std::abs(hint.x_starts.back() - (origin.x + (kColumns - 1) * kPitch)) <= 1,
+            "two-row transfer must preserve the rightmost column");
+        Check(std::abs(hint.y_starts.front() + top - origin.y) <= 1, "two-row transfer must preserve the first row");
+    }
+}
+
+void CheckSparseColumnSpan(iconrecognition::GridType type, int columns, int missing_column, const cv::Rect& roi, cv::Point origin)
+{
+    constexpr int kCellSize = 64;
+    constexpr int kPitch = 69;
+    constexpr int kRows = 2;
+    // 稀疏格框可拟合到 68..70px 间距；容许右侧七列用例的 4px 端点误差，但不能丢格或错移一列。
+    constexpr int kPositionTolerance = 4;
+    cv::Mat image(720, 1280, CV_8UC3, cv::Scalar(30, 30, 30));
+    for (int row = 0; row < kRows; ++row) {
+        for (int column = 0; column < columns; ++column) {
+            // 两端均有观测，中间一列没有格框；列跨度比观测数多一，补全不能消耗末列。
+            if (column == missing_column) {
+                continue;
+            }
+            const cv::Rect cell(origin.x + column * kPitch, origin.y + row * kPitch, kCellSize, kCellSize);
+            image(cell).setTo(cv::Scalar(60, 60, 60));
+            cv::rectangle(image, cell, cv::Scalar(200, 200, 200), 1);
+            for (int y = 8; y < kCellSize - 8; y += 4) {
+                image(cv::Rect(cell.x + 8, cell.y + y, kCellSize - 16, 1)).setTo(cv::Scalar(180, 180, 180));
+            }
+            image(cv::Rect(cell.x, cell.y + kCellSize - 3, kCellSize, 3)).setTo(RarityBgr(3));
+        }
+    }
+    const auto grid = iconrecognition::detail::DetectGrid(image, type, roi, 1.0);
+    Check(grid.grids.size() == 1, "sparse column fixture must form one panel");
+    const auto& layout = grid.grids.front();
+    Check(
+        layout.columns == columns && layout.rows == kRows,
+        "sparse observations must preserve the complete column span; expected=" + std::to_string(columns)
+            + " columns=" + std::to_string(layout.columns) + " rows=" + std::to_string(layout.rows));
+    for (int row = 0; row < kRows; ++row) {
+        for (int column = 0; column < columns; ++column) {
+            Check(
+                std::ranges::any_of(
+                    layout.cells,
+                    [&](const auto& cell) {
+                        return std::abs(cell.cell_box.x - (origin.x + column * kPitch)) <= kPositionTolerance
+                               && std::abs(cell.cell_box.y - (origin.y + row * kPitch)) <= kPositionTolerance;
+                    }),
+                "sparse column recovery must preserve every cell position, including both ends; columns=" + std::to_string(columns)
+                    + " expected=" + std::to_string(origin.x + column * kPitch) + "," + std::to_string(origin.y + row * kPitch)
+                    + " first=" + std::to_string(layout.cells.front().cell_box.x) + "," + std::to_string(layout.cells.front().cell_box.y)
+                    + " pitch=" + std::to_string(layout.pitch_x) + " missing=" + std::to_string(missing_column));
+        }
+    }
+}
+
+void TestTransferGridKeepsSparseColumnSpan()
+{
+    CheckSparseColumnSpan(iconrecognition::GridType::Transfer, 8, 3, cv::Rect(154, 202, 585, 291), cv::Point(162, 217));
+}
+
+void TestPortStoragerGridKeepsSparseColumnSpan()
+{
+    // 存取站左右两侧容量不同，但都必须保留缺失观测前后的完整列跨度。
+    CheckSparseColumnSpan(iconrecognition::GridType::PortStorager, 7, -1, cv::Rect(570, 250, 500, 350), cv::Point(580, 267));
+    CheckSparseColumnSpan(iconrecognition::GridType::PortStorager, 4, 1, cv::Rect(190, 250, 318, 350), cv::Point(202, 267));
+    CheckSparseColumnSpan(iconrecognition::GridType::PortStorager, 7, 3, cv::Rect(570, 250, 500, 350), cv::Point(580, 267));
+}
+
 void TestTransferGridRejectsBroadOvercapacityPhase()
 {
     constexpr int kCellSize = 64;
@@ -2115,6 +2220,9 @@ int main()
         TestTransferRegionPartitionKeepsUndetectedOuterColumns();
         TestTransferGridDetectsSparseVisiblePhase();
         TestTransferGridRejectsBroadOvercapacityPhase();
+        TestTransferGridKeepsTwoRowCandidate();
+        TestTransferGridKeepsSparseColumnSpan();
+        TestPortStoragerGridKeepsSparseColumnSpan();
         TestTransferEmptyGridFitsOneCompleteLattice();
         TestTransferEmptyGridSkipsCroppedTopRowAndKeepsWeakColumn();
         TestTransferEmptyGridDiagnosticsSkipUnexecutedRarity();

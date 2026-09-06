@@ -52,6 +52,8 @@ constexpr std::pair<int, int> kTransferDiscoveryPitchRange { 66, 74 };
 constexpr int kTransferDiscoveryMinimumColumns = 3;
 // 粗发现候选至少包含的行数；调高减少局部误检，调低可召回浅面板。
 constexpr int kTransferDiscoveryMinimumRows = 3;
+// 已分区面板的多行候选下限；两行也提供纵向重复证据，不能落入仅接纳单行的后备路径。
+constexpr int kTransferStructuredMinimumRows = 2;
 // 单侧 transfer 候选允许的最大列数，防止把左右面板合成一个网格。
 constexpr int kTransferMaximumColumns = 8;
 // 右侧面板分区的 720p 参考宽度，用于缺少双候选时构造保守区域。
@@ -486,10 +488,10 @@ std::optional<TransferHypothesis> select_grid_hypothesis(const cv::Mat& crop, bo
 {
     const int maximum_columns = formal_axis_capacity(crop.cols);
     const int maximum_rows = formal_axis_capacity(crop.rows);
-    const auto candidates = [&](int minimum) {
+    const auto candidates = [&](int minimum_columns, int minimum_rows) {
         std::vector<TransferHypothesis> filtered;
         for (const auto& item :
-             phase_hypotheses(crop, { kBaseTransferProfile.pitch_min, kBaseTransferProfile.pitch_max }, minimum, minimum)) {
+             phase_hypotheses(crop, { kBaseTransferProfile.pitch_min, kBaseTransferProfile.pitch_max }, minimum_columns, minimum_rows)) {
             if (item.columns <= std::min(kTransferMaximumColumns, maximum_columns)
                 && item.rows <= std::min(kBaseTransferProfile.maximum_rows, maximum_rows) && item.rect.x + item.rect.width <= crop.cols
                 && item.rect.y + item.rect.height <= crop.rows) {
@@ -498,17 +500,18 @@ std::optional<TransferHypothesis> select_grid_hypothesis(const cv::Mat& crop, bo
         }
         return filtered;
     };
-    auto hypotheses = candidates(3);
+    auto hypotheses = candidates(kTransferDiscoveryMinimumColumns, kTransferStructuredMinimumRows);
     for (auto& hypothesis : hypotheses) {
         hypothesis.foreground_texture_coverage = ForegroundTextureCoverage(crop, hypothesis);
     }
     const bool has_reliable_multirow = std::ranges::any_of(hypotheses, [](const auto& hypothesis) {
-        return hypothesis.rows >= 2 && hypothesis.foreground_texture_coverage >= kMinimumStructuredTransferTextureCoverage;
+        return hypothesis.rows >= kTransferStructuredMinimumRows
+               && hypothesis.foreground_texture_coverage >= kMinimumStructuredTransferTextureCoverage;
     });
-    const auto sparse_candidates = candidates(1);
+    const auto sparse_candidates = candidates(1, 1);
     if (!has_reliable_multirow) {
         for (auto candidate : sparse_candidates) {
-            if (candidate.rows != 1 || candidate.columns < 3) {
+            if (candidate.rows != 1 || candidate.columns < kTransferDiscoveryMinimumColumns) {
                 continue;
             }
             candidate.foreground_texture_coverage = ForegroundTextureCoverage(crop, candidate);
