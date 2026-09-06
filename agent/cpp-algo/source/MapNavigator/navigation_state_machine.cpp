@@ -2043,22 +2043,22 @@ NavigationStateMachine::PromptDistance NavigationStateMachine::NearestPromptDist
             nearest.is_zipline = false;
         }
     }
-    // 上索点也算提示点: 同一个图标、同一件事 —— 够不够得着只看身位离架子多远。已经站上去了就不算,
-    // 剩下的跳靠瞄准接上; 走过的那些也不算, 链尾旁边的旧架子会把走路模式一直摁着
-    if (!runtime_state_.semantic.zipline_mounted) {
-        const std::vector<Waypoint>& path = session_->current_path();
-        for (size_t index = session_->current_node_idx(); index < path.size(); ++index) {
-            const Waypoint& waypoint = path[index];
-            if (waypoint.action != ActionType::ZIPLINE || !waypoint.HasPosition()) {
-                continue;
-            }
-            const double dx = waypoint.x - position_->x;
-            const double dy = waypoint.y - position_->y;
-            const double distance_sq = dx * dx + dy * dy;
-            if (nearest.distance_sq < 0.0 || distance_sq < nearest.distance_sq) {
-                nearest.distance_sq = distance_sq;
-                nearest.is_zipline = true;
-            }
+    // 挖掘点和上索点都需要减速接近; 只统计尚未经过的点, 避免已经执行的点持续压住走路模式。
+    // 已经站上滑索架时不再统计上索点, 剩下的跳靠瞄准接上; 挖掘点仍照常统计。
+    const std::vector<Waypoint>& path = session_->current_path();
+    for (size_t index = session_->current_node_idx(); index < path.size(); ++index) {
+        const Waypoint& waypoint = path[index];
+        const bool is_zipline = waypoint.action == ActionType::ZIPLINE;
+        if (!waypoint.HasPosition() || (waypoint.action != ActionType::DIG && !is_zipline)
+            || (is_zipline && runtime_state_.semantic.zipline_mounted)) {
+            continue;
+        }
+        const double dx = waypoint.x - position_->x;
+        const double dy = waypoint.y - position_->y;
+        const double distance_sq = dx * dx + dy * dy;
+        if (nearest.distance_sq < 0.0 || distance_sq < nearest.distance_sq) {
+            nearest.distance_sq = distance_sq;
+            nearest.is_zipline = is_zipline;
         }
     }
     return nearest;
@@ -2071,7 +2071,7 @@ void NavigationStateMachine::UpdatePromptSprintSuppression()
     }
 
     const double nearest_sq = NearestPromptDistance().distance_sq;
-    // 这条线上没有提示驱动的点时 nearest_sq < 0, 疾跑行为一点不碰
+    // 这条线上没有需要减速接近的点时 nearest_sq < 0, 疾跑行为一点不碰
     const bool approaching_prompt = nearest_sq >= 0.0 && nearest_sq <= kCollectSprintSuppressBandWu * kCollectSprintSuppressBandWu;
     motion_controller_->SetSprintSuppressed(approaching_prompt);
 }
@@ -2084,8 +2084,8 @@ void NavigationStateMachine::UpdateWalkMode(NaviPhase phase)
     const bool recovering = runtime_state_.recovery.active || runtime_state_.cross_tier_escape.active;
     const bool has_waypoint = session_->HasCurrentWaypoint();
     const ActionType action = has_waypoint ? session_->CurrentWaypoint().action : ActionType::HEADING;
-    const bool plain_approach = action == ActionType::COLLECT || action == ActionType::INTERACT || action == ActionType::RUN
-                                || action == ActionType::NAVMESH || action == ActionType::ZIPLINE;
+    const bool plain_approach = action == ActionType::COLLECT || action == ActionType::DIG || action == ActionType::INTERACT
+                                || action == ActionType::RUN || action == ActionType::NAVMESH || action == ActionType::ZIPLINE;
     // 末端要纠正的点按同一套来: 走路让滑行距离减半, 到点后要走回去的那段也就短一半
     bool settling_approach = false;
     if (has_waypoint && session_->CurrentWaypoint().SettlesAtArrival()) {
