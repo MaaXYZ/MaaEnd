@@ -1,0 +1,78 @@
+{
+    "__AutoUseSpMedicationInQuickUse": {
+        "desc": "进入恢复理智界面",
+        "recognition": "OCR",
+        "roi": [
+            180,
+            180,
+            200,
+            100
+        ],
+        "expected": [
+            "恢复理智"
+        ],
+        "pre_wait_freezes": 100,
+        "next": [
+            "__AutoUseSpMedicationSelectEmergencySanityBooster",
+            "[Anchor]AutoUseSpMedicationInPrepareFinishNoUseAnchor"
+        ]
+    },
+    "__AutoUseSpMedicationSelectEmergencySanityBooster": {
+        "desc": "选择应急理智加强剂",
+        "recognition": "And",
+        "all_of": [
+            "__AutoUseSpMedicationFindDeadlineEmergencySanityBooster"
+        ],
+        "action": "Click",
+        "target_offset": [
+            10,
+            10,
+            0,
+            0
+        ],
+        "post_wait_freezes": 300,
+        "next": [
+            "__AutoUseSpMedicationUseEmergencySpBooster"
+        ]
+    },
+    "__AutoUseSpMedicationUseEmergencySpBooster": {
+        "desc": "点击详情页的使用按钮",
+        "recognition": {
+            "type": "And",
+            "param": {
+                "all_of": [
+                    "YellowConfirmButtonType2"
+                ],
+                "box_index": 0
+            }
+        },
+        "action": "Click",
+        "anchor": {
+            "SceneNoticeRewardsConfirmNextAnchor": "__AutoUseSpMedicationUseEmergencySpBoosterFinish"
+        },
+        "post_wait_freezes": 300,
+        "next": [
+            "SceneNoticeRewardsConfirmWithAnchor"
+        ],
+        "focus": {
+            "Node.Action.Starting": "$task.AutoUseSpMedication.focus.restore_sanity"
+        }
+    },
+    "__AutoUseSpMedicationUseEmergencySpBoosterFinish": {
+        "desc": "使用理智界面关闭",
+        "recognition": "OCR",
+        "roi": [
+            180,
+            180,
+            200,
+            100
+        ],
+        "expected": [
+            "恢复理智"
+        ],
+        "inverse": true,
+        "next": [
+            "[Anchor]AutoUseSpMedicationInPrepareFinishUseAnchor"
+        ]
+    }
+}
