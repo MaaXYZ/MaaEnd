@@ -627,7 +627,7 @@
                     "description": "$option.AutoEssenceRepeatCount.inputs.AutoEssenceRepeatCountValue.description",
                     "pipeline_type": "int",
                     "verify": "^(([1-9])|([1-9][0-9]))$",
-                    "default": "1"
+                    "default": "5"
                 }
             ],
             "pipeline_override": {
