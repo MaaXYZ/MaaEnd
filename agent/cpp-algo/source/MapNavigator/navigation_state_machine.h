@@ -50,6 +50,7 @@ private:
     {
         double distance_sq = -1.0;
         bool is_zipline = false;
+        double dig_distance_sq = -1.0;
     };
 
     bool Bootstrap();
@@ -98,7 +99,7 @@ private:
     // 架子的交互提示出现就算够得着了。预筛看错时返回 false, 这一拍照常往前走
     bool TryZiplineMountPrompt(const Waypoint& waypoint, const RouteTrackingState& route);
     void UpdatePromptSprintSuppression();
-    // Distance and kind of the nearest prompt-driven point; distance_sq is -1 when the route has none.
+    // Distance and kind of the nearest point needing a slow approach; distance_sq is -1 when the route has none.
     PromptDistance NearestPromptDistance() const;
     void UpdateWalkMode(NaviPhase phase);
 

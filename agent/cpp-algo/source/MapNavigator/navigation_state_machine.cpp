@@ -1355,6 +1355,10 @@ bool NavigationStateMachine::TickNavigate()
             // 有各自的站位与提交距离, 判定圈被放宽或收紧的那几种情况要的也正是原来的宽松判定, 都不介入。
             if (waypoint.SettlesAtArrival()) {
                 if (route.waypoint_distance <= route.arrival_band) {
+                    // 这一拍的位移可能直接跨过步行进带; 挖掘的末端纠正必须先进入步行再挪动。
+                    if (waypoint.action == ActionType::DIG) {
+                        walk_mode_.Request(true);
+                    }
                     semantic_nodes::SettleAtStrictGoal(semantic_ctx, waypoint);
                     // 收尾里的转镜头没走操舵那条路, 在途转角账认不出来, 清掉重新起算
                     runtime_state_.steering_rate.Reset();
@@ -2056,6 +2060,9 @@ NavigationStateMachine::PromptDistance NavigationStateMachine::NearestPromptDist
         const double dx = waypoint.x - position_->x;
         const double dy = waypoint.y - position_->y;
         const double distance_sq = dx * dx + dy * dy;
+        if (waypoint.action == ActionType::DIG && (nearest.dig_distance_sq < 0.0 || distance_sq < nearest.dig_distance_sq)) {
+            nearest.dig_distance_sq = distance_sq;
+        }
         if (nearest.distance_sq < 0.0 || distance_sq < nearest.distance_sq) {
             nearest.distance_sq = distance_sq;
             nearest.is_zipline = is_zipline;
@@ -2076,8 +2083,9 @@ void NavigationStateMachine::UpdatePromptSprintSuppression()
     motion_controller_->SetSprintSuppressed(approaching_prompt);
 }
 
-// Walk mode's only decision point: engaged on the last few units of an approach to a point that has to be
-// stood on, released everywhere else (travel legs, recovery, turn-in-place nodes, before motion is confirmed).
+// Regular approach walking policy: engaged on the last few units of an approach to a point that has to be
+// stood on, released everywhere else (travel legs, recovery, turn-in-place nodes). DIG may start walking before
+// motion is confirmed; its arrival gate still requires actual movement before digging.
 void NavigationStateMachine::UpdateWalkMode(NaviPhase phase)
 {
     PromptDistance nearest = NearestPromptDistance();
@@ -2099,8 +2107,10 @@ void NavigationStateMachine::UpdateWalkMode(NaviPhase phase)
         }
         settling_approach = true;
     }
-    if (phase != NaviPhase::Navigate || nearest.distance_sq < 0.0 || recovering || !(plain_approach || settling_approach)
-        || !runtime_state_.route.startup_motion_confirmed) {
+    // 连续挖掘会重置起步确认。短腿应从起步就走路, 而不是等确认位移时已进到达圈才切换。
+    const bool startup_blocks_walk = !runtime_state_.route.startup_motion_confirmed && action != ActionType::DIG;
+    if (phase != NaviPhase::Navigate || !position_->valid || nearest.distance_sq < 0.0 || recovering
+        || !(plain_approach || settling_approach) || startup_blocks_walk) {
         walk_mode_.Request(false);
         return;
     }
@@ -2109,7 +2119,10 @@ void NavigationStateMachine::UpdateWalkMode(NaviPhase phase)
     const double enter_band = nearest.is_zipline ? kZiplineWalkEnterBandWu : kCollectWalkEnterBandWu;
     const double exit_band = nearest.is_zipline ? kZiplineWalkExitBandWu : kCollectWalkExitBandWu;
     const double band = was_engaged ? exit_band : enter_band;
-    walk_mode_.Request(nearest.distance_sq <= band * band);
+    // 更近的采集点可能还在自己的步行带外, 不能挡掉稍远但已进入较大步行带的挖掘点。
+    const double dig_band = was_engaged ? kDigWalkExitBandWu : kDigWalkEnterBandWu;
+    const bool approaching_dig = nearest.dig_distance_sq >= 0.0 && nearest.dig_distance_sq <= dig_band * dig_band;
+    walk_mode_.Request(nearest.distance_sq <= band * band || approaching_dig);
     const bool walking = walk_mode_.engaged();
     if (walking != was_engaged) {
         const double nearest_stop_point = std::sqrt(nearest.distance_sq);

@@ -391,9 +391,18 @@ constexpr int32_t kSprintCancelReleaseMs = 60;
 // otherwise the mount prompt can appear on the first frame after walking is toggled and stop motion immediately.
 constexpr double kCollectWalkEnterBandWu = 3.0;
 constexpr double kCollectWalkExitBandWu = 4.5;
+// DIG accepts arrival at 2.25 units: the ordinary 3-unit walking band leaves only 0.75 units to slow down.
+// Start earlier without changing where digging is allowed or opting ordinary DIG points into strict settling.
+constexpr double kDigWalkEnterBandWu = 5.0;
+constexpr double kDigWalkExitBandWu = 7.5;
 constexpr double kZiplineWalkEnterBandWu = 5.0;
 constexpr double kZiplineWalkExitBandWu = 7.5;
 static_assert(kCollectWalkEnterBandWu < kCollectWalkExitBandWu, "collect walk enter band must be smaller than its exit band");
+static_assert(kDigWalkEnterBandWu < kDigWalkExitBandWu, "dig walk enter band must be smaller than its exit band");
+static_assert(
+    kStrictArrivalLookaheadRadius + kMeasurementDefaultPositionQuantum < kDigWalkEnterBandWu,
+    "dig walking must start before arrival");
+static_assert(kDigWalkExitBandWu < kCollectSprintSuppressBandWu, "dig walk bands must sit inside the sprint-suppress band");
 static_assert(kZiplineWalkEnterBandWu < kZiplineWalkExitBandWu, "zipline walk enter band must be smaller than its exit band");
 static_assert(kZiplineWalkExitBandWu < kCollectSprintSuppressBandWu, "walk bands must sit inside the sprint-suppress band");
 
