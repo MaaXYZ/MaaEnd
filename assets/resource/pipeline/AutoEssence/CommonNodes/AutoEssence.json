@@ -537,35 +537,17 @@
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
-            "AutoEssenceSelectEngraveBase_s1_1",
-            "AutoEssenceSelectEngraveBase_s1_2",
-            "AutoEssenceSelectEngraveBase_s1_3",
-            "AutoEssenceSelectEngraveBase_s1_4",
-            "AutoEssenceSelectEngraveBase_s1_5"
+            "AutoEssenceSelectEngraveBase_s1_1"
         ]
     },
     "AutoEssenceSelectEngraveBase_s1_1": {
-        "desc": "选择预刻写基础属性 s1_1（未勾选时 disabled）",
-        "enabled": false,
+        "desc": "选择预刻写基础属性 s1_1（未勾选时 DirectHit 跳过）",
         "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    43,
-                    125,
-                    904,
-                    540
-                ],
-                "expected": [
-                    // @i18n-skip
-                    "a^"
-                ]
-            }
+            "type": "DirectHit",
+            "param": {}
         },
         "pre_delay": 0,
-        "action": {
-            "type": "Click"
-        },
+        "action": "DoNothing",
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
@@ -573,27 +555,13 @@
         ]
     },
     "AutoEssenceSelectEngraveBase_s1_2": {
-        "desc": "选择预刻写基础属性 s1_2（未勾选时 disabled）",
-        "enabled": false,
+        "desc": "选择预刻写基础属性 s1_2（未勾选时 DirectHit 跳过）",
         "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    43,
-                    125,
-                    904,
-                    540
-                ],
-                "expected": [
-                    // @i18n-skip
-                    "a^"
-                ]
-            }
+            "type": "DirectHit",
+            "param": {}
         },
         "pre_delay": 0,
-        "action": {
-            "type": "Click"
-        },
+        "action": "DoNothing",
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
@@ -601,27 +569,13 @@
         ]
     },
     "AutoEssenceSelectEngraveBase_s1_3": {
-        "desc": "选择预刻写基础属性 s1_3（未勾选时 disabled）",
-        "enabled": false,
+        "desc": "选择预刻写基础属性 s1_3（未勾选时 DirectHit 跳过）",
         "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    43,
-                    125,
-                    904,
-                    540
-                ],
-                "expected": [
-                    // @i18n-skip
-                    "a^"
-                ]
-            }
+            "type": "DirectHit",
+            "param": {}
         },
         "pre_delay": 0,
-        "action": {
-            "type": "Click"
-        },
+        "action": "DoNothing",
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
@@ -629,27 +583,13 @@
         ]
     },
     "AutoEssenceSelectEngraveBase_s1_4": {
-        "desc": "选择预刻写基础属性 s1_4（未勾选时 disabled）",
-        "enabled": false,
+        "desc": "选择预刻写基础属性 s1_4（未勾选时 DirectHit 跳过）",
         "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    43,
-                    125,
-                    904,
-                    540
-                ],
-                "expected": [
-                    // @i18n-skip
-                    "a^"
-                ]
-            }
+            "type": "DirectHit",
+            "param": {}
         },
         "pre_delay": 0,
-        "action": {
-            "type": "Click"
-        },
+        "action": "DoNothing",
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
@@ -657,27 +597,13 @@
         ]
     },
     "AutoEssenceSelectEngraveBase_s1_5": {
-        "desc": "选择预刻写基础属性 s1_5（未勾选时 disabled）",
-        "enabled": false,
+        "desc": "选择预刻写基础属性 s1_5（未勾选时 DirectHit 跳过）",
         "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    43,
-                    125,
-                    904,
-                    540
-                ],
-                "expected": [
-                    // @i18n-skip
-                    "a^"
-                ]
-            }
+            "type": "DirectHit",
+            "param": {}
         },
         "pre_delay": 0,
-        "action": {
-            "type": "Click"
-        },
+        "action": "DoNothing",
         "post_delay": 0,
         "rate_limit": 0,
         "next": [

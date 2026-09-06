@@ -15,7 +15,6 @@
                     "label": "$option.AutoEssenceSkill.s1_1",
                     "pipeline_override": {
                         "AutoEssenceSelectEngraveBase_s1_1": {
-                            "enabled": true,
                             "recognition": {
                                 "type": "OCR",
                                 "param": {
@@ -32,6 +31,9 @@
                                         "주요 능력치"
                                     ]
                                 }
+                            },
+                            "action": {
+                                "type": "Click"
                             }
                         },
                         "AutoEssenceEngraveCondition1Base_s1_1": {
@@ -55,7 +57,6 @@
                     "label": "$option.AutoEssenceSkill.s1_2",
                     "pipeline_override": {
                         "AutoEssenceSelectEngraveBase_s1_2": {
-                            "enabled": true,
                             "recognition": {
                                 "type": "OCR",
                                 "param": {
@@ -72,6 +73,9 @@
                                         "힘"
                                     ]
                                 }
+                            },
+                            "action": {
+                                "type": "Click"
                             }
                         },
                         "AutoEssenceEngraveCondition1Base_s1_2": {
@@ -95,7 +99,6 @@
                     "label": "$option.AutoEssenceSkill.s1_3",
                     "pipeline_override": {
                         "AutoEssenceSelectEngraveBase_s1_3": {
-                            "enabled": true,
                             "recognition": {
                                 "type": "OCR",
                                 "param": {
@@ -111,6 +114,9 @@
                                         "의지"
                                     ]
                                 }
+                            },
+                            "action": {
+                                "type": "Click"
                             }
                         },
                         "AutoEssenceEngraveCondition1Base_s1_3": {
@@ -133,7 +139,6 @@
                     "label": "$option.AutoEssenceSkill.s1_4",
                     "pipeline_override": {
                         "AutoEssenceSelectEngraveBase_s1_4": {
-                            "enabled": true,
                             "recognition": {
                                 "type": "OCR",
                                 "param": {
@@ -149,6 +154,9 @@
                                         "민첩"
                                     ]
                                 }
+                            },
+                            "action": {
+                                "type": "Click"
                             }
                         },
                         "AutoEssenceEngraveCondition1Base_s1_4": {
@@ -171,7 +179,6 @@
                     "label": "$option.AutoEssenceSkill.s1_5",
                     "pipeline_override": {
                         "AutoEssenceSelectEngraveBase_s1_5": {
-                            "enabled": true,
                             "recognition": {
                                 "type": "OCR",
                                 "param": {
@@ -188,6 +195,9 @@
                                         "지능"
                                     ]
                                 }
+                            },
+                            "action": {
+                                "type": "Click"
                             }
                         },
                         "AutoEssenceEngraveCondition1Base_s1_5": {
