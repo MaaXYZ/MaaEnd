@@ -537,7 +537,11 @@
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
-            "AutoEssenceSelectEngraveBase_s1_1"
+            "AutoEssenceSelectEngraveBase_s1_1",
+            "AutoEssenceSelectEngraveBase_s1_2",
+            "AutoEssenceSelectEngraveBase_s1_3",
+            "AutoEssenceSelectEngraveBase_s1_4",
+            "AutoEssenceSelectEngraveBase_s1_5"
         ]
     },
     "AutoEssenceSelectEngraveBase_s1_1": {

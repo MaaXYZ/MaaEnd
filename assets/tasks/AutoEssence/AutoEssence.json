@@ -306,14 +306,25 @@
                     "name": "Target",
                     "label": "$option.AutoEssenceMenu.cases.Target.label",
                     "description": "$option.AutoEssenceMenu.cases.Target.description",
+                    "pipeline_override": {
+                        "AutoEssenceMain": {
+                            "max_hit": 999999
+                        },
+                        "AutoEssenceOnSuccess": {
+                            "next": [
+                                "AutoEssenceMain",
+                                "[JumpBack]AutoEssenceAfterBattleRunEndLootReport",
+                                "AutoEssenceOnComplete"
+                            ]
+                        }
+                    },
                     "option": [
                         "AutoEssenceWeaponTypeSword",
                         "AutoEssenceWeaponTypeClaymore",
                         "AutoEssenceWeaponTypePistol",
                         "AutoEssenceWeaponTypeWand",
                         "AutoEssenceWeaponTypeLance",
-                        "AutoEssenceObtainModeClaimOnly",
-                        "AutoEssenceRepeatCount"
+                        "AutoEssenceObtainModeClaimOnly"
                     ]
                 }
             ]
