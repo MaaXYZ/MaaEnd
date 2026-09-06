@@ -90,6 +90,14 @@
             }
         }
     },
+    "GiftOperatorMoveBackward": {
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 1
+            }
+        }
+    },
     "GiftOperatorMoveResetBackward": {
         "action": {
             "type": "ClickKey",

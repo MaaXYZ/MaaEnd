@@ -158,9 +158,7 @@ void TestCandidateSelectionDeduplicatesCompositeIconIdentity()
         "candidate selection must deduplicate by iconId and fluidIconId after filtering");
     Check(selected.front().record.aliases.size() == 1, "shared composite icon must retain one alias");
     Check(selected.front().record.aliases.front().item_id == "alias", "shared composite icon alias id mismatch");
-    Check(
-        selected.front().record.aliases.front().name_key == "iconRecognition.name.alias",
-        "shared composite icon alias name mismatch");
+    Check(selected.front().record.aliases.front().name_key == "iconRecognition.name.alias", "shared composite icon alias name mismatch");
 
     const auto recheck = iconrecognition::detail::SelectCandidateTemplates(all, candidates, { "Normal:*" }, false);
     Check(recheck.size() == 2, "recheck candidate selection must use the same icon identity deduplication");
@@ -197,8 +195,7 @@ void TestCandidateSelectionExactIdRetainsFilteredAliases()
     const auto alias_requested = iconrecognition::detail::SelectCandidateTemplates(all, candidates, { "ValuableDepot:*" });
     Check(alias_requested.front().record.item_id == "base_alias", "requesting the alias id must make it the representative");
     Check(
-        alias_requested.front().record.aliases.size() == 2
-            && alias_requested.front().record.aliases.front().item_id == "additional_alias"
+        alias_requested.front().record.aliases.size() == 2 && alias_requested.front().record.aliases.front().item_id == "additional_alias"
             && alias_requested.front().record.aliases.back().item_id == "requested",
         "requesting either shared-icon id must return the other filtered ids as aliases");
 }
@@ -338,9 +335,7 @@ void TestValuablesPortraitDetectionDoesNotDependOnTemplateMask()
 {
     cv::Mat slot = cv::Mat::zeros(96, 96, CV_8UC3);
     cv::circle(slot, cv::Point(81, 15), 18, cv::Scalar(255, 255, 255), 2, cv::LINE_AA);
-    Check(
-        iconrecognition::detail::HasValuablesWeaponPortrait(slot),
-        "valuables portrait detection must depend only on the slot image");
+    Check(iconrecognition::detail::HasValuablesWeaponPortrait(slot), "valuables portrait detection must depend only on the slot image");
 
     slot.setTo(cv::Scalar(0, 0, 0));
     Check(

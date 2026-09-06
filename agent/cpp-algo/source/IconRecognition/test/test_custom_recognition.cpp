@@ -180,8 +180,8 @@ struct SingleRoiFixture
 
 SingleRoiFixture MakeSingleRoiFixture(std::string_view icon_id = "item_copper_ore", int rarity = 1)
 {
-    const auto template_path = get_exe_dir() / ".." / "resource" / "image" / "IconRecognition" / std::to_string(rarity)
-                               / (std::string(icon_id) + ".png");
+    const auto template_path =
+        get_exe_dir() / ".." / "resource" / "image" / "IconRecognition" / std::to_string(rarity) / (std::string(icon_id) + ".png");
     const iconrecognition::detail::TemplateRecord record { .item_id = std::string(icon_id) };
     const auto prepared = iconrecognition::detail::PrepareStandardTemplate(
         record,
@@ -664,8 +664,7 @@ void TestRegionRestrictedFallbackRunsOnlyAfterNormalRejection()
     Require(alias_result.matched && alias_result.matches.size() == 1, "exact alias request must recognize one item");
     Require(alias_result.matches.front().item.item_id == "restricted_alias", "exact alias request must return its requested id");
     Require(
-        alias_result.matches.front().item.aliases.size() == 1
-            && alias_result.matches.front().item.aliases.front().item_id == "restricted",
+        alias_result.matches.front().item.aliases.size() == 1 && alias_result.matches.front().item.aliases.front().item_id == "restricted",
         "exact alias request must retain the other shared-icon item as an alias");
 
     const auto disabled_fixture = MakeRegionRestrictedFixture("generated-region-restricted-disabled", true);

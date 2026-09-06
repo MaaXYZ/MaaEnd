@@ -1450,10 +1450,39 @@ test("AutoDelivery ensures the delivery mission detail before branching", () => 
         "AutoDeliveryCheckSubmitGoodsButton",
     ]);
     assert.deepEqual(delivery.AutoDeliverySubmitGoods.next, [
-        "AutoDeliverySkipChat",
+        "AutoDeliveryCheckSkipChatReady",
         "AutoDeliveryCloseRewardDialog",
     ]);
+    assert.deepEqual(delivery.AutoDeliveryCheckSkipChatReady.next, [
+        "AutoDeliverySkipChat",
+    ]);
+    assert.equal(delivery.AutoDeliverySkipChat.action, "TouchMove");
+    assert.deepEqual(delivery.AutoDeliverySkipChat.target, [
+        0,
+        0,
+        1,
+        1,
+    ]);
     assert.deepEqual(delivery.AutoDeliverySkipChat.next, [
+        "AutoDeliveryCheckSkipChatAfterMoveAway",
+    ]);
+    assert.deepEqual(delivery.AutoDeliveryCheckSkipChatAfterMoveAway.all_of, [
+        "AutoDeliveryInChatDialog",
+        "AutoDeliveryCheckSkipChatButton",
+    ]);
+    assert.deepEqual(delivery.AutoDeliveryCheckSkipChatAfterMoveAway.next, [
+        "AutoDeliverySkipChatMoveToButton",
+    ]);
+    assert.equal(delivery.AutoDeliverySkipChatMoveToButton.action, "TouchMove");
+    assert.equal(
+        delivery.AutoDeliverySkipChatMoveToButton.target,
+        "AutoDeliveryCheckSkipChatAfterMoveAway",
+    );
+    assert.deepEqual(delivery.AutoDeliverySkipChatMoveToButton.next, [
+        "AutoDeliverySkipChatClick",
+    ]);
+    assert.equal(delivery.AutoDeliverySkipChatClick.action, "Click");
+    assert.deepEqual(delivery.AutoDeliverySkipChatClick.next, [
         "AutoDeliverySkipChatConfirm",
         "AutoDeliveryCloseRewardDialog",
     ]);
