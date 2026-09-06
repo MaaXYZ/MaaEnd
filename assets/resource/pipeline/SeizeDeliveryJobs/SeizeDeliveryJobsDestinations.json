@@ -1,0 +1,142 @@
+{
+    "SeizeDeliveryJobsEndpointFilterOwl": {
+        "desc": "在武陵城大地图确认「猫头鹰」送货终点（deliver_target_map02_lv002_recycle_01）",
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "MapFind",
+        "custom_recognition_param": {
+            "zone": "Wuling",
+            "icon": "DeliveryPoint",
+            "at": [
+                513.135,
+                1650.773
+            ]
+        },
+        "next": [
+            "SeizeDeliveryJobsEndpointMatched"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": "$task.SeizeDeliveryJobs.focus.endpointOwl"
+        }
+    },
+    "SeizeDeliveryJobsEndpointFilterMaterialResearchInstitute": {
+        "desc": "在武陵城大地图确认「材料研究所」送货终点（deliver_target_map02_lv002_02）",
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "MapFind",
+        "custom_recognition_param": {
+            "zone": "Wuling",
+            "icon": "DeliveryPoint",
+            "at": [
+                461.92,
+                1712.802
+            ]
+        },
+        "next": [
+            "SeizeDeliveryJobsEndpointMatched"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": "$task.SeizeDeliveryJobs.focus.endpointMaterialResearchInstitute"
+        }
+    },
+    "SeizeDeliveryJobsEndpointFilterObservatory": {
+        "desc": "在武陵城大地图确认「观测站」送货终点（deliver_target_map02_lv002_03）",
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "MapFind",
+        "custom_recognition_param": {
+            "zone": "Wuling",
+            "icon": "DeliveryPoint",
+            "at": [
+                894.615,
+                1408.425
+            ]
+        },
+        "next": [
+            "SeizeDeliveryJobsEndpointMatched"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": "$task.SeizeDeliveryJobs.focus.endpointObservatory"
+        }
+    },
+    "SeizeDeliveryJobsEndpointFilterTechProductionOffice": {
+        "desc": "在武陵城大地图确认「技术生产办公室」送货终点（deliver_target_map02_lv002_01）",
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "MapFind",
+        "custom_recognition_param": {
+            "zone": "Wuling",
+            "icon": "DeliveryPoint",
+            "at": [
+                538.031,
+                1250.27
+            ]
+        },
+        "next": [
+            "SeizeDeliveryJobsEndpointMatched"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": "$task.SeizeDeliveryJobs.focus.endpointTechProductionOffice"
+        }
+    },
+    "SeizeDeliveryJobsEndpointFilterNo1TypeCAnchorArea": {
+        "desc": "在试验园区大地图确认「一号丙型辅桩区」送货终点（deliver_target_map02_lv005_02）",
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "MapFind",
+        "custom_recognition_param": {
+            "zone": "Wuling",
+            "icon": "DeliveryPoint",
+            "at": [
+                1083.307,
+                1455.27
+            ]
+        },
+        "next": [
+            "SeizeDeliveryJobsEndpointMatched"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": "$task.SeizeDeliveryJobs.focus.endpointNo1TypeCAnchorArea"
+        }
+    },
+    "SeizeDeliveryJobsEndpointFilterNo3TypeCAnchorArea": {
+        "desc": "在试验园区大地图确认「三号丙型辅桩区」送货终点（deliver_target_map02_lv005_03）",
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "MapFind",
+        "custom_recognition_param": {
+            "zone": "Wuling",
+            "icon": "DeliveryPoint",
+            "at": [
+                1369.873,
+                1533.922
+            ]
+        },
+        "next": [
+            "SeizeDeliveryJobsEndpointMatched"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": "$task.SeizeDeliveryJobs.focus.endpointNo3TypeCAnchorArea"
+        }
+    },
+    "SeizeDeliveryJobsEndpointFilterJingweiFieldArea": {
+        "desc": "在试验园区大地图确认「经纬田区」送货终点（deliver_target_map02_lv005_01）",
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "MapFind",
+        "custom_recognition_param": {
+            "zone": "Wuling",
+            "icon": "DeliveryPoint",
+            "at": [
+                1383.764,
+                1633.923
+            ]
+        },
+        "next": [
+            "SeizeDeliveryJobsEndpointMatched"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": "$task.SeizeDeliveryJobs.focus.endpointJingweiFieldArea"
+        }
+    }
+}
