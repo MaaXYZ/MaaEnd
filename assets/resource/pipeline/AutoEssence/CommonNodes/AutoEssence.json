@@ -776,7 +776,7 @@
         "desc": "尝试使用理智消耗许可",
         "pre_delay": 0,
         "anchor": {
-            "AutoUseSpMedicationInPrepareFinishNoUseAnchor": "AutoEssenceLowSpStop",
+            "AutoUseSpMedicationInPrepareFinishNoUseAnchor": "AutoEssenceLowSpCancelObtain",
             "AutoUseSpMedicationInPrepareFinishUseAnchor": "AutoEssenceConfirmObtain"
         },
         "post_delay": 0,
