@@ -2034,7 +2034,8 @@ LocateResult MapLocator::Impl::locate(const cv::Mat& minimap, const LocateOption
             auto hintResult = tryGlobalSearchWithFallback(minimap, targetZoneId, hintConstraint, featureCache, &hintRaw);
             LogInfo << "Global Search: hint window." << VAR(hint.x) << VAR(hint.y) << VAR(hint.radius) << VAR(hintRaw.x) << VAR(hintRaw.y)
                     << VAR(hintRaw.score) << VAR(bestRawGlobal.x) << VAR(bestRawGlobal.y) << VAR(bestRawGlobal.score);
-            if (hintRaw.score > bestRawGlobal.score) {
+            // 双策略回退的裸峰分与主策略不同量纲, 没过校验的提示窗不能顶掉已校验的结果
+            if (hintRaw.score > bestRawGlobal.score && (hintResult.has_value() || !globalResult.has_value())) {
                 bestRawGlobal = hintRaw;
                 globalResult = hintResult;
             }
