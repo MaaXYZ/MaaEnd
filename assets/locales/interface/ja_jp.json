@@ -2403,6 +2403,6 @@
     "option.AutoEssenceSelectLocation.description": "周回する地域を1つ選び、下でその地域の属性条件を設定します",
     "option.AutoEssenceLocationSlot1.label": "基本属性",
     "option.AutoEssenceLocationSlot1.description": "基本属性を3つ選択（主能力 / 筋力 / 意志 / 敏捷 / 知性）",
-    "option.AutoEssenceLocationBonus.label": "ボーナス属性",
-    "option.AutoEssenceLocationBonus.description": "この地域で利用可能なボーナス属性を1つ選択"
+    "option.AutoEssenceLocationSecondary.label": "ボーナス / スキル属性",
+    "option.AutoEssenceLocationSecondary.description": "この地域で利用可能なボーナス属性またはスキル属性を1つ選択"
 }

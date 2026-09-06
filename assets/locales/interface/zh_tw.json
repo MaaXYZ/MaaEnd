@@ -2403,6 +2403,6 @@
     "option.AutoEssenceSelectLocation.description": "選擇要刷取的單個地區，並在下方配置該地區的屬性條件",
     "option.AutoEssenceLocationSlot1.label": "基礎屬性",
     "option.AutoEssenceLocationSlot1.description": "選擇 3 項基礎屬性（主能力 / 力量 / 意志 / 敏捷 / 智識）",
-    "option.AutoEssenceLocationBonus.label": "附加屬性",
-    "option.AutoEssenceLocationBonus.description": "選擇 1 項該地區可用的附加屬性"
+    "option.AutoEssenceLocationSecondary.label": "附加 / 技能屬性",
+    "option.AutoEssenceLocationSecondary.description": "選擇 1 項該地區可用的附加屬性或技能屬性"
 }

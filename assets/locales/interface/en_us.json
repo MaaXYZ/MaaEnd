@@ -2403,6 +2403,6 @@
     "option.AutoEssenceSelectLocation.description": "Choose one region to farm and configure its attribute conditions below",
     "option.AutoEssenceLocationSlot1.label": "Base attributes",
     "option.AutoEssenceLocationSlot1.description": "Select 3 base attributes (Main / Strength / Will / Agility / Intellect)",
-    "option.AutoEssenceLocationBonus.label": "Bonus attribute",
-    "option.AutoEssenceLocationBonus.description": "Select 1 bonus attribute available at this region"
+    "option.AutoEssenceLocationSecondary.label": "Bonus / skill attribute",
+    "option.AutoEssenceLocationSecondary.description": "Select 1 bonus or skill attribute available at this region"
 }

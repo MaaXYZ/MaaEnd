@@ -42,7 +42,6 @@
         "pre_delay": 0,
         "post_delay": 0,
         "next": [
-            "AutoEssenceInitEngraveCondition1OCR",
             // 在 SetupLocation 节点的 max_hit 未耗尽时，先经过该节点进行初始化步骤
             "AutoEssenceSetupLocation",
             // 如果 SetupLocation 节点的 max_hit 已耗尽，则会直接进入交互分发
@@ -51,66 +50,6 @@
         "focus": {
             "Node.Action.Starting": "▶️**准备开始本次基质刷取**"
         }
-    },
-    "AutoEssenceInitEngraveCondition1OCR": {
-        "desc": "地区模式：为已勾选的基础属性 OCR 节点初始化子串白名单（未勾选保持 DirectHit）",
-        "max_hit": 1,
-        "recognition": {
-            "type": "DirectHit",
-            "param": {}
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "AttachToExpectedRegexAction",
-                "custom_action_param": {
-                    "substring": true,
-                    "targets": [
-                        "AutoEssenceEngraveCondition1Base_s1_1",
-                        "AutoEssenceEngraveCondition1Base_s1_2",
-                        "AutoEssenceEngraveCondition1Base_s1_3",
-                        "AutoEssenceEngraveCondition1Base_s1_4",
-                        "AutoEssenceEngraveCondition1Base_s1_5"
-                    ]
-                }
-            }
-        },
-        "post_delay": 0,
-        "rate_limit": 0,
-        "next": [
-            "AutoEssenceInitEngraveOptionOCR"
-        ]
-    },
-    "AutoEssenceInitEngraveOptionOCR": {
-        "desc": "地区模式：根据任务选项 attach 初始化附加属性与属性选择 OCR 白名单",
-        "max_hit": 1,
-        "recognition": {
-            "type": "DirectHit",
-            "param": {}
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "AttachToExpectedRegexAction",
-                "custom_action_param": {
-                    "targets": [
-                        "AutoEssenceEngraveCondition2OCR",
-                        "AutoEssenceSelectEngraveBaseCondition1",
-                        "AutoEssenceSelectEngraveBaseCondition2",
-                        "AutoEssenceSelectEngraveBaseCondition3",
-                        "AutoEssenceSelectEngraveBonusCondition"
-                    ]
-                }
-            }
-        },
-        "post_delay": 0,
-        "rate_limit": 0,
-        "next": [
-            "AutoEssenceSetupLocation",
-            "AutoEssenceDispatcher"
-        ]
     },
     "AutoEssenceSetupLocation": {
         "desc": "抽取一个已启用的淤积点，调用其 Anchor 赋值节点，为自动导航的节点赋值（此节点默认最多执行 1 次）",
@@ -148,12 +87,7 @@
         ],
         "on_error": [
             "AutoEssenceSetupLocationFailed"
-        ],
-        "attach": {
-            "menu_mode": "random",
-            "location_id": "",
-            "slot2_id": 0
-        }
+        ]
     },
     "AutoEssenceSetupLocationFailed": {
         "desc": "抽取淤积点失败（通常是因为所有淤积点均未启用），此时结束任务",
@@ -603,11 +537,12 @@
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
-            "AutoEssenceSelectEngraveBaseCondition1"
+            "AutoEssenceSelectEngraveBase_s1_1"
         ]
     },
-    "AutoEssenceSelectEngraveBaseCondition1": {
-        "desc": "选择预刻写条件 1 基础属性",
+    "AutoEssenceSelectEngraveBase_s1_1": {
+        "desc": "选择预刻写基础属性 s1_1（未勾选时 disabled）",
+        "enabled": false,
         "recognition": {
             "type": "OCR",
             "param": {
@@ -630,11 +565,12 @@
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
-            "AutoEssenceSelectEngraveBaseCondition2"
+            "AutoEssenceSelectEngraveBase_s1_2"
         ]
     },
-    "AutoEssenceSelectEngraveBaseCondition2": {
-        "desc": "选择预刻写条件 2 基础属性",
+    "AutoEssenceSelectEngraveBase_s1_2": {
+        "desc": "选择预刻写基础属性 s1_2（未勾选时 disabled）",
+        "enabled": false,
         "recognition": {
             "type": "OCR",
             "param": {
@@ -657,11 +593,68 @@
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
-            "AutoEssenceSelectEngraveBaseCondition3"
+            "AutoEssenceSelectEngraveBase_s1_3"
         ]
     },
-    "AutoEssenceSelectEngraveBaseCondition3": {
-        "desc": "选择预刻写条件 3 基础属性",
+    "AutoEssenceSelectEngraveBase_s1_3": {
+        "desc": "选择预刻写基础属性 s1_3（未勾选时 disabled）",
+        "enabled": false,
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    43,
+                    125,
+                    904,
+                    540
+                ],
+                "expected": [
+                    // @i18n-skip
+                    "a^"
+                ]
+            }
+        },
+        "pre_delay": 0,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoEssenceSelectEngraveBase_s1_4"
+        ]
+    },
+    "AutoEssenceSelectEngraveBase_s1_4": {
+        "desc": "选择预刻写基础属性 s1_4（未勾选时 disabled）",
+        "enabled": false,
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    43,
+                    125,
+                    904,
+                    540
+                ],
+                "expected": [
+                    // @i18n-skip
+                    "a^"
+                ]
+            }
+        },
+        "pre_delay": 0,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoEssenceSelectEngraveBase_s1_5"
+        ]
+    },
+    "AutoEssenceSelectEngraveBase_s1_5": {
+        "desc": "选择预刻写基础属性 s1_5（未勾选时 disabled）",
+        "enabled": false,
         "recognition": {
             "type": "OCR",
             "param": {

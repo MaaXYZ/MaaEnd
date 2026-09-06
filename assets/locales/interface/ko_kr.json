@@ -2403,6 +2403,6 @@
     "option.AutoEssenceSelectLocation.description": "파밍할 지역 하나를 선택하고 아래에서 해당 지역의 속성 조건을 설정합니다",
     "option.AutoEssenceLocationSlot1.label": "기본 속성",
     "option.AutoEssenceLocationSlot1.description": "기본 속성 3개 선택 (주요 능력치 / 힘 / 의지 / 민첩 / 지능)",
-    "option.AutoEssenceLocationBonus.label": "부가 속성",
-    "option.AutoEssenceLocationBonus.description": "이 지역에서 사용 가능한 부가 속성 1개 선택"
+    "option.AutoEssenceLocationSecondary.label": "부가 / 스킬 속성",
+    "option.AutoEssenceLocationSecondary.description": "이 지역에서 사용 가능한 부가 속성 또는 스킬 속성 1개 선택"
 }
