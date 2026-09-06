@@ -97,6 +97,32 @@ test("target deck editing rejects ordinary points and multi-selection", () => {
   assert.equal(state.editSetSelectedTargetDeck(100).unsupported, true);
 });
 
+test("applying null fields to a mixed multi-selection keeps each point's own values", () => {
+  const state = new AppState();
+  state.setPoints([
+    makePoint(ActionType.NAVMESH, {strict: true, required: true, target_tier: "TierA"}),
+    makePoint(ActionType.RUN, {x: 300, strict: false}),
+  ]);
+  state.setSelection([0, 1], 0);
+
+  state.editApplyActionToSelected(null, null, null, null);
+  assert.deepEqual(state.points[0].actions, [ActionType.NAVMESH]);
+  assert.deepEqual(state.points[1].actions, [ActionType.RUN]);
+  assert.equal(state.points[0].strict, true);
+  assert.equal(state.points[1].strict, false);
+  assert.equal(state.points[0].required, true);
+  assert.equal(state.points[1].required, undefined);
+  assert.equal(state.points[0].target_tier, "TierA");
+  assert.equal(state.points[1].target_tier, undefined);
+
+  state.editApplyActionToSelected(null, true, false, "");
+  assert.equal(state.points[0].strict, true);
+  assert.equal(state.points[1].strict, true);
+  assert.equal(state.points[0].required, undefined);
+  assert.equal(state.points[0].target_tier, undefined);
+  assert.deepEqual(state.points[1].actions, [ActionType.RUN]);
+});
+
 test("changing a NAVMESH target or coordinate frame clears its stale target deck", () => {
   const state = new AppState();
   state.setPoints([makePoint(ActionType.NAVMESH, {target_deck_y: 100.5})]);

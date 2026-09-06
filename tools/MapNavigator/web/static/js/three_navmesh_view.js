@@ -34,10 +34,11 @@ export class ThreeNavmeshView {
     this.canvas = canvas;
     this.onPick = onPick;
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x080d12);
 
     this.camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10000);
-    this.renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: false});
+    // Transparent canvas: the 2D and 3D views share the page background instead of each painting its own.
+    this.renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: true});
+    this.renderer.setClearColor(0x000000, 0);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
