@@ -29,7 +29,10 @@
         "rate_limit": 0,
         "next": [],
         "focus": {
-            "Node.Action.Succeeded": "$task.TrialOfSwordmancy.focus.overflow_stopped"
+            "Node.Action.Succeeded": {
+                "content": "$task.TrialOfSwordmancy.focus.overflow_stopped",
+                "display": "modal"
+            }
         }
     },
     "TrialOfSwordmancyStartTrialClick": {
