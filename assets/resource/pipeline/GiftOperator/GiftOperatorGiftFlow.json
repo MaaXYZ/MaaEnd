@@ -2,6 +2,24 @@
     "GiftOperatorBranchGift": {
         "desc": "分支1：可以赠送礼物",
         "recognition": {
+            "type": "Or",
+            "param": {
+                "any_of": [
+                    "GiftOperatorBranchGiftTemplate",
+                    "GiftOperatorBranchGiftOCR"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "GiftOperatorGiftUI"
+        ]
+    },
+    "GiftOperatorBranchGiftTemplate": {
+        "desc": "赠送礼物按钮模板识别",
+        "recognition": {
             "type": "TemplateMatch",
             "param": {
                 "roi": [
@@ -15,15 +33,29 @@
                     "GiftOperator/GiftOperatorGiftFullButton.png",
                     "GiftOperator/GiftFullOperatorGiftButton.png"
                 ],
-                "threshold": 0.9
+                "threshold": 0.8
             }
-        },
-        "action": {
-            "type": "Click"
-        },
-        "next": [
-            "GiftOperatorGiftUI"
-        ]
+        }
+    },
+    "GiftOperatorBranchGiftOCR": {
+        "desc": "赠送礼物按钮 OCR 识别，作为模板失败时的回退",
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    900,
+                    334,
+                    350,
+                    318
+                ],
+                "expected": [
+                    "赠送礼物",
+                    "贈送禮物",
+                    "(?i)Offering\\s*Gifts",
+                    "プレゼントを贈る"
+                ]
+            }
+        }
     },
     "GiftOperatorBranchReceive": {
         "desc": "分支2：干员给你送礼，点击领取",
