@@ -53,6 +53,7 @@ class WebResourceTest(unittest.TestCase):
             "route_preview",
             position=[100.0, 200.0],
             position_zone="map02base",
+            floor_y=[],
             custom_action_param={"zip": True, "path": []},
             zipline_account_id="account-a",
         )
