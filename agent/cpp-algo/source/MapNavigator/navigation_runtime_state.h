@@ -374,6 +374,9 @@ struct NavigationRuntimeState
     // 跟着重规划清零, 重展开就会再选中刚失败的索。
     std::vector<ZiplineHopBan> zipline_hop_bans;
     int32_t zipline_abandon_count = 0;
+    // 置于顶层且不参与任何 Reset: 禁区按世界坐标记录障碍, 生命周期为整趟导航, 仅由 BeginNavigation 清空。
+    // 若随重规划一并清零, 下一次规划会再次穿过刚判定出障碍的位置。
+    std::vector<VirtualNoGoDisc> virtual_no_go;
     // Consecutive global re-acquires (the navigation_state_machine "recovered via global re-acquire" path) since
     // the last genuine waypoint advance. Top-level on purpose: the loss/escape/overlay Resets that fire all through
     // a wrong-tier thrash storm never clear it — only real forward progress does — so it is the one storm-proof
@@ -410,6 +413,7 @@ struct NavigationRuntimeState
         zipline_approach.Reset();
         zipline_recovery.Reset();
         zipline_hop_bans.clear();
+        virtual_no_go.clear();
         zipline_abandon_count = 0;
         progress_identity.Reset();
         global_reacquire_streak = 0;

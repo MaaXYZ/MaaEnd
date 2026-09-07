@@ -97,6 +97,18 @@ struct ZiplineHopBan
     double to_y = 0.0;
 };
 
+// 运行期在卡死点前方生成的圆形禁区, 用于占位网格中未记录的障碍, 此后每次规划都绕开它。
+// 圆心按生成时所在定位区的坐标记录, 仅对同区规划生效。push_through 表示该禁区封闭了唯一通路,
+// 规划时不再计入, 只作为恢复流程判定此处需要物理脱困的依据。
+struct VirtualNoGoDisc
+{
+    std::string zone_id;
+    double x = 0.0;
+    double y = 0.0;
+    double radius = 0.0;
+    bool push_through = false;
+};
+
 struct Waypoint
 {
     double x;

@@ -666,8 +666,6 @@ bool NavigationStateMachine::TryApplyDynamicOverlayToAnchor(
     const char* reason,
     size_t continue_index,
     const Waypoint& anchor,
-    bool use_detour,
-    double route_heading,
     bool emit_interior_corners)
 {
     if (!anchor.HasPosition()) {
@@ -677,26 +675,28 @@ bool NavigationStateMachine::TryApplyDynamicOverlayToAnchor(
 
     const navmesh::WorldPoint start { .x = position_->x, .y = position_->y };
     const navmesh::WorldPoint goal { .x = anchor.x, .y = anchor.y };
-    navmesh::WorldPoint detour_vertex {};
-    const auto route = use_detour ? PlanNavmeshDetourRoute(param_, *position_, anchor, route_heading, &detour_vertex)
-                                  : PlanNavmeshRoute(param_, position_->zone_id, start, goal, anchor.target_deck_y);
+    const auto route = PlanNavmeshRoute(
+        param_,
+        position_->zone_id,
+        start,
+        goal,
+        anchor.target_deck_y,
+        std::nullopt,
+        nullptr,
+        &runtime_state_.virtual_no_go);
     if (!route) {
         return false;
     }
 
     std::vector<Waypoint> generated_prefix;
-    if (use_detour) {
-        generated_prefix.emplace_back(detour_vertex.x, detour_vertex.y, ActionType::RUN);
-        generated_prefix.back().strict_arrival = true;
-    }
-    else if (!AppendGeneratedNavmeshWaypoints(
-                 param_,
-                 position_->zone_id,
-                 *route,
-                 generated_prefix,
-                 /*include_goal=*/false,
-                 emit_interior_corners,
-                 /*strict_segment_breaks=*/false)) {
+    if (!AppendGeneratedNavmeshWaypoints(
+            param_,
+            position_->zone_id,
+            *route,
+            generated_prefix,
+            /*include_goal=*/false,
+            emit_interior_corners,
+            /*strict_segment_breaks=*/false)) {
         LogWarn << "Dynamic navmesh overlay skipped: generated path is unusable." << VAR(reason) << VAR(continue_index)
                 << VAR(route->path.points.size());
         return false;
@@ -717,12 +717,12 @@ bool NavigationStateMachine::TryApplyDynamicOverlayToAnchor(
     }
     runtime_state_.dynamic_replan_requested = false;
     const size_t planned_points = route->path.points.size();
-    LogInfo << "Dynamic navmesh overlay selected." << VAR(reason) << VAR(use_detour) << VAR(continue_index) << VAR(generated_count)
-            << VAR(planned_points) << VAR(detour_vertex.x) << VAR(detour_vertex.y) << VAR(anchor.x) << VAR(anchor.y);
+    LogInfo << "Dynamic navmesh overlay selected." << VAR(reason) << VAR(continue_index) << VAR(generated_count) << VAR(planned_points)
+            << VAR(runtime_state_.virtual_no_go.size()) << VAR(anchor.x) << VAR(anchor.y);
     return true;
 }
 
-bool NavigationStateMachine::TryApplyDynamicOverlayToNextAnchor(const char* reason, bool use_detour, double route_heading)
+bool NavigationStateMachine::TryApplyDynamicOverlayToNextAnchor(const char* reason)
 {
     const std::optional<DynamicAnchor> anchor = ResolveCurrentAnchor(session_, *position_);
     if (!anchor) {
@@ -731,13 +731,86 @@ bool NavigationStateMachine::TryApplyDynamicOverlayToNextAnchor(const char* reas
                 << VAR(position_->zone_id);
         return false;
     }
-    return TryApplyDynamicOverlayToAnchor(
-        reason,
-        anchor->first,
-        anchor->second,
-        use_detour,
-        route_heading,
-        /*emit_interior_corners=*/false);
+    return TryApplyDynamicOverlayToAnchor(reason, anchor->first, anchor->second, /*emit_interior_corners=*/false);
+}
+
+bool NavigationStateMachine::TryVirtualNoGoReplan(
+    const char* reason,
+    size_t continue_index,
+    const Waypoint& anchor,
+    const NaviPosition& origin,
+    double stuck_heading)
+{
+    std::vector<VirtualNoGoDisc>& discs = runtime_state_.virtual_no_go;
+    // 朝向是罗盘角(0 朝上, 顺时针), 与 PlanUnstickTarget 同一口径
+    const double rad = NaviMath::NormalizeHeading(stuck_heading) * kPi / 180.0;
+    const double dir_x = std::sin(rad);
+    const double dir_y = -std::cos(rad);
+    // 圆心取在卡死点前方, 留出 standoff 以免把卡死点本身圈进禁区
+    const auto center_x = [&](double radius) {
+        return origin.x + dir_x * (radius + kVirtualNoGoStandoff);
+    };
+    const auto center_y = [&](double radius) {
+        return origin.y + dir_y * (radius + kVirtualNoGoStandoff);
+    };
+    // 物理脱困后当前位置已经离开卡死点。禁区若把当前位置一并圈入, 规划起点便落在禁区内,
+    // 因此逐次折半收缩, 直到当前位置落在禁区之外。
+    const auto fit_outside = [&](double radius) {
+        while (radius >= kVirtualNoGoRadiusMin && std::hypot(position_->x - center_x(radius), position_->y - center_y(radius)) < radius) {
+            radius *= 0.5;
+        }
+        return radius;
+    };
+
+    // 在既有禁区边缘再次卡死, 说明障碍大于该禁区, 新禁区在其半径上增加一档。旧禁区原样保留,
+    // 两者的并集仍然覆盖最初的卡死点。
+    double radius = kVirtualNoGoRadius;
+    bool grown = false;
+    for (const VirtualNoGoDisc& disc : discs) {
+        if (disc.zone_id != origin.zone_id || disc.push_through) {
+            continue;
+        }
+        if (std::hypot(center_x(kVirtualNoGoRadius) - disc.x, center_y(kVirtualNoGoRadius) - disc.y)
+            <= disc.radius + kVirtualNoGoRadiusStep) {
+            radius = std::max(radius, std::min(disc.radius + kVirtualNoGoRadiusStep, kVirtualNoGoRadiusMax));
+            grown = true;
+        }
+    }
+    // 锚点过近时禁区会覆盖锚点本身, 先按锚点净空压低半径, 压不到最小半径则放弃生成。
+    // 锚点正处前方时圆心到锚点最近, 按该最坏情形定上界: 距离 - standoff - 半径 ≥ 半径 + 净空。
+    const double anchor_distance = std::hypot(anchor.x - origin.x, anchor.y - origin.y);
+    const double radius_cap = (anchor_distance - kVirtualNoGoStandoff - kVirtualNoGoGoalClearance) * 0.5;
+    radius = fit_outside(std::min(radius, radius_cap));
+    if (radius < kVirtualNoGoRadiusMin) {
+        LogInfo << "Virtual no-go skipped: no room for a disc between here and the anchor." << VAR(reason) << VAR(anchor_distance)
+                << VAR(radius);
+        return false;
+    }
+
+    discs.push_back({ .zone_id = origin.zone_id, .x = center_x(radius), .y = center_y(radius), .radius = radius });
+    VirtualNoGoDisc* disc = &discs.back();
+    LogInfo << "Virtual no-go stamped." << VAR(reason) << VAR(grown) << VAR(disc->x) << VAR(disc->y) << VAR(disc->radius)
+            << VAR(stuck_heading) << VAR(discs.size());
+
+    if (TryApplyDynamicOverlayToAnchor(reason, continue_index, anchor)) {
+        return true;
+    }
+    // 规划失败: 禁区可能封住了整条窄路, 半径折半后再规划一次; 已是最小半径则不再重试
+    const double shrunk = fit_outside(disc->radius * 0.5);
+    if (shrunk >= kVirtualNoGoRadiusMin) {
+        disc->radius = shrunk;
+        disc->x = center_x(shrunk);
+        disc->y = center_y(shrunk);
+        LogInfo << "Virtual no-go shrunk after replan failure." << VAR(reason) << VAR(disc->radius);
+        if (TryApplyDynamicOverlayToAnchor(reason, continue_index, anchor)) {
+            return true;
+        }
+    }
+    // 收缩后仍规划失败: 此处是唯一通路。该禁区退出规划, 仅保留标记供恢复流程改走物理脱困。
+    disc->push_through = true;
+    LogWarn << "Virtual no-go blocks the only passage; marked push-through." << VAR(reason) << VAR(disc->x) << VAR(disc->y)
+            << VAR(disc->radius);
+    return false;
 }
 
 // 上索点是必到的语义点, 重规划总是把人瞄回它, 所以那根架子要是根本走不到(导入的坐标跟实际
@@ -836,12 +909,7 @@ bool NavigationStateMachine::HandleZiplineRecoveryReplan()
 
     const std::optional<DynamicAnchor> anchor =
         ResolveReachableNavmeshAnchor(param_, session_, *position_, session_->current_node_idx(), "zipline_recovery");
-    const bool rejoined = anchor
-                          && TryApplyDynamicOverlayToAnchor(
-                              "zipline_recovery",
-                              anchor->first,
-                              anchor->second,
-                              /*use_detour=*/false);
+    const bool rejoined = anchor && TryApplyDynamicOverlayToAnchor("zipline_recovery", anchor->first, anchor->second);
     // 链尾落点规划出的剩余展开路径从半路的架子上可能一个点都够不着; 那不代表导航失败, 只代表
     // 这份展开作废了 —— 回到作者的原始路线重新展开剩余部分, 刚判死的那跳已进封禁名单。
     if (!rejoined && !TryReplanRemainingAuthoredRoute("zipline_recovery_reexpand")) {
@@ -900,7 +968,8 @@ bool NavigationStateMachine::TryReplanRemainingAuthoredRoute(const char* reason)
     }
     replan_param.path.assign(authored.begin() + static_cast<std::ptrdiff_t>(slice_begin), authored.end());
     std::vector<Waypoint> replanned;
-    if (!ExpandNavmeshWaypoints(replan_param, *position_, should_stop_, replanned) || replanned.empty()) {
+    if (!ExpandNavmeshWaypoints(replan_param, *position_, should_stop_, replanned, nullptr, &runtime_state_.virtual_no_go)
+        || replanned.empty()) {
         LogWarn << "Authored route replan failed to expand the remaining route." << VAR(reason) << VAR(slice_begin)
                 << VAR(replan_param.path.size());
         return false;
@@ -919,7 +988,7 @@ bool NavigationStateMachine::TryReplanRemainingAuthoredRoute(const char* reason)
 
     const std::optional<DynamicAnchor> anchor = ResolveReachableNavmeshAnchor(param_, session_, *position_, 0, reason);
     if (anchor) {
-        TryApplyDynamicOverlayToAnchor(reason, anchor->first, anchor->second, /*use_detour=*/false);
+        TryApplyDynamicOverlayToAnchor(reason, anchor->first, anchor->second);
     }
     LogInfo << "Zipline recovery re-expanded the remaining authored route." << VAR(reason) << VAR(slice_begin)
             << VAR(session_->current_path().size()) << VAR(position_->x) << VAR(position_->y) << VAR(position_->zone_id);
@@ -931,7 +1000,7 @@ bool NavigationStateMachine::HandleDynamicReplanRequest(const char* reason)
     if (GiveUpUnreachableZipline(reason)) {
         return true;
     }
-    if (TryApplyDynamicOverlayToNextAnchor(reason, false)) {
+    if (TryApplyDynamicOverlayToNextAnchor(reason)) {
         return true;
     }
 
@@ -948,7 +1017,6 @@ bool NavigationStateMachine::HandleDynamicReplanRequest(const char* reason)
 
 bool NavigationStateMachine::PlanCrossTierEscapeCorridorFromHere(const char* reason)
 {
-    const double heading = NaviMath::NormalizeAngle(position_->angle);
     const std::vector<Waypoint>& path = session_->current_path();
     for (size_t index = session_->current_node_idx(); index < path.size(); ++index) {
         const Waypoint& candidate = session_->CurrentPathAt(index);
@@ -959,13 +1027,7 @@ bool NavigationStateMachine::PlanCrossTierEscapeCorridorFromHere(const char* rea
         if (!continue_index) {
             continue; // a generated overlay waypoint (no canonical index) is not a rejoin target
         }
-        if (TryApplyDynamicOverlayToAnchor(
-                reason,
-                *continue_index,
-                candidate,
-                /*use_detour=*/false,
-                heading,
-                /*emit_interior_corners=*/true)) {
+        if (TryApplyDynamicOverlayToAnchor(reason, *continue_index, candidate, /*emit_interior_corners=*/true)) {
             runtime_state_.cross_tier_escape.goal_x = candidate.x;
             runtime_state_.cross_tier_escape.goal_y = candidate.y;
             LogInfo << "Cross-tier escape corridor planned." << VAR(reason) << VAR(position_->zone_id) << VAR(position_->x)
@@ -1056,7 +1118,13 @@ bool NavigationStateMachine::ExecutePhysicalUnstick(double stuck_heading)
     LogInfo << "Physical unstick step executed." << VAR(distance) << VAR(moved) << VAR(dislodged) << VAR(unstick.count)
             << VAR(target_heading) << VAR(target->x) << VAR(target->y);
 
-    if (TryApplyDynamicOverlayToNextAnchor("recovery_unstick_replan", false)) {
+    // 位移之后先把刚顶住的障碍生成禁区再重新规划, 使新线自起点即绕开它; 生成或规划失败则退回普通重规划。
+    // 禁区以位移前的位置为原点: 障碍位于该位置的前方, 与位移后的当前位置的相对关系已不确定。
+    const std::optional<DynamicAnchor> anchor = ResolveCurrentAnchor(session_, *position_);
+    const bool replanned =
+        (anchor && TryVirtualNoGoReplan("recovery_unstick_replan", anchor->first, anchor->second, step_start, stuck_heading))
+        || TryApplyDynamicOverlayToNextAnchor("recovery_unstick_replan");
+    if (replanned) {
         session_->ResetProgress();
         SelectPhaseForCurrentWaypoint("recovery_unstick_replan");
         return true;
@@ -1488,11 +1556,6 @@ bool NavigationStateMachine::TickNavigate()
         runtime_state_.offroute.Reset();
     }
 
-    // Near a strict-arrival goal only the *detour* is unsafe (it routes away from the exact point);
-    // a jump is still a safe nudge, so recovery is allowed to enter here and the suppression is
-    // applied to the detour step alone, below.
-    const bool near_strict_goal =
-        waypoint.RequiresStrictArrival() && route.waypoint_distance <= arrival_distance + kCloseGoalDetourSuppressSlack;
     // "Too close to bother recovering" is measured on the same signal the stall clock runs on: while NavRun
     // steers, corridor remaining is the true distance left, and the serial waypoint is a breadcrumb that can sit
     // a pixel away with the whole leg still ahead. Reading the breadcrumb here closed the gate on an agent pinned
@@ -1634,21 +1697,26 @@ bool NavigationStateMachine::TickNavigate()
 
                 // The jump pulse above runs every recovery tick, so a fresh stall always tries to hop free
                 // first; the rest of the ladder only opens after the jump has failed
-                // kRecoveryJumpAttemptsBeforeDetour times for this anchor. Of the two escalations only the
-                // detour is unsafe next to a strict goal — it re-routes to a bypass vertex and gives up the
-                // exact point. The physical unstick just dislodges sideways and re-approaches the same anchor,
-                // so it stays available there; otherwise a stall inside the strict band has nothing left but
-                // the jump until the hard-progress timeout.
+                // kRecoveryJumpAttemptsBeforeDetour times for this anchor. The detour places a virtual no-go
+                // disc ahead and re-plans around it; the disc keeps the line off this spot for the rest of the
+                // navigation. Where a disc has already proven to block the only passage, the detour is skipped
+                // and the ladder goes straight to the physical unstick.
                 const bool escalated = escalation.jump_attempt_count >= kRecoveryJumpAttemptsBeforeDetour;
-                const bool detour_allowed = escalated && !near_strict_goal;
-                if (detour_allowed && escalation.detour_attempt_count < kRecoveryDetourAttemptsBeforeUnstick) {
+                const double stuck_heading = nav_run_result.has_corridor_heading ? nav_run_result.corridor_heading : route.route_heading;
+                const bool push_through_here =
+                    std::any_of(runtime_state_.virtual_no_go.begin(), runtime_state_.virtual_no_go.end(), [&](const VirtualNoGoDisc& disc) {
+                        return disc.push_through && disc.zone_id == position_->zone_id
+                               && std::hypot(disc.x - position_->x, disc.y - position_->y)
+                                      <= disc.radius + kVirtualNoGoStandoff + kVirtualNoGoRadiusStep;
+                    });
+                if (escalated && !push_through_here && escalation.detour_attempt_count < kRecoveryDetourAttemptsBeforeUnstick) {
                     ++escalation.detour_attempt_count;
-                    if (TryApplyDynamicOverlayToAnchor(
+                    if (TryVirtualNoGoReplan(
                             "recovery_navmesh_detour",
                             post_jump_anchor->first,
                             post_jump_anchor->second,
-                            true,
-                            route.route_heading)) {
+                            *position_,
+                            stuck_heading)) {
                         SelectPhaseForCurrentWaypoint("recovery_navmesh_detour");
                         return true;
                     }
@@ -1656,7 +1724,7 @@ bool NavigationStateMachine::TickNavigate()
                             << VAR(escalation.detour_attempt_count) << VAR(escalation.jump_attempt_count) << VAR(post_jump_anchor->first)
                             << VAR(route.progress_distance) << VAR(stalled_ms);
                 }
-                if (escalated && ExecutePhysicalUnstick(route.route_heading)) {
+                if (escalated && ExecutePhysicalUnstick(stuck_heading)) {
                     return true;
                 }
                 utils::SleepFor(kTargetTickMs);
