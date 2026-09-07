@@ -1,6 +1,6 @@
 {
     "__ScenePrivateMenuListEnterMenuSetting": {
-        "desc": "从菜单总列表点击左上角齿轮进入设置",
+        "desc": "从菜单总列表点击左上角齿轮进入设置；点识别框右下，避开透视把点击带到菜单外沿",
         "recognition": {
             "type": "And",
             "param": {
@@ -30,7 +30,15 @@
         },
         "pre_delay": 0,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target_offset": [
+                    12,
+                    10,
+                    0,
+                    0
+                ]
+            }
         },
         "post_delay": 0,
         "rate_limit": 0,
