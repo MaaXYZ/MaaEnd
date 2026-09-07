@@ -304,7 +304,7 @@ class MapNavigatorApp {
     this._meshKey = null;
     this._meshToken = 0;
     this.viewMode = "2d";
-    this.threeNavigationMode = "free";
+    this.threeNavigationMode = "spectator";
     this.threeView = null;
     this._threeViewPromise = null;
     /** @type {?{key:string,buffer:ArrayBuffer}} current display-frame NMSH payload. */
@@ -337,6 +337,13 @@ class MapNavigatorApp {
       threeFlightSpeedValue: $("three-flight-speed-value"),
       threeRecolorRow: $("three-recolor-row"),
       btnThreeRecolor: $("btn-three-recolor"),
+      threeHud: $("three-hud"),
+      threeCrosshair: $("three-crosshair"),
+      threeEnterHint: $("three-enter-hint"),
+      threeLockHint: $("three-lock-hint"),
+      threeOrbitHint: $("three-orbit-hint"),
+      threeFloorPrompt: $("three-floor-prompt"),
+      threeFloorChoices: $("three-floor-choices"),
       btnStart: $("btn-start"),
       btnStop: $("btn-stop"),
       btnCopyPath: $("btn-copy-path"),
@@ -993,6 +1000,10 @@ class MapNavigatorApp {
     e.threeFlightSpeed.addEventListener("input", () => this._setThreeFlightSpeed(e.threeFlightSpeed.value));
     this._setThreeFlightSpeed(e.threeFlightSpeed.value);
     e.btnThreeRecolor.addEventListener("click", () => this._recolorThreeByLiveHeight());
+    e.threeFloorChoices.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-height]");
+      if (button) this._chooseThreeFloor(Number(button.dataset.height));
+    });
     e.btnApplyAction.addEventListener("click", () => this._applyAction());
     e.assertZoneCombo.addEventListener("change", () => this._onAssertZoneChanged());
     e.displayZoneCombo.addEventListener("change", () => this._onDisplayZoneChanged());
@@ -1203,8 +1214,17 @@ class MapNavigatorApp {
     this._cssH = cssH;
     this.renderer.resize(cssW, cssH, dpr);
     this.overlay.resize(cssW, cssH, dpr);
-    if (this.threeView) this.threeView.resize(cssW, cssH, dpr);
+    this._syncThreeViewport();
     this._paint();
+  }
+
+  /** Size the 3D view to the wrap and put its optical centre in the HUD band, clear of the sidebar. */
+  _syncThreeViewport() {
+    if (!this.threeView) return;
+    this.threeView.resize(this._cssW, this._cssH, window.devicePixelRatio || 1);
+    const wrap = this.els.canvasWrap.getBoundingClientRect();
+    const hud = this.els.threeHud.getBoundingClientRect();
+    this.threeView.setViewCenter(hud.left - wrap.left + hud.width / 2);
   }
 
   // ==================================================================================
@@ -2991,26 +3011,23 @@ class MapNavigatorApp {
       this.livePathBase.push({x, y, rot});
     }
     if (this.state.mode === Mode.EDIT) this._paint();
-    if (this.threeView && this._is3DView()) {
-      const [u, v] = this._baseToDisplay(x, y);
-      this.threeView.setLivePosition({u, v, rot: this._headingBaseToDisplay(x, y, rot)});
-      const live = this._livePathForDisplay();
-      this.threeView.setLivePath((live?.points || []).map((point) => [point.x, point.y]));
-      if (!this._initialLiveHeightColored) {
-        const height = this.threeView.getHeightAt(u, v);
-        if (Number.isFinite(height)) {
-          this.threeView.setHeightFocus(height);
-          this._initialLiveHeightColored = true;
-          this._syncThreeOverlays();
-        }
-      }
-    }
+    if (this.threeView && this._is3DView()) this._syncThreeLive();
   }
 
   /** Clear measured live-path state without affecting the planned preview. */
   _clearLivePath() {
     this.livePathBase = [];
     this.livePositionBase = null;
+    if (this.threeView) {
+      this.threeView.clearLiveTrail();
+      this._syncThreeFloorPrompt();
+    }
+  }
+
+  /** Every measured fix in the current display frame, oldest first, whether or not the path is shown. */
+  _liveTrailPointsForThree() {
+    if (!this.field || this.state.mode !== Mode.EDIT) return [];
+    return this.livePathBase.map((point) => this._baseToDisplay(point.x, point.y));
   }
 
   /** Project measured base-frame points into the current path-edit display frame. */
@@ -3597,10 +3614,19 @@ class MapNavigatorApp {
           onPick: ({u, v, height}) => {
             setStatus(`3D 点位: [${compactNumber(u)}, ${compactNumber(v)}]  高度 ${compactNumber(height)}`, "#10b981");
           },
+          onStartChoice: (heights) => {
+            this._syncThreeFloorPrompt();
+            setStatus(`起点压着 ${heights.length} 张可走面，请在画布上选择实际所在高度。`, "#f59e0b");
+          },
+          onSpectatorChange: (active) => {
+            this._syncThreeHud();
+            setStatus(active ? "已进入观察者模式，按 Esc 退出。" : "已退出观察者模式。", "#10b981");
+          },
+          onSpeedChange: (multiplier) => this._setThreeFlightSpeed(multiplier),
         });
         this.threeView.setNavigationMode(this.threeNavigationMode);
         this.threeView.setMovementSpeed(Number(this.els.threeFlightSpeed.value));
-        this.threeView.resize(this._cssW, this._cssH, window.devicePixelRatio || 1);
+        this._syncThreeViewport();
         if (this._latest3DMesh) this._setThreeViewMesh(this._latest3DMesh.buffer);
         this.threeView.setVisible(this._is3DView());
         return this.threeView;
@@ -3632,30 +3658,78 @@ class MapNavigatorApp {
     }
   }
 
+  /** Lift the measured trajectory and marker onto the mesh, then colour the mesh around the first fix. */
+  _syncThreeLive() {
+    if (!this.threeView) return;
+    const position = this.livePositionBase || this.editLocateHint;
+    let current = null;
+    if (position) {
+      const [u, v] = this._baseToDisplay(position.x, position.y);
+      current = {u, v, rot: this._headingBaseToDisplay(position.x, position.y, position.rot)};
+    }
+    const drawPath = this.showLivePath && this.state.mode === Mode.EDIT;
+    this.threeView.setLiveTrail(this._liveTrailPointsForThree(), current, {drawPath});
+    this._syncThreeFloorPrompt();
+    if (this.livePositionBase && !this._initialLiveHeightColored) {
+      const height = this.threeView.liveHeight();
+      if (Number.isFinite(height)) {
+        this.threeView.setHeightFocus(height);
+        this._initialLiveHeightColored = true;
+      }
+    }
+  }
+
+  /** Show the start-floor question while the 3D trail is waiting for an answer. */
+  _syncThreeFloorPrompt() {
+    const e = this.els;
+    const choices = this._is3DView() && this.threeView ? this.threeView.startChoices() : null;
+    e.threeFloorPrompt.hidden = !choices;
+    if (!choices) {
+      e.threeFloorChoices.replaceChildren();
+      delete e.threeFloorChoices.dataset.choices;
+      return;
+    }
+    const key = choices.map((height) => height.toFixed(2)).join(",");
+    if (e.threeFloorChoices.dataset.choices === key) return;
+    e.threeFloorChoices.dataset.choices = key;
+    e.threeFloorChoices.replaceChildren(
+      ...choices.map((height, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-secondary";
+        button.dataset.height = String(height);
+        button.textContent = `${index + 1} · 高度 ${height.toFixed(1)} m`;
+        return button;
+      }),
+    );
+  }
+
+  _chooseThreeFloor(height) {
+    if (!this.threeView || !Number.isFinite(height)) return;
+    this.threeView.chooseStartHeight(height, this._liveTrailPointsForThree());
+    this._syncThreeLive();
+    setStatus(`实测轨迹从高度 ${height.toFixed(1)} m 的可走面起步。`, "#10b981");
+  }
+
+  /** Crosshair and key hints for the pointer-locked spectator camera. */
+  _syncThreeHud() {
+    const e = this.els;
+    const in3D = this._is3DView();
+    const spectator = in3D && this.threeNavigationMode === "spectator";
+    const active = spectator && !!this.threeView?.spectatorActive;
+    e.threeEnterHint.hidden = !spectator || active;
+    e.threeLockHint.hidden = !active;
+    e.threeOrbitHint.hidden = !in3D || spectator;
+    e.threeCrosshair.hidden = !active;
+    // The speed slider only drives spectator movement; orbit mode is mouse-only.
+    e.threeSpeedRow.hidden = !spectator;
+  }
+
   /** Keep the read-only 3D scene in sync with 2D planning and live location state. */
   _syncThreeOverlays() {
     if (!this.threeView) return;
     const route = this.quickRouteTestRoute || this.editRoute;
-    const live = this._livePathForDisplay();
-    const position = this.livePositionBase || this.editLocateHint;
-    if (position) {
-      const [u, v] = this._baseToDisplay(position.x, position.y);
-      this.threeView.setLivePosition({
-        u,
-        v,
-        rot: this._headingBaseToDisplay(position.x, position.y, position.rot),
-      });
-      if (this.livePositionBase && !this._initialLiveHeightColored) {
-        const height = this.threeView.getHeightAt(u, v);
-        if (Number.isFinite(height)) {
-          this.threeView.setHeightFocus(height);
-          this._initialLiveHeightColored = true;
-        }
-      }
-    } else {
-      this.threeView.clearLivePosition();
-    }
-    this.threeView.setLivePath((live?.points || []).map((point) => [point.x, point.y]));
+    this._syncThreeLive();
     const diagnostics = this._diagnosticsForDisplay(route?.diagnostics || []);
     const plannedPoints = diagnostics.flatMap((diagnostic) => diagnostic.planned_points || []);
     const routePoints = (route?.points || []).map((point) => {
@@ -3686,7 +3760,8 @@ class MapNavigatorApp {
     this._syncViewModeUI();
 
     if (nextMode === "3d") {
-      void this._ensureThreeView();
+      if (this.threeView) this._syncThreeOverlays();
+      else void this._ensureThreeView();
       if (announce) setStatus("已切换到 3D 视图。", "#10b981");
     } else {
       if (this.threeView) this.threeView.setVisible(false);
@@ -3697,14 +3772,15 @@ class MapNavigatorApp {
 
   /** Select how mouse and WASD input navigate the active 3D view. */
   _setThreeNavigationMode(mode, {announce = true} = {}) {
-    const nextMode = mode === "orbit" ? "orbit" : "free";
+    const nextMode = mode === "orbit" ? "orbit" : "spectator";
     this.threeNavigationMode = nextMode;
     this.els.threeNavigationMode.value = nextMode;
     if (this.threeView) this.threeView.setNavigationMode(nextMode);
     else if (this._is3DView()) void this._ensureThreeView();
+    this._syncThreeHud();
 
     if (announce) {
-      setStatus(`3D 视角导航已切换为${nextMode === "orbit" ? "轨道环绕" : "自由飞行"}。`, "#10b981");
+      setStatus(`3D 视角导航已切换为${nextMode === "orbit" ? "轨道环绕" : "观察者漫游"}。`, "#10b981");
     }
   }
 
@@ -3730,7 +3806,6 @@ class MapNavigatorApp {
     e.viewMode2d.setAttribute("aria-pressed", String(!show3D));
     e.viewMode3d.setAttribute("aria-pressed", String(show3D));
     e.threeNavigationRow.hidden = !show3D;
-    e.threeSpeedRow.hidden = !show3D;
     e.threeRecolorRow.hidden = !show3D;
     e.threeNavigationMode.value = this.threeNavigationMode;
     e.canvasWrap.classList.toggle("view-3d", show3D);
@@ -3739,6 +3814,8 @@ class MapNavigatorApp {
     e.overlayCanvas.hidden = show3D;
     e.threeCanvas.hidden = !show3D;
     if (this.threeView) this.threeView.setVisible(show3D);
+    this._syncThreeHud();
+    this._syncThreeFloorPrompt();
 
     e.toolRouteTest.hidden = !editMode || show3D;
     e.toolEditStart.hidden = !editMode || show3D;
@@ -5001,10 +5078,9 @@ class MapNavigatorApp {
       setStatus("尚未获取到实时位置，暂时无法重着色。", "#f59e0b");
       return;
     }
-    const [u, v] = this._baseToDisplay(this.livePositionBase.x, this.livePositionBase.y);
-    const height = this.threeView.getHeightAt(u, v);
+    const height = this.threeView.liveHeight();
     if (!Number.isFinite(height)) {
-      setStatus("当前 3D 网格尚未加载，无法重着色。", "#f59e0b");
+      setStatus("当前 3D 网格尚未加载或起点楼层未选择，无法重着色。", "#f59e0b");
       return;
     }
     this.threeView.setHeightFocus(height);
@@ -5836,7 +5912,14 @@ class MapNavigatorApp {
       return;
     }
     if (this._is3DView()) {
-      if (e.key === "Escape" && this.threeView?.clearSelection()) {
+      const floorChoice =
+        /^[1-9]$/.test(e.key) && !this.els.threeFloorPrompt.hidden
+          ? this.els.threeFloorChoices.querySelectorAll("button[data-height]")[Number(e.key) - 1]
+          : null;
+      if (floorChoice) {
+        this._chooseThreeFloor(Number(floorChoice.dataset.height));
+        e.preventDefault();
+      } else if (e.key === "Escape" && this.threeView?.clearSelection()) {
         setStatus("已清除 3D 点位选择。", "#10b981");
         e.preventDefault();
       } else if (e.key === "+" || e.key === "=" || e.code === "NumpadAdd") {
