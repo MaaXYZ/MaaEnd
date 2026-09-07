@@ -245,7 +245,6 @@
         "tasks/ZiplineImport.json",
         "tasks/AeroSalvage.json",
         // group: sanity_sink
-        "tasks/AutoUseSpMedication.json",
         "tasks/AutoEssence.json",
         "tasks/ProtocolSpace.json",
         // group: dijiang_ship

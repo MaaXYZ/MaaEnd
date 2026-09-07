@@ -1,15 +1,9 @@
 {
     "__AutoUseSpMedicationInQuickUse": {
         "desc": "进入恢复理智界面",
-        "recognition": "OCR",
-        "roi": [
-            180,
-            180,
-            200,
-            100
-        ],
-        "expected": [
-            "恢复理智"
+        "recognition": "And",
+        "all_of": [
+            "AutoUseSpMedicationDialogText"
         ],
         "pre_wait_freezes": 100,
         "next": [
@@ -60,15 +54,9 @@
     },
     "__AutoUseSpMedicationNoUseEmergencySpBoosterFinish": {
         "desc": "未使用结束",
-        "recognition": "OCR",
-        "roi": [
-            180,
-            180,
-            200,
-            100
-        ],
-        "expected": [
-            "恢复理智"
+        "recognition": "And",
+        "all_of": [
+            "AutoUseSpMedicationDialogText"
         ],
         "inverse": true,
         "next": [
@@ -100,15 +88,9 @@
     },
     "__AutoUseSpMedicationUseEmergencySpBoosterFinish": {
         "desc": "使用理智界面关闭",
-        "recognition": "OCR",
-        "roi": [
-            180,
-            180,
-            200,
-            100
-        ],
-        "expected": [
-            "恢复理智"
+        "recognition": "And",
+        "all_of": [
+            "AutoUseSpMedicationDialogText"
         ],
         "inverse": true,
         "next": [

@@ -121,7 +121,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_PROTOSET",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -230,7 +229,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_PROTODISK",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -327,7 +325,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_TRIPHASIC_NANOFLAKE",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -424,7 +421,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_QUADRANT_FITTING_FLUID",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -521,7 +517,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_TACHYON_SCREENING_LATTICE",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -618,7 +613,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_D96_STEEL_SAMPLE_4",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -715,7 +709,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_METADIASTIMA_PHOTOEMISSION_TUBE",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -824,7 +817,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_PROTOHEDRON",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -933,7 +925,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_PROTOPRISM",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -1034,7 +1025,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_T_CREDS",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -1146,7 +1136,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_HEAVY_CAST_DIE",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -1258,7 +1247,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_CAST_DIE",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -1680,7 +1668,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_COGNITIVE_CARRIER_EXP",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -1811,7 +1798,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_COMBAT_RECORD_EXP",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
@@ -1937,7 +1923,6 @@
                         "ProtocolSpaceRewardAddItemData": {
                             "next": [
                                 "SupplyPlanRewardItemMet_WEAPON_EXP",
-                                "ProtocolSpaceRewardClaimSuccessSanityLow",
                                 "ProtocolSpaceRewardClaimSuccessContinue",
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
