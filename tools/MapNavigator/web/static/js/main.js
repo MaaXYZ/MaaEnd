@@ -198,6 +198,8 @@ class MapNavigatorApp {
     this.livePathBase = [];
     /** @type {?{x:number,y:number,rot:?number}} latest measured position in base px. */
     this.livePositionBase = null;
+    /** Geometry zone the measured points belong to; NaN while the trail is empty. */
+    this.liveGeometryZoneId = NaN;
     this._initialLiveHeightColored = false;
     /**
      * EDIT-mode off-mesh badges, in the points' own zone frame. Same shape as
@@ -3006,6 +3008,7 @@ class MapNavigatorApp {
     const [x, y] = this._pointToBase(zoneId, fix.x, fix.y);
     const rot = this._headingToBase(zoneId, fix.x, fix.y, fix.rot);
     this.livePositionBase = {x, y, rot};
+    this.liveGeometryZoneId = this.field.geometryZoneId(zoneId);
     const last = this.livePathBase[this.livePathBase.length - 1];
     if (!last || Math.hypot(last.x - x, last.y - y) >= 1) {
       this.livePathBase.push({x, y, rot});
@@ -3018,21 +3021,30 @@ class MapNavigatorApp {
   _clearLivePath() {
     this.livePathBase = [];
     this.livePositionBase = null;
+    this.liveGeometryZoneId = NaN;
     if (this.threeView) {
       this.threeView.clearLiveTrail();
       this._syncThreeFloorPrompt();
     }
   }
 
+  /** Whether the measured trail belongs to the map on screen; base px of another map must not be projected. */
+  _liveOnDisplayMap() {
+    if (!this.field || Number.isNaN(this.liveGeometryZoneId)) return false;
+    const displayZoneId = this._resolveZoneId(this._displayZoneId());
+    if (Number.isNaN(displayZoneId)) return false;
+    return this.field.geometryZoneId(displayZoneId) === this.liveGeometryZoneId;
+  }
+
   /** Every measured fix in the current display frame, oldest first, whether or not the path is shown. */
   _liveTrailPointsForThree() {
-    if (!this.field || this.state.mode !== Mode.EDIT) return [];
+    if (this.state.mode !== Mode.EDIT || !this._liveOnDisplayMap()) return [];
     return this.livePathBase.map((point) => this._baseToDisplay(point.x, point.y));
   }
 
   /** Project measured base-frame points into the current path-edit display frame. */
   _livePathForDisplay() {
-    if (!this.showLivePath || !this.field || this.state.mode !== Mode.EDIT) return null;
+    if (!this.showLivePath || this.state.mode !== Mode.EDIT || !this._liveOnDisplayMap()) return null;
     return {
       points: this.livePathBase.map((point) => {
         const [x, y] = this._baseToDisplay(point.x, point.y);
@@ -3661,16 +3673,20 @@ class MapNavigatorApp {
   /** Lift the measured trajectory and marker onto the mesh, then colour the mesh around the first fix. */
   _syncThreeLive() {
     if (!this.threeView) return;
-    const position = this.livePositionBase || this.editLocateHint;
+    // Only this map's fixes and locate hint reach the mesh; either one from another map is dropped.
+    const live = this._liveOnDisplayMap() ? this.livePositionBase : null;
     let current = null;
-    if (position) {
-      const [u, v] = this._baseToDisplay(position.x, position.y);
-      current = {u, v, rot: this._headingBaseToDisplay(position.x, position.y, position.rot)};
+    if (live) {
+      const [u, v] = this._baseToDisplay(live.x, live.y);
+      current = {u, v, rot: this._headingBaseToDisplay(live.x, live.y, live.rot)};
+    } else {
+      const hint = this._editLocateHintForDisplay();
+      if (hint) current = {u: hint.x, v: hint.y, rot: hint.rot};
     }
     const drawPath = this.showLivePath && this.state.mode === Mode.EDIT;
     this.threeView.setLiveTrail(this._liveTrailPointsForThree(), current, {drawPath});
     this._syncThreeFloorPrompt();
-    if (this.livePositionBase && !this._initialLiveHeightColored) {
+    if (live && !this._initialLiveHeightColored) {
       const height = this.threeView.liveHeight();
       if (Number.isFinite(height)) {
         this.threeView.setHeightFocus(height);
