@@ -716,7 +716,7 @@ Result HandleArrival(const Context& ctx, const Waypoint& waypoint, double actual
     case ActionType::PORTAL:
         return ArrivePortal(ctx, node_idx, actual_distance);
     case ActionType::ZIPLINE:
-        return StartZiplineHop(ctx, waypoint, actual_distance, node_idx);
+        return StartZiplineHop(ctx, waypoint, actual_distance);
     case ActionType::DIG:
         return ArriveDig(ctx, waypoint, node_idx, actual_distance);
     case ActionType::INTERACT:

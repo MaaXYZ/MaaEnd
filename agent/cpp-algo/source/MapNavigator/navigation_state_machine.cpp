@@ -869,10 +869,12 @@ bool NavigationStateMachine::HandleZiplineRecoveryReplan()
         return true;
     }
 
+    // 人留在架子上等重规划时脚下是架子, 不要求贴回 navmesh
+    const bool on_tower = runtime_state_.IsZiplineMounted();
     const navmesh::WorldPoint fix { .x = position_->x, .y = position_->y };
     const auto snap = NavmeshSnapAt(param_, position_->zone_id, fix, param_.navmesh_snap_radius);
     const bool fresh_fix = !position_provider_->LastCaptureWasHeld();
-    const bool on_mesh = snap && snap->distance <= param_.navmesh_snap_radius;
+    const bool on_mesh = on_tower || (snap && snap->distance <= param_.navmesh_snap_radius);
     if (!fresh_fix || !on_mesh) {
         ++recovery.rejected_fixes;
         if (recovery.rejected_fixes == 1) {
@@ -901,12 +903,27 @@ bool NavigationStateMachine::HandleZiplineRecoveryReplan()
     LogInfo << "Zipline recovery position stabilized." << VAR(elapsed_ms) << VAR(recovery.stable_hits) << VAR(recovery.rejected_fixes)
             << VAR(position_->x) << VAR(position_->y) << VAR(position_->zone_id);
 
-    const std::optional<DynamicAnchor> anchor =
-        ResolveReachableNavmeshAnchor(param_, session_, *position_, session_->current_node_idx(), "zipline_recovery");
-    const bool rejoined = anchor && TryApplyDynamicOverlayToAnchor("zipline_recovery", anchor->first, anchor->second);
+    // 站在架子上哪个点都走不到, 剩余展开路径直接作废, 只能重展开
+    bool rejoined = false;
+    if (!on_tower) {
+        const std::optional<DynamicAnchor> anchor =
+            ResolveReachableNavmeshAnchor(param_, session_, *position_, session_->current_node_idx(), "zipline_recovery");
+        rejoined = anchor && TryApplyDynamicOverlayToAnchor("zipline_recovery", anchor->first, anchor->second);
+    }
     // 链尾落点规划出的剩余展开路径从半路的架子上可能一个点都够不着; 那不代表导航失败, 只代表
-    // 这份展开作废了 —— 回到作者的原始路线重新展开剩余部分, 刚判死的那跳已进封禁名单。
+    // 这份展开作废了 —— 回到作者的原始路线重新展开剩余部分, 刚判死的那跳已经记在账本里。
     if (!rejoined && !TryReplanRemainingAuthoredRoute("zipline_recovery_reexpand")) {
+        if (on_tower) {
+            semantic_nodes::LeaveZiplineTower(BuildSemanticContext(
+                action_wrapper_,
+                position_provider_,
+                session_,
+                motion_controller_,
+                action_executor_,
+                position_,
+                &runtime_state_,
+                maa_context_));
+        }
         return FailNavigation(
             "zipline_recovery_route_unavailable",
             "Zipline recovery found no reachable point in the remaining route and could not re-expand the authored route; "
@@ -917,6 +934,22 @@ bool NavigationStateMachine::HandleZiplineRecoveryReplan()
     }
 
     recovery.Reset();
+    // 重展开后人还留在架子上, 就是新路线的头一跳从脚下起滑: 直接开跳, 不用再走过去按上索
+    if (runtime_state_.IsZiplineMounted()) {
+        semantic_nodes::StartZiplineHop(
+            BuildSemanticContext(
+                action_wrapper_,
+                position_provider_,
+                session_,
+                motion_controller_,
+                action_executor_,
+                position_,
+                &runtime_state_,
+                maa_context_),
+            session_->CurrentWaypoint(),
+            0.0);
+        return true;
+    }
     SelectPhaseForCurrentWaypoint("zipline_recovery");
     return true;
 }
@@ -953,12 +986,14 @@ bool NavigationStateMachine::TryReplanRemainingAuthoredRoute(const char* reason)
     NaviParam replan_param = param_;
     // 重展开时滑索照常参与, 只把执行侧判死过的跳从候选里拿掉——一根索滑不动不该罚掉整段路
     // 的所有捷径。弃索次数太多说明这一带的标定或定位整体不可靠, 才整段退回纯走路。
-    if (runtime_state_.zipline_abandon_count >= kZiplineAbandonWalkFallbackCount) {
+    const HopLedger& ledger = runtime_state_.zipline_ride.ledger();
+    const int32_t rope_failures = CountZiplineRopeFailures(ledger);
+    if (rope_failures >= kZiplineAbandonWalkFallbackCount) {
         replan_param.zipline_enabled = false;
-        LogWarn << "Authored route replan disables ziplines: too many abandons this run." << VAR(runtime_state_.zipline_abandon_count);
+        LogWarn << "Authored route replan disables ziplines: too many rope failures this run." << VAR(rope_failures);
     }
     else {
-        replan_param.banned_zipline_hops = runtime_state_.zipline_hop_bans;
+        replan_param.zipline_ledger = ledger;
     }
     replan_param.path.assign(authored.begin() + static_cast<std::ptrdiff_t>(slice_begin), authored.end());
     std::vector<Waypoint> replanned;
@@ -979,6 +1014,26 @@ bool NavigationStateMachine::TryReplanRemainingAuthoredRoute(const char* reason)
     runtime_state_.route.Reset();
     runtime_state_.nav_run_dirty = true;
     runtime_state_.dynamic_replan_requested = false;
+
+    // 人还站在架子上: 新路线仍从脚下这根架子起滑就留在上面, 接入段也不铺(铺了会把那一跳跳过去);
+    // 用不上这根架子就先下来再走
+    if (runtime_state_.IsZiplineMounted()) {
+        const semantic_nodes::Context ctx = BuildSemanticContext(
+            action_wrapper_,
+            position_provider_,
+            session_,
+            motion_controller_,
+            action_executor_,
+            position_,
+            &runtime_state_,
+            maa_context_);
+        if (semantic_nodes::CurrentHopStartsUnderfoot(ctx)) {
+            LogInfo << "Zipline recovery re-expanded the remaining authored route; the next hop leaves from this tower." << VAR(reason)
+                    << VAR(slice_begin) << VAR(session_->current_path().size());
+            return true;
+        }
+        semantic_nodes::LeaveZiplineTower(ctx);
+    }
 
     const std::optional<DynamicAnchor> anchor = ResolveReachableNavmeshAnchor(param_, session_, *position_, 0, reason);
     if (anchor) {
@@ -1394,7 +1449,7 @@ bool NavigationStateMachine::TickNavigate()
     // 上索认的是跟采集一样的交互提示 —— 面板给的是离身位最近的那台设备, 按常规判定圈停下时人还
     // 差着够不着架子, 所以判定圈按同一套收紧。只收链首那一次: 链中间的点人是从索上落到台面上的,
     // 不用再认提示, 而台面上迈不动步, 收紧了就是站在原地等超时。真收不拢也放回去, 别多出一种卡死
-    if (waypoint.action == ActionType::ZIPLINE && !runtime_state_.semantic.zipline_mounted
+    if (waypoint.action == ActionType::ZIPLINE && !runtime_state_.IsZiplineMounted()
         && session_->HardStalledMs(now) <= kCollectArrivalRelaxMs) {
         arrival_distance = std::min(arrival_distance, kCollectArrivalBandWu);
         // 按空一次就当人站得还不够近: 收紧了接着走(有备用站位的已经改瞄它了), 原地重按只会得到
@@ -2051,7 +2106,7 @@ bool NavigationStateMachine::TryZiplineMountPrompt(const Waypoint& waypoint, con
         return false;
     }
     // 已经站在架子上时下一跳靠瞄准接上, 不再上索; 预筛这时既没用也该省下来
-    if (runtime_state_.semantic.zipline_mounted) {
+    if (runtime_state_.IsZiplineMounted()) {
         return false;
     }
     if (zipline_mount_scanner_ == nullptr && maa_context_ != nullptr) {
@@ -2089,7 +2144,7 @@ NavigationStateMachine::PromptDistance NavigationStateMachine::NearestPromptDist
         const Waypoint& waypoint = path[index];
         const bool is_zipline = waypoint.action == ActionType::ZIPLINE;
         if (!waypoint.HasPosition() || (waypoint.action != ActionType::DIG && !is_zipline)
-            || (is_zipline && runtime_state_.semantic.zipline_mounted)) {
+            || (is_zipline && runtime_state_.IsZiplineMounted())) {
             continue;
         }
         const double dx = waypoint.x - position_->x;

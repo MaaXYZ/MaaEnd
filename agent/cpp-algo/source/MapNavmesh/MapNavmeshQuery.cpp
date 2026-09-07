@@ -630,23 +630,23 @@ json::object BuildRoutePreview(const QueryParam& query)
         if (waypoint.action != mapnavigator::ActionType::ZIPLINE) {
             continue;
         }
-        if (!waypoint.zipline_target) {
+        if (!waypoint.zipline_hop) {
             return Fail("滑索展开结果缺少下索点");
         }
 
         flush_walk();
-        const mapnavigator::ZiplineTarget& target = *waypoint.zipline_target;
-        const navmesh::WorldPoint landing { .x = target.x, .y = target.y };
+        const mapnavigator::ZiplineHopPlan& hop = *waypoint.zipline_hop;
+        const navmesh::WorldPoint landing { .x = hop.landing.x, .y = hop.landing.y };
         json::object segment {
             { "from", json::array { point.x, point.y } },
             { "to", json::array { landing.x, landing.y } },
             { "from_height", waypoint.target_deck_y ? json::value(*waypoint.target_deck_y) : json::value() },
-            { "to_height", target.height },
-            { "elevation_deg", target.elevation_deg },
+            { "to_height", hop.landing.height },
+            { "elevation_deg", hop.planned_elevation_deg },
             { "authored_group_begin", waypoint.authored_group_begin },
         };
-        if (waypoint.mount_restand) {
-            segment.emplace("mount_restand", json::array { waypoint.mount_restand->x, waypoint.mount_restand->y });
+        if (hop.restand) {
+            segment.emplace("mount_restand", json::array { hop.restand->x, hop.restand->y });
         }
         zipline_segments.emplace_back(std::move(segment));
         AppendDistinct(all_points, landing);

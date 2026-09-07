@@ -579,11 +579,11 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
     // 一条路线用几条索由代价决定，不设跳数上限：换乘要收钱，划不来的长链自己就被淘汰了。
     std::vector<std::vector<size_t>> links = BuildLinks(nodes, span_limit, footprints);
 
-    // 执行侧判死过的跳直接从连通图里拿掉。索不分上下行, 一根滑不动的索反着大概率也滑不动,
-    // 两个方向一起封。
-    if (!param.banned_zipline_hops.empty()) {
-        const auto near_tower = [&nodes](size_t tower, double x, double y) {
-            return std::hypot(nodes[tower].x - x, nodes[tower].y - y) <= kZiplineHopBanMatchWu;
+    // 执行侧账本里滑不动、滑错、落地丢了的跳直接从连通图里拿掉。索不分上下行, 一根滑不动的索
+    // 反着大概率也滑不动, 两个方向一起封。
+    if (!param.zipline_ledger.empty()) {
+        const auto near_tower = [&nodes](size_t tower, const ZiplineNodeRef& ref) {
+            return std::hypot(nodes[tower].x - ref.x, nodes[tower].y - ref.y) <= kZiplineHopBanMatchWu;
         };
         size_t banned_edges = 0;
         for (size_t i = 0; i < links.size(); ++i) {
@@ -593,9 +593,13 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
                     outgoing.begin(),
                     outgoing.end(),
                     [&](size_t j) {
-                        for (const ZiplineHopBan& ban : param.banned_zipline_hops) {
-                            if ((near_tower(i, ban.from_x, ban.from_y) && near_tower(j, ban.to_x, ban.to_y))
-                                || (near_tower(i, ban.to_x, ban.to_y) && near_tower(j, ban.from_x, ban.from_y))) {
+                        for (const ZiplineHopRecord& record : param.zipline_ledger) {
+                            if (!IsZiplineRopeFailure(record.outcome)) {
+                                continue;
+                            }
+                            const ZiplineNodeRef& from = record.plan.mount;
+                            const ZiplineNodeRef& to = record.plan.landing;
+                            if ((near_tower(i, from) && near_tower(j, to)) || (near_tower(i, to) && near_tower(j, from))) {
                                 ++banned_edges;
                                 return true;
                             }
@@ -604,7 +608,7 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
                     }),
                 outgoing.end());
         }
-        LogInfo << "ZiplineRoute: dropped the hops the runtime already gave up on." << VAR(param.banned_zipline_hops.size())
+        LogInfo << "ZiplineRoute: dropped the hops the runtime already gave up on." << VAR(param.zipline_ledger.size())
                 << VAR(banned_edges);
     }
 
