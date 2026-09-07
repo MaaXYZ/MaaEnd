@@ -1,6 +1,6 @@
 {
     "TrialOfSwordmancyStartTrial": {
-        "desc": "开始演算",
+        "desc": "开始演算前检查是否因溢出结束任务",
         "recognition": "TemplateMatch",
         "roi": [
             986,
@@ -9,6 +9,38 @@
             25
         ],
         "template": "TrialOfSwordmancy/TrialStart.png",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "TrialOfSwordmancyFinishOnOverflow",
+            "TrialOfSwordmancyStartTrialClick"
+        ]
+    },
+    "TrialOfSwordmancyFinishOnOverflow": {
+        "desc": "本局已溢出，保留手牌并正常结束任务",
+        "enabled": false,
+        "recognition": "DirectHit",
+        "inverse": true, // Decide 按手牌总分覆盖，不依赖受抽牌动画影响的溢出叹号
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "content": "$task.TrialOfSwordmancy.focus.overflow_stopped",
+                "display": "modal"
+            }
+        }
+    },
+    "TrialOfSwordmancyStartTrialClick": {
+        "desc": "点击开始演算并等待编队界面",
+        "recognition": "And",
+        "all_of": [
+            "TrialOfSwordmancyStartTrial"
+        ],
         "pre_delay": 0,
         "action": "Custom",
         "custom_action": "RepeatUntilFoundAction",
@@ -20,6 +52,7 @@
             ]
         },
         "post_delay": 0,
+        "rate_limit": 0,
         "next": [
             "TrialOfSwordmancyPrepareTeam"
         ]

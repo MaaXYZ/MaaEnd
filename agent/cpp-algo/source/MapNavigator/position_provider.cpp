@@ -64,7 +64,11 @@ void PositionProvider::SetFrameObserver(std::function<void(const cv::Mat&)> obse
     frame_observer_ = std::move(observer);
 }
 
-bool PositionProvider::Capture(NaviPosition* out_pos, bool force_global_search, const std::string& expected_zone_id)
+bool PositionProvider::Capture(
+    NaviPosition* out_pos,
+    bool force_global_search,
+    const std::string& expected_zone_id,
+    const std::vector<maplocator::SearchHint>& search_hints)
 {
     if (out_pos == nullptr) {
         return false;
@@ -96,6 +100,7 @@ bool PositionProvider::Capture(NaviPosition* out_pos, bool force_global_search, 
     maplocator::LocateOptions options;
     options.force_global_search = force_global_search;
     options.expected_zone_id = expected_zone_id;
+    options.search_hints = search_hints;
 
     const auto locate_result = locator_->locate(minimap, options);
     const auto locate_done_at = std::chrono::steady_clock::now();

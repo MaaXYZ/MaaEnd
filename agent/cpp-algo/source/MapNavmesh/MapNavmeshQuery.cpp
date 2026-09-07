@@ -124,7 +124,7 @@ QueryContext* AcquireContext(const std::string& configured_path, std::string& er
     auto context = std::make_unique<QueryContext>();
     context->pack = std::move(*loaded.pack);
     context->planner.emplace(context->pack);
-    context->engine.emplace(context->pack, *context->planner);
+    context->engine.emplace(context->pack, *context->planner, mapnavigator::NoGoTablePath());
     context->pack.releaseLinks();
     QueryContext* raw = context.get();
     g_contexts.emplace(key, std::move(context));
@@ -340,7 +340,7 @@ json::object BuildRoute(QueryContext& context, const QueryParam& param)
     const navmesh::WorldPoint start { .x = param.start[0], .y = param.start[1] };
     const navmesh::WorldPoint goal { .x = param.goal[0], .y = param.goal[1] };
     const float floor_y = FloorOrNone(param.floor_y);
-    const auto plan = context.engine->plan(zone->name, start, goal, floor_y, floor_y, FloorOrNone(param.goal_deck_y), {}, {}, {});
+    const auto plan = context.engine->plan(zone->name, start, goal, floor_y, floor_y, FloorOrNone(param.goal_deck_y), {}, {});
 
     if (!plan.ok) {
         // 失败时带上两端的离网探针，调用方才能标出是哪个点掉在网格外。

@@ -719,26 +719,6 @@ std::vector<uint8_t> WallsAtLayer(
     return keep;
 }
 
-Mask WallHits(const std::vector<WorldPoint>& p0, const std::vector<WorldPoint>& p1, double ox, double oy, int64_t nx, int64_t ny)
-{
-    Mask hit(nx, ny, 0);
-    for (size_t i = 0; i < p0.size(); ++i) {
-        const double L = std::hypot(p1[i].x - p0[i].x, p1[i].y - p0[i].y);
-        const int64_t steps = sampleSteps(L, 0.2);
-        for (int64_t k = 0; k < steps; ++k) {
-            const double t = static_cast<double>(k) / static_cast<double>(steps - 1);
-            const double sx = p0[i].x + (p1[i].x - p0[i].x) * t;
-            const double sy = p0[i].y + (p1[i].y - p0[i].y) * t;
-            const int64_t gx = static_cast<int64_t>(std::floor((sx - ox) / kCS));
-            const int64_t gy = static_cast<int64_t>(std::floor((sy - oy) / kCS));
-            if (gx >= 0 && gx < nx && gy >= 0 && gy < ny) {
-                hit.at(gy, gx) = 1;
-            }
-        }
-    }
-    return hit;
-}
-
 std::vector<int64_t> Comps4(const Mask& mask)
 {
     const int64_t ny = mask.ny, nx = mask.nx, NC = nx * ny;

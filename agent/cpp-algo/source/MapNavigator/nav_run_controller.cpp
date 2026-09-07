@@ -403,6 +403,7 @@ void NavRunController::invalidate()
 bool NavRunController::buildPlan(
     const NaviParam& param,
     const NavigationSession& session,
+    const NavigationRuntimeState& runtime,
     const NaviPosition& position,
     size_t anchor_index,
     const Waypoint& anchor,
@@ -459,7 +460,8 @@ bool NavRunController::buildPlan(
 
     const navmesh::WorldPoint start { .x = position.x, .y = position.y };
     const navmesh::WorldPoint goal { .x = anchor.x, .y = anchor.y };
-    auto route = PlanNavmeshRoute(param, position.zone_id, start, goal, anchor.target_deck_y);
+    auto route =
+        PlanNavmeshRoute(param, position.zone_id, start, goal, anchor.target_deck_y, std::nullopt, nullptr, &runtime.virtual_no_go);
     if (route && route->ok() && route->path.points.size() >= 2) {
         commit(std::move(route->path), false);
         return true;
@@ -592,7 +594,7 @@ NavRunTickResult NavRunController::tick(
         if (failed_build_anchor_ == anchor_index && ElapsedMs(failed_build_at_, now) < kNavRunPlanFailureCooldownMs) {
             return result;
         }
-        if (!buildPlan(param, *session, position, anchor_index, anchor, NavRunReplanReason::AnchorChanged, now)) {
+        if (!buildPlan(param, *session, *runtime, position, anchor_index, anchor, NavRunReplanReason::AnchorChanged, now)) {
             failed_build_anchor_ = anchor_index;
             failed_build_at_ = now;
             return result;
@@ -628,7 +630,7 @@ NavRunTickResult NavRunController::tick(
         if (budget_left && (hard_off || cooldown_ready)) {
             plan_.last_soft_replan_at = now;
             plan_.soft_replan_attempts += 1;
-            if (buildPlan(param, *session, position, anchor_index, anchor, reason, now)) {
+            if (buildPlan(param, *session, *runtime, position, anchor_index, anchor, reason, now)) {
                 auto reprojected = ProjectOntoCorridor(plan_.path, plan_.cursor, position);
                 if (!reprojected) {
                     invalidate();

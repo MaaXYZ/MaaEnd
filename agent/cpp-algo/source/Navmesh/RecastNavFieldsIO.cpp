@@ -19,7 +19,7 @@ constexpr size_t kHeaderSize = 48;
 constexpr size_t kSectionEntrySize = 24;
 constexpr size_t kConstSize = 144;
 
-// 采样与包围盒口径写死在 StampWalls / WallHits / BakeWalls 里, 旁包按同样的值烘。
+// 采样与包围盒口径写死在 StampWalls / BakeWalls 里, 旁包按同样的值烘。
 constexpr double kWallSampleSub = 0.4;
 constexpr double kHitSampleSub = 0.2;
 constexpr double kWallBBoxPad = 4.0;

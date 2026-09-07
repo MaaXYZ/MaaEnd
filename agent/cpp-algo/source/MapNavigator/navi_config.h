@@ -155,8 +155,20 @@ constexpr int32_t kDynamicRecoveryTotalTimeoutMs = 30000;
 // abandons the precise route.
 constexpr int32_t kRecoveryJumpAttemptsBeforeDetour = 2;
 constexpr double kDynamicRecoveryResetDistance = 2.0;
-constexpr double kCloseGoalDetourSuppressSlack = 6.0;
-constexpr int32_t kRecoveryDetourAttemptsBeforeUnstick = 1;
+// Each detour attempt places one virtual no-go disc and re-plans around it; a further stall at the same
+// spot places a larger one. After this many attempts at one anchor the ladder moves on to the physical
+// unstick.
+constexpr int32_t kRecoveryDetourAttemptsBeforeUnstick = 3;
+// Virtual no-go disc placed ahead of a stall. The first radius is an estimate of the unseen obstacle's
+// size; a further stall against an existing disc adds one step, up to the cap. The standoff keeps the
+// agent's own cell outside the disc so the replan has a start point; the goal clearance keeps the anchor
+// outside it.
+constexpr double kVirtualNoGoRadius = 2.0;
+constexpr double kVirtualNoGoRadiusStep = 1.5;
+constexpr double kVirtualNoGoRadiusMax = 6.5;
+constexpr double kVirtualNoGoRadiusMin = 1.0;
+constexpr double kVirtualNoGoStandoff = 1.0;
+constexpr double kVirtualNoGoGoalClearance = 1.0;
 constexpr double kUnstickSampleStepM = 0.5;  // per-ray on/off scan resolution (world units)
 constexpr double kUnstickMaxRockCrossingM =
     2.0;                                     // tolerate this much off-mesh (the rock) before solid ground; longer = water => reject bearing
@@ -260,6 +272,10 @@ constexpr double kRelocationResumeMinDistance = 3.0;
 // 一跳分三步: 站上架子(仅链首)、把镜头对准落点、按左键起滑。滑行途中人悬在半空, 位置一路在动,
 // 所以判完成只认「进了落点圈」这一条, 任何「动了就算走完」的判据都会在起滑瞬间成立
 constexpr double kZiplineLandingBandWu = 6.0;
+// 落地那一帧是冷启动, 把落点(和同一架子上其它索的落点)交给定位器当搜索先验, 每个点开这么大
+// 半径的小窗跟 YOLO 格窗比分。要装得下落点散布(band), 又小到错先验只能撞出弱峰；模板半宽由
+// 定位器自己补边, 这里不用算进去
+constexpr double kZiplineLandingHintRadiusWu = 24.0;
 constexpr int32_t kZiplineRideRetryIntervalMs = 150;
 constexpr int32_t kZiplineRideTimeoutMs = 30000;
 // 落点圈内还要连着读到这么多个非 held 定位才收工, 避免滑行途中恰好飞过落点上方就提前落地
@@ -289,11 +305,6 @@ constexpr int32_t kZiplineLaunchAttempts = 3;
 // 滑行中位置每拍都在变, 连着这么多拍几乎不动就说明这趟已经结束了
 constexpr double kZiplineSettleMoveWu = 1.5;
 constexpr int32_t kZiplineSettleFixes = 4;
-// 全局搜索偶尔会在同一区域错锁到远处的相似纹理。低分本身不能判错，滑到相邻索也可能真离开
-// 目标线段；只有「低于断言定位的常用及格线」且「距上索点远超当前索跨度」才拒绝这一帧。
-constexpr double kZiplineOutlierFixConfidence = 0.70;
-constexpr double kZiplineOutlierSpanFactorSquared = 9.0;
-constexpr double kZiplineOutlierDistanceSlackWu = 12.0;
 // 下索是一次右键。站在架子上时移动指令会被架子的选点状态吃掉, 所以走路之前必须先下来
 constexpr int32_t kZiplineDismountHoldMs = 80;
 // 索没通电、两端根本没挂索时起滑是空响, 人还站在架子上。滑一趟是大位移, 所以「过了确认时间
@@ -342,6 +353,8 @@ constexpr double kPostTurnForwardCommitMinDegrees = 15.0;
 
 constexpr const char* kDefaultNavmeshRelativePath = "assets/resource/model/map/navmesh/base.nav";
 constexpr const char* kDefaultCompressedNavmeshRelativePath = "assets/resource/model/map/navmesh/base.nav.gz";
+// 作者圈的虚拟禁区表。resource/model 是另一个仓库的子模块, 本仓库的配置统一放 data/<模块>/。
+constexpr const char* kNoGoTableRelativePath = "data/MapNavigator/nogo_zones.json";
 
 // Prompt-driven actions (collect / async interact), three nodes per kind: entry, authoritative recognition, exit.
 // The recognition node is also the ROI source, the pre-warm target and where the route's text is injected.
@@ -391,9 +404,18 @@ constexpr int32_t kSprintCancelReleaseMs = 60;
 // otherwise the mount prompt can appear on the first frame after walking is toggled and stop motion immediately.
 constexpr double kCollectWalkEnterBandWu = 3.0;
 constexpr double kCollectWalkExitBandWu = 4.5;
+// DIG accepts arrival at 2.25 units: the ordinary 3-unit walking band leaves only 0.75 units to slow down.
+// Start earlier without changing where digging is allowed or opting ordinary DIG points into strict settling.
+constexpr double kDigWalkEnterBandWu = 5.0;
+constexpr double kDigWalkExitBandWu = 7.5;
 constexpr double kZiplineWalkEnterBandWu = 5.0;
 constexpr double kZiplineWalkExitBandWu = 7.5;
 static_assert(kCollectWalkEnterBandWu < kCollectWalkExitBandWu, "collect walk enter band must be smaller than its exit band");
+static_assert(kDigWalkEnterBandWu < kDigWalkExitBandWu, "dig walk enter band must be smaller than its exit band");
+static_assert(
+    kStrictArrivalLookaheadRadius + kMeasurementDefaultPositionQuantum < kDigWalkEnterBandWu,
+    "dig walking must start before arrival");
+static_assert(kDigWalkExitBandWu < kCollectSprintSuppressBandWu, "dig walk bands must sit inside the sprint-suppress band");
 static_assert(kZiplineWalkEnterBandWu < kZiplineWalkExitBandWu, "zipline walk enter band must be smaller than its exit band");
 static_assert(kZiplineWalkExitBandWu < kCollectSprintSuppressBandWu, "walk bands must sit inside the sprint-suppress band");
 

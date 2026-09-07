@@ -1684,5 +1684,6 @@
     "resource/image/GiftOperator/Operators/Typhoeus": "36151da43f148e9f8d1a123b65f80279baca26216188a399f166edec61030654",
     "resource/image/GiftOperator/GiftOperatorGiftFullButton": "a8db626ab1f1c1a4e798afc93d871c0d636c88e0eae6180014f79597e5fc4bea",
     "resource/image/GiftOperator/GiftOperatorGiftButton": "3e85d0b7f03ebe25e159f6216e30eb633de46d83d6df29a7624163e954c917fc",
-    "resource/image/GiftOperator/GiftFullOperatorGiftButton": "d6c17198f994990c61b30a9a8cc0b0ddfdfc34108fcf326344dc475bee85fa47"
+    "resource/image/GiftOperator/GiftFullOperatorGiftButton": "d6c17198f994990c61b30a9a8cc0b0ddfdfc34108fcf326344dc475bee85fa47",
+    "resource/image/AutoUseSpMedication/AddButton": "94cfcf1433609376110aafd2b28303b8962f1c70009fc16cdbc9ac4ba2c2f7fe"
 }

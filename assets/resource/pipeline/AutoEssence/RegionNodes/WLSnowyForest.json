@@ -36,8 +36,8 @@
         "pre_delay": 0,
         "post_delay": 0,
         "next": [
-            // 距离淤积点最近的锚点：寒雾松林（锚点编号按 X 从左到右递增）
-            "SceneEnterWorldWulingSnowyForest1"
+            // 距离淤积点最近的锚点：雪祀木屋
+            "SceneEnterWorldWulingSnowyForest2"
         ]
     },
     "__GotoTriggerPointNearAnchor_WLSnowyForest": {
@@ -49,10 +49,10 @@
                 "custom_recognition_param": {
                     "zone_id": "Wuling_Base",
                     "target": [
-                        1408.68,
-                        986.93,
-                        15.66,
-                        16.44
+                        1505.45,
+                        982.74,
+                        15.43,
+                        16.63
                     ]
                 }
             }

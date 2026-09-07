@@ -4,7 +4,6 @@
             "name": "AutoEssence",
             "label": "$task.AutoEssence.label",
             "entry": "AutoEssenceSchedule",
-            "description": "$task.AutoEssence.description",
             "controller": [
                 "ADB",
                 "Linux-Gamescope",
@@ -345,7 +344,10 @@
                         "AutoEssenceClickDiscardButton": {
                             "enabled": true
                         },
-                        "AutoEssenceDismissWarningSanityLowExit": {
+                        "AutoEssenceDismissWarningSanityLowStop": {
+                            "enabled": false
+                        },
+                        "AutoEssenceDismissWarningSanityLowUseSpMedicationPrepare": {
                             "enabled": false
                         },
                         "AutoEssenceDismissWarningSanityLowContinue": {
@@ -366,16 +368,14 @@
                         "AutoEssenceChooseScaling2": {
                             "enabled": false
                         },
-                        "AutoEssenceDismissWarningSanityLowExit": {
-                            "enabled": true
-                        },
                         "AutoEssenceDismissWarningSanityLowContinue": {
                             "enabled": false
                         }
                     },
                     "option": [
                         "AutoEssenceDoOverride",
-                        "EssenceFilterAfterBattle"
+                        "EssenceFilterAfterBattle",
+                        "AutoUseSpMedication"
                     ]
                 },
                 {
@@ -391,16 +391,14 @@
                         "AutoEssenceChooseScaling2": {
                             "enabled": true
                         },
-                        "AutoEssenceDismissWarningSanityLowExit": {
-                            "enabled": true
-                        },
                         "AutoEssenceDismissWarningSanityLowContinue": {
                             "enabled": false
                         }
                     },
                     "option": [
                         "AutoEssenceDoOverride",
-                        "EssenceFilterAfterBattle"
+                        "EssenceFilterAfterBattle",
+                        "AutoUseSpMedication"
                     ]
                 }
             ]
@@ -424,9 +422,6 @@
                         "AutoEssenceChooseScaling2": {
                             "enabled": false
                         },
-                        "AutoEssenceDismissWarningSanityLowExit": {
-                            "enabled": true
-                        },
                         "AutoEssenceDismissWarningSanityLowContinue": {
                             "enabled": false
                         },
@@ -438,7 +433,8 @@
                         }
                     },
                     "option": [
-                        "EssenceFilterAfterBattle"
+                        "EssenceFilterAfterBattle",
+                        "AutoUseSpMedication"
                     ]
                 },
                 {
@@ -454,9 +450,6 @@
                         "AutoEssenceChooseScaling2": {
                             "enabled": true
                         },
-                        "AutoEssenceDismissWarningSanityLowExit": {
-                            "enabled": true
-                        },
                         "AutoEssenceDismissWarningSanityLowContinue": {
                             "enabled": false
                         },
@@ -468,8 +461,122 @@
                         }
                     },
                     "option": [
-                        "EssenceFilterAfterBattle"
+                        "EssenceFilterAfterBattle",
+                        "AutoUseSpMedication"
                     ]
+                }
+            ]
+        },
+        "AutoUseSpMedication": {
+            "type": "select",
+            "label": "$option.AutoUseSpMedication.label",
+            "default_case": "UseMedication",
+            "cases": [
+                {
+                    "name": "EndTask",
+                    "label": "$option.AutoUseSpMedication.cases.EndTask.label",
+                    "pipeline_override": {
+                        "AutoEssenceDismissWarningSanityLowStop": {
+                            "enabled": true
+                        },
+                        "AutoEssenceDismissWarningSanityLowUseSpMedicationPrepare": {
+                            "enabled": false
+                        },
+                        "AutoEssenceLowSpUseMedication": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "UseMedication",
+                    "label": "$option.AutoUseSpMedication.cases.UseMedication.label",
+                    "pipeline_override": {
+                        "AutoEssenceDismissWarningSanityLowStop": {
+                            "enabled": false
+                        },
+                        "AutoEssenceDismissWarningSanityLowUseSpMedicationPrepare": {
+                            "enabled": true
+                        },
+                        "AutoEssenceLowSpUseMedication": {
+                            "enabled": true
+                        }
+                    },
+                    "option": [
+                        "AutoEssenceSpMedicationExpireWithinDays"
+                    ]
+                }
+            ]
+        },
+        "AutoEssenceSpMedicationExpireWithinDays": {
+            "label": "$option.AutoUseSpMedicationExpireWithinDays.label",
+            "description": "$option.AutoUseSpMedicationExpireWithinDays.description",
+            "type": "select",
+            "default_case": "Days3",
+            "cases": [
+                {
+                    "name": "All",
+                    "label": "$option.AutoUseSpMedicationExpireWithinDays.cases.All.label",
+                    "pipeline_override": {
+                        "__AutoUseSpMedicationOCRRecognitionEmergencySanityBoosterRemainingTime": {
+                            "expected": [
+                                // 剩余时间 OCR：行首锚定，避免匹配「剩余23小时」「剩余1天」等带前缀文本
+                                // @i18n-skip
+                                "^(\\d+小时|([1-9]|1[0-3])天)"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Days10",
+                    "label": "$option.AutoUseSpMedicationExpireWithinDays.cases.Days10.label",
+                    "pipeline_override": {
+                        "__AutoUseSpMedicationOCRRecognitionEmergencySanityBoosterRemainingTime": {
+                            "expected": [
+                                // 剩余时间 OCR：行首锚定，避免匹配「剩余23小时」「剩余1天」等带前缀文本
+                                // @i18n-skip
+                                "^(\\d+小时|([1-9]|10)天)"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Days7",
+                    "label": "$option.AutoUseSpMedicationExpireWithinDays.cases.Days7.label",
+                    "pipeline_override": {
+                        "__AutoUseSpMedicationOCRRecognitionEmergencySanityBoosterRemainingTime": {
+                            "expected": [
+                                // 剩余时间 OCR：行首锚定，避免匹配「剩余23小时」「剩余1天」等带前缀文本
+                                // @i18n-skip
+                                "^(\\d+小时|[1-7]天)"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Days3",
+                    "label": "$option.AutoUseSpMedicationExpireWithinDays.cases.Days3.label",
+                    "pipeline_override": {
+                        "__AutoUseSpMedicationOCRRecognitionEmergencySanityBoosterRemainingTime": {
+                            "expected": [
+                                // 剩余时间 OCR：行首锚定，避免匹配「剩余23小时」「剩余1天」等带前缀文本
+                                // @i18n-skip
+                                "^(\\d+小时|[1-3]天)"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Days1",
+                    "label": "$option.AutoUseSpMedicationExpireWithinDays.cases.Days1.label",
+                    "pipeline_override": {
+                        "__AutoUseSpMedicationOCRRecognitionEmergencySanityBoosterRemainingTime": {
+                            "expected": [
+                                // 剩余时间 OCR：行首锚定，避免匹配「剩余23小时」「剩余1天」等带前缀文本
+                                // @i18n-skip
+                                "^(\\d+小时|1天)"
+                            ]
+                        }
+                    }
                 }
             ]
         },
@@ -506,7 +613,6 @@
         "AutoEssenceRepeatCount": {
             "type": "input",
             "label": "$option.AutoEssenceRepeatCount.label",
-            "description": "$option.AutoEssenceRepeatCount.description",
             "inputs": [
                 {
                     "name": "AutoEssenceRepeatCountValue",
@@ -514,7 +620,7 @@
                     "description": "$option.AutoEssenceRepeatCount.inputs.AutoEssenceRepeatCountValue.description",
                     "pipeline_type": "int",
                     "verify": "^(([1-9])|([1-9][0-9]))$",
-                    "default": "1"
+                    "default": "5"
                 }
             ],
             "pipeline_override": {
@@ -559,7 +665,6 @@
         "EssenceFilterAfterBattle": {
             "type": "switch",
             "label": "$option.EssenceFilterAfterBattle.label",
-            "description": "$option.EssenceFilterAfterBattle.description",
             "default_case": "No",
             "cases": [
                 {
