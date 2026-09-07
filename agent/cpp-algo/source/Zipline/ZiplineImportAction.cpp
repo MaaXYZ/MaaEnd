@@ -131,9 +131,11 @@ std::string QueryValue(const std::string& url, const std::string& key)
     return { };
 }
 
-// 请求 URL 会携带 roleId/serverId。它们只能在内存里参与账号匹配，任何日志都必须先打码。
+// 请求 URL 会携带 roleId/serverId。它们只能在内存里参与账号匹配，任何日志都必须先打码；
+// 同名参数可能重复出现，每一处都要打。
 std::string RedactAccountQuery(std::string url)
 {
+    const std::string mask = "<redacted>";
     for (const std::string key : { "roleId", "serverId" }) {
         const std::string needle = key + "=";
         size_t pos = url.find('?');
@@ -142,8 +144,9 @@ std::string RedactAccountQuery(std::string url)
             if (url.compare(start, needle.size(), needle) == 0) {
                 const size_t value_start = start + needle.size();
                 const size_t value_end = url.find_first_of("&#", value_start);
-                url.replace(value_start, value_end == std::string::npos ? std::string::npos : value_end - value_start, "<redacted>");
-                break;
+                url.replace(value_start, value_end == std::string::npos ? std::string::npos : value_end - value_start, mask);
+                pos = url.find('&', value_start + mask.size());
+                continue;
             }
             pos = url.find('&', start);
         }
