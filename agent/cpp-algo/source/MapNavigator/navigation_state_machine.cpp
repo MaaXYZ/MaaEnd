@@ -69,16 +69,12 @@ bool IsRequiredSemanticAnchor(const Waypoint& waypoint)
     if (!waypoint.HasPosition()) {
         return waypoint.IsHeadingOnly() || waypoint.IsZoneDeclaration();
     }
-    return waypoint.action != ActionType::RUN || waypoint.RequiresStrictArrival();
+    return !waypoint.IsContinuousRun();
 }
 
 double ArrivalBandForStartupBypass(const Waypoint& waypoint)
 {
-    double arrival_band = waypoint.ArrivalBand(kMeasurementDefaultPositionQuantum);
-    if (waypoint.action == ActionType::PORTAL) {
-        arrival_band = std::max(arrival_band, kPortalCommitDistance);
-    }
-    return arrival_band;
+    return std::max(waypoint.ArrivalBand(kMeasurementDefaultPositionQuantum), waypoint.Traits().commit_distance);
 }
 
 std::optional<DynamicAnchor> ResolveCurrentAnchorFrom(NavigationSession* session, const NaviPosition& position, size_t start_index)
@@ -368,7 +364,7 @@ semantic_nodes::Context BuildSemanticContext(
     PositionProvider* position_provider,
     NavigationSession* session,
     MotionController* motion_controller,
-    IActionExecutor* action_executor,
+    ActionExecutor* action_executor,
     NaviPosition* position,
     NavigationRuntimeState* runtime_state,
     MaaContext* maa_context)
@@ -404,7 +400,7 @@ NavigationStateMachine::NavigationStateMachine(
     PositionProvider* position_provider,
     NavigationSession* session,
     MotionController* motion_controller,
-    IActionExecutor* action_executor,
+    ActionExecutor* action_executor,
     NaviPosition* position,
     std::function<bool()> should_stop,
     MaaContext* maa_context)
@@ -1298,7 +1294,7 @@ bool NavigationStateMachine::TickNavigate()
         bool consumed_any = false;
         while (remaining_to_consume > 0 && session_->HasCurrentWaypoint()) {
             const Waypoint& corridor_passed = session_->CurrentWaypoint();
-            if (!corridor_passed.HasPosition() || corridor_passed.action != ActionType::RUN || corridor_passed.RequiresStrictArrival()) {
+            if (!corridor_passed.IsContinuousRun()) {
                 break;
             }
             session_->AdvanceToNextWaypoint(ActionType::RUN, "navmesh_corridor_passed_run_waypoint");
@@ -1372,7 +1368,7 @@ bool NavigationStateMachine::TickNavigate()
 
     if (TryZiplineMountPrompt(waypoint, route)) {
         runtime_state_.semantic.zipline_prompt_probe = true;
-        const semantic_nodes::Result prompt_result = semantic_nodes::HandleArrivalSemantic(semantic_ctx, waypoint, route.waypoint_distance);
+        const semantic_nodes::Result prompt_result = semantic_nodes::HandleArrival(semantic_ctx, waypoint, route.waypoint_distance);
         runtime_state_.semantic.zipline_prompt_probe = false;
         if (prompt_result.request_failure) {
             return FailNavigation(
@@ -1387,12 +1383,9 @@ bool NavigationStateMachine::TickNavigate()
         }
     }
 
-    double arrival_distance = route.arrival_band;
-    if (waypoint.action == ActionType::PORTAL) {
-        arrival_distance = std::max(arrival_distance, kPortalCommitDistance);
-    }
+    double arrival_distance = std::max(route.arrival_band, waypoint.Traits().commit_distance);
     // 提示驱动的点判定圈收窄了, 真站不上去(硬性无进展这么久)就放回常规值, 别多出一种卡死
-    else if (waypoint.StopsOnPromptDetection() && session_->HardStalledMs(now) > kCollectArrivalRelaxMs) {
+    if (waypoint.StopsOnPromptDetection() && session_->HardStalledMs(now) > kCollectArrivalRelaxMs) {
         const double relaxed = waypoint.ArrivalBand(kMeasurementDefaultPositionQuantum, /*relax_tight_band=*/true);
         if (relaxed > arrival_distance && route.waypoint_distance <= relaxed) {
             LogInfo << "Prompt-point arrival band relaxed after no progress." << VAR(session_->current_node_idx())
@@ -1423,8 +1416,8 @@ bool NavigationStateMachine::TickNavigate()
             // 有各自的站位与提交距离, 判定圈被放宽或收紧的那几种情况要的也正是原来的宽松判定, 都不介入。
             if (waypoint.SettlesAtArrival()) {
                 if (route.waypoint_distance <= route.arrival_band) {
-                    // 这一拍的位移可能直接跨过步行进带; 挖掘的末端纠正必须先进入步行再挪动。
-                    if (waypoint.action == ActionType::DIG) {
+                    // 这一拍的位移可能直接跨过步行进带; 要走路纠正的点必须先进入步行再挪动。
+                    if (waypoint.Traits().settle_walking) {
                         walk_mode_.Request(true);
                     }
                     semantic_nodes::SettleAtStrictGoal(semantic_ctx, waypoint);
@@ -1435,40 +1428,15 @@ bool NavigationStateMachine::TickNavigate()
                 walk_mode_.Request(false);
             }
 
-            const semantic_nodes::Result arrival_semantic_result =
-                semantic_nodes::HandleArrivalSemantic(semantic_ctx, waypoint, route.waypoint_distance);
-            if (arrival_semantic_result.request_failure) {
+            const semantic_nodes::Result arrival_result = semantic_nodes::HandleArrival(semantic_ctx, waypoint, route.waypoint_distance);
+            if (arrival_result.request_failure) {
                 return FailNavigation(
-                    arrival_semantic_result.failure_reason,
-                    arrival_semantic_result.failure_log_message,
+                    arrival_result.failure_reason,
+                    arrival_result.failure_log_message,
                     route.waypoint_distance,
                     0.0,
                     stalled_ms);
             }
-            if (arrival_semantic_result.consumed) {
-                return true;
-            }
-
-            const std::optional<size_t> arrived_absolute_node_idx = session_->CurrentAbsoluteNodeIndex();
-            if (waypoint.RequiresStrictArrival() && motion_controller_->IsMoving()) {
-                motion_controller_->SetForwardState(false);
-                utils::SleepFor(kStopWaitMs);
-            }
-            // rec 模式的点走到这里说明文本没解析出来, 异步那条路没接住它。原语义是到点狂按F, 正是它要避开的
-            if (waypoint.IsRecInteract()) {
-                LogInfo << "Action: INTERACT in rec mode, skipping the key press." << VAR(waypoint.interact_text_node);
-            }
-            else {
-                action_executor_->Execute(waypoint.action);
-            }
-            session_->NoteCanonicalFinalGoalConsumed(arrived_absolute_node_idx, *position_, "waypoint_action_completed");
-            session_->AdvanceToNextWaypoint(waypoint.action, "waypoint_action_completed");
-            runtime_state_.OnWaypointAdvance();
-            if (!session_->HasCurrentWaypoint()) {
-                session_->NoteRouteTailConsumed(*position_, "route_tail_consumed");
-                return true;
-            }
-            SelectPhaseForCurrentWaypoint("waypoint_action_completed");
             return true;
         }
     }
@@ -1523,8 +1491,8 @@ bool NavigationStateMachine::TickNavigate()
     // cursor. Fed straight-line distance, so the timer only grows while genuinely off-route with no inward gain.
     // A non-finite cross_track means the projection could not be computed at all, not that the agent left the
     // route, so it must not arm the watchdog; the no-progress clocks still cover that case.
-    if (session_->phase() == NaviPhase::Navigate && waypoint.action == ActionType::RUN && !waypoint.RequiresStrictArrival()
-        && !route.on_route && std::isfinite(route.cross_track) && !runtime_state_.cross_tier_escape.active) {
+    if (session_->phase() == NaviPhase::Navigate && waypoint.IsContinuousRun() && !route.on_route && std::isfinite(route.cross_track)
+        && !runtime_state_.cross_tier_escape.active) {
         OffRouteWedgeState& wedge = runtime_state_.offroute;
         const double progress_epsilon = std::max(kNoProgressDistanceEpsilon, kMeasurementDefaultPositionQuantum);
         if (!wedge.active || route.progress_distance + progress_epsilon < wedge.best_distance) {
@@ -2159,9 +2127,8 @@ void NavigationStateMachine::UpdateWalkMode(NaviPhase phase)
     PromptDistance nearest = NearestPromptDistance();
     const bool recovering = runtime_state_.recovery.active || runtime_state_.cross_tier_escape.active;
     const bool has_waypoint = session_->HasCurrentWaypoint();
-    const ActionType action = has_waypoint ? session_->CurrentWaypoint().action : ActionType::HEADING;
-    const bool plain_approach = action == ActionType::COLLECT || action == ActionType::DIG || action == ActionType::INTERACT
-                                || action == ActionType::RUN || action == ActionType::NAVMESH || action == ActionType::ZIPLINE;
+    const ActionTraits traits = has_waypoint ? session_->CurrentWaypoint().Traits() : ActionTraits {};
+    const bool plain_approach = traits.walk_approach;
     // 末端要纠正的点按同一套来: 走路让滑行距离减半, 到点后要走回去的那段也就短一半
     bool settling_approach = false;
     if (has_waypoint && session_->CurrentWaypoint().SettlesAtArrival()) {
@@ -2176,7 +2143,7 @@ void NavigationStateMachine::UpdateWalkMode(NaviPhase phase)
         settling_approach = true;
     }
     // 连续挖掘会重置起步确认。短腿应从起步就走路, 而不是等确认位移时已进到达圈才切换。
-    const bool startup_blocks_walk = !runtime_state_.route.startup_motion_confirmed && action != ActionType::DIG;
+    const bool startup_blocks_walk = !runtime_state_.route.startup_motion_confirmed && !traits.walk_at_startup;
     if (phase != NaviPhase::Navigate || !position_->valid || nearest.distance_sq < 0.0 || recovering
         || !(plain_approach || settling_approach) || startup_blocks_walk) {
         walk_mode_.Request(false);

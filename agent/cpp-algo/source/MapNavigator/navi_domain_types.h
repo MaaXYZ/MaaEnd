@@ -58,6 +58,58 @@ enum class ActionType
     MEOJSON_ENUM_RANGE(RUN, ZIPLINE)
 };
 
+// 每种动作的静态策略, 一种动作一行; 到点后做什么见 semantic_nodes 的到点分发
+struct ActionTraits
+{
+    bool strict_arrival = false;     // 到点必须精确停住, 线路上的 strict_arrival 只能再加严
+    bool settles_at_arrival = false; // 进圈后末端纠正到位才验收, 只对线路明写 strict_arrival 的点
+    bool walk_approach = false;      // 接近段允许切走路
+    bool walk_at_startup = false;    // 起步位移还没确认也允许走路
+    bool settle_walking = false;     // 末端纠正前先切走路
+    bool route_boundary = false;     // 全局规划分段的固有边界
+    double commit_distance = 0.0;    // 判定圈下限 px, 0 = 不放宽
+};
+
+constexpr ActionTraits TraitsOf(ActionType action)
+{
+    switch (action) {
+    case ActionType::RUN:
+        return { .settles_at_arrival = true, .walk_approach = true };
+    case ActionType::SPRINT:
+        return { .strict_arrival = true, .settles_at_arrival = true };
+    case ActionType::JUMP:
+        return { .strict_arrival = true, .settles_at_arrival = true };
+    case ActionType::FIGHT:
+        return { .strict_arrival = true, .settles_at_arrival = true };
+    case ActionType::INTERACT:
+        return { .strict_arrival = true, .walk_approach = true };
+    case ActionType::TRANSFER:
+        return { .strict_arrival = true, .settles_at_arrival = true };
+    case ActionType::PORTAL:
+        return { .strict_arrival = true, .commit_distance = kPortalCommitDistance };
+    case ActionType::HEADING:
+        return { .route_boundary = true };
+    case ActionType::NAVMESH:
+        return { .strict_arrival = true, .settles_at_arrival = true, .walk_approach = true };
+    case ActionType::ZONE:
+        return {};
+    case ActionType::COLLECT:
+        return { .walk_approach = true, .route_boundary = true };
+    case ActionType::DIG:
+        return {
+            .strict_arrival = true,
+            .settles_at_arrival = true,
+            .walk_approach = true,
+            .walk_at_startup = true,
+            .settle_walking = true,
+            .route_boundary = true,
+        };
+    case ActionType::ZIPLINE:
+        return { .strict_arrival = true, .walk_approach = true };
+    }
+    return {};
+}
+
 struct ZiplinePoint
 {
     double x = 0.0;
@@ -180,44 +232,15 @@ struct Waypoint
         return std::min(band, std::max(corridor_clearance, kMinArrivalBand));
     }
 
-    bool RequiresStrictArrival() const
-    {
-        if (!has_position) {
-            return false;
-        }
-        return strict_arrival || action == ActionType::SPRINT || action == ActionType::JUMP || action == ActionType::INTERACT
-               || action == ActionType::FIGHT || action == ActionType::TRANSFER || action == ActionType::PORTAL
-               || action == ActionType::NAVMESH || action == ActionType::DIG || action == ActionType::ZIPLINE;
-    }
+    ActionTraits Traits() const { return TraitsOf(action); }
 
-    // 末端纠正到位才验收的点, 只认线路明写的 strict_arrival。不写 default: 加动作时漏归类, clang/gcc 会
-    // 报 -Wswitch; 真漏到运行期也按不纠正走, 那是这套东西上线前的行为
-    bool SettlesAtArrival() const
-    {
-        if (!has_position || !authored_strict_arrival) {
-            return false;
-        }
-        switch (action) {
-        // 滑索和传送门各有自己的站位与提交距离, 往圈心收反而站不上去
-        case ActionType::ZIPLINE:
-        case ActionType::PORTAL:
-        // 判出提示就地停车, 再往回走等于离开刚认下的那个目标
-        case ActionType::INTERACT:
-        case ActionType::COLLECT:
-            return false;
-        case ActionType::RUN:
-        case ActionType::SPRINT:
-        case ActionType::JUMP:
-        case ActionType::FIGHT:
-        case ActionType::TRANSFER:
-        case ActionType::HEADING:
-        case ActionType::NAVMESH:
-        case ActionType::ZONE:
-        case ActionType::DIG:
-            return true;
-        }
-        return false;
-    }
+    bool RequiresStrictArrival() const { return has_position && (strict_arrival || Traits().strict_arrival); }
+
+    // 末端纠正到位才验收的点, 只认线路明写的 strict_arrival
+    bool SettlesAtArrival() const { return has_position && authored_strict_arrival && Traits().settles_at_arrival; }
+
+    // 顺着走过去就算数的点: 走廊跟随、经过即推进都只对这种点生效
+    bool IsContinuousRun() const { return has_position && action == ActionType::RUN && !RequiresStrictArrival(); }
 
     // 路线说了停下后认什么才走异步交互。只换预筛不给文本的点走不通: 共用识别节点里的占位文本没被顶掉, 停下来
     // 也认不出东西, 所以那种点退回原语义而不是白停一次。
@@ -234,7 +257,7 @@ struct Waypoint
 
     bool IsHeadingOnly() const { return action == ActionType::HEADING; }
 
-    bool IsIntrinsicRouteBoundary() const { return IsHeadingOnly() || action == ActionType::COLLECT || action == ActionType::DIG; }
+    bool IsIntrinsicRouteBoundary() const { return Traits().route_boundary; }
 
     bool ClosesGlobalRouteGroup() const { return route_required || IsIntrinsicRouteBoundary(); }
 

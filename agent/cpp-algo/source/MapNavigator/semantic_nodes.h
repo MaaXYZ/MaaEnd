@@ -21,7 +21,7 @@ struct Context
     PositionProvider* position_provider = nullptr;
     NavigationSession* session = nullptr;
     MotionController* motion_controller = nullptr;
-    IActionExecutor* action_executor = nullptr;
+    ActionExecutor* action_executor = nullptr;
     NaviPosition* position = nullptr;
     NavigationRuntimeState* runtime_state = nullptr;
     MaaContext* maa_context = nullptr;
@@ -39,7 +39,7 @@ struct Result
 
 Result TickSemanticFlow(const Context& ctx, NaviPhase phase);
 Result ConsumeInlineSemantics(const Context& ctx);
-Result HandleArrivalSemantic(const Context& ctx, const Waypoint& waypoint, double actual_distance);
+Result HandleArrival(const Context& ctx, const Waypoint& waypoint, double actual_distance);
 
 } // namespace semantic_nodes
 
