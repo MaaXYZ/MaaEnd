@@ -25,7 +25,7 @@ struct Config
     int64_t window_ms = 12000;
     // 一窗至少发出这么多度才作数，转得太少的窗拟合出来是噪声。
     double window_min_cmd_deg = 150.0;
-    // 只报转过头。转不到位有太多正常原因（指令被吞、贴墙转不动、掉帧），低倍率分不出是哪种。
+    // 只认转过头。转不到位有太多正常原因（指令被吞、贴墙转不动、掉帧），低倍率分不出是哪种。
     double overshoot_ratio = 1.20;
     // 攒够这么多窗才判，两倍灵敏度实机 37 秒就够。
     int required_windows = 3;
@@ -36,6 +36,7 @@ struct Config
 
 struct Verdict
 {
+    double ratio = 1.0;
     int ratio_percent = 0;
     int window_count = 0;
 };

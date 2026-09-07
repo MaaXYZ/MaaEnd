@@ -223,8 +223,9 @@ std::optional<Verdict> Detector::Evaluate(int required_windows)
     }
 
     Verdict verdict;
-    // 过线的占多数就蕴含中位数也过线，展示值用中位数不会和判定矛盾。
-    verdict.ratio_percent = static_cast<int>(std::lround(Median(ratio_history_) * 100.0));
+    // 过线的占多数就蕴含中位数也过线，展示值和校正系数都取中位数，不会和判定矛盾。
+    verdict.ratio = Median(ratio_history_);
+    verdict.ratio_percent = static_cast<int>(std::lround(verdict.ratio * 100.0));
     verdict.window_count = static_cast<int>(ratio_history_.size());
     fired_ = true;
     return verdict;

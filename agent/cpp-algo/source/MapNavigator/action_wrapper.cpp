@@ -2,6 +2,7 @@
 
 #include "Backend/backend.h"
 #include "action_wrapper.h"
+#include "sensitivity_observer.h"
 
 namespace mapnavigator
 {
@@ -40,7 +41,8 @@ const char* ActionWrapper::unsupported_reason() const
 
 double ActionWrapper::DefaultTurnUnitsPerDegree() const
 {
-    return backend_->default_turn_units_per_degree();
+    // 偏航度→单位只从这里过，校正系数只乘这一处。
+    return backend_->default_turn_units_per_degree() * sensitivity::TurnUnitsScale();
 }
 
 double ActionWrapper::DefaultPitchUnitsPerDegree() const
