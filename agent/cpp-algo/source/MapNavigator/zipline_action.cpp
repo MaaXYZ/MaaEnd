@@ -301,7 +301,7 @@ Result AbandonZipline(const Context& ctx, const char* reason, const char* detail
     // 前面根本没有链——最后一跳出事时就是这样，剩下的路本来就是走路，一个点都不该丢。
     const std::vector<Waypoint>& path = ctx.session->current_path();
     size_t hop = ctx.session->current_node_idx();
-    while (hop < path.size() && path[hop].HasPosition() && path[hop].action == ActionType::RUN && !path[hop].RequiresStrictArrival()) {
+    while (hop < path.size() && path[hop].IsContinuousRun()) {
         ++hop;
     }
     // 整条链一起丢。留下任何一跳，重规划都会把人送回索边再试一次，而刚失败的正是这条索。

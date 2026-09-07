@@ -19,7 +19,7 @@
 namespace mapnavigator
 {
 
-class IActionExecutor;
+class ActionExecutor;
 class ActionWrapper;
 class MotionController;
 class PositionProvider;
@@ -37,7 +37,7 @@ public:
         PositionProvider* position_provider,
         NavigationSession* session,
         MotionController* motion_controller,
-        IActionExecutor* action_executor,
+        ActionExecutor* action_executor,
         NaviPosition* position,
         std::function<bool()> should_stop,
         MaaContext* maa_context);
@@ -115,7 +115,7 @@ private:
     PositionProvider* position_provider_;
     NavigationSession* session_;
     MotionController* motion_controller_;
-    IActionExecutor* action_executor_;
+    ActionExecutor* action_executor_;
     NaviPosition* position_;
     std::function<bool()> should_stop_;
     MaaContext* maa_context_;

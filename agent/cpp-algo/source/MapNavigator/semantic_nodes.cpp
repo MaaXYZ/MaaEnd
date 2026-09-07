@@ -592,143 +592,153 @@ Result ConsumeInlineSemantics(const Context& ctx)
     return result;
 }
 
-Result HandleArrivalSemantic(const Context& ctx, const Waypoint& waypoint, double actual_distance)
+namespace
 {
-    Result result;
-    const std::optional<size_t> arrived_absolute_node_idx = ctx.session->CurrentAbsoluteNodeIndex();
 
+// 到点后的公共收尾: 记账、推进、按下一个点选相位
+Result CompleteArrival(const Context& ctx, const Waypoint& waypoint, const std::optional<size_t>& node_idx, const char* reason)
+{
+    ctx.session->NoteCanonicalFinalGoalConsumed(node_idx, *ctx.position, reason);
+    ctx.session->AdvanceToNextWaypoint(waypoint.action, reason);
+    ctx.runtime_state->OnWaypointAdvance();
+    SelectPhaseForCurrentWaypoint(ctx, reason);
+    return { .consumed = true, .stay_in_current_tick = true };
+}
+
+Result ArriveTransfer(const Context& ctx, const std::optional<size_t>& node_idx, double actual_distance)
+{
+    StopMotionAndCommitment(ctx);
+    ctx.session->NoteCanonicalFinalGoalConsumed(node_idx, *ctx.position, "transfer_wait_started");
+    ctx.session->AdvanceToNextWaypoint(ActionType::TRANSFER, "transfer_wait_started");
+    ctx.runtime_state->OnWaypointAdvance();
+    ctx.runtime_state->semantic.transfer_anchor_pos = *ctx.position;
+    ctx.runtime_state->semantic.transfer_wait_started = std::chrono::steady_clock::now();
+    ctx.runtime_state->semantic.transfer_stable_hits = 0;
+    ctx.position_provider->ResetTracking();
+    LogInfo << "Action: TRANSFER reached." << VAR(actual_distance);
+
+    if (!ctx.session->HasCurrentWaypoint()) {
+        ctx.runtime_state->semantic.transfer_wait_started = {};
+        ctx.runtime_state->semantic.transfer_anchor_pos = {};
+        ctx.runtime_state->semantic.transfer_stable_hits = 0;
+        ctx.session->NoteRouteTailConsumed(*ctx.position, "route_tail_consumed");
+    }
+    else {
+        ctx.session->UpdatePhase(NaviPhase::WaitTransfer, "transfer_wait_started");
+    }
+    return { .consumed = true, .stay_in_current_tick = true };
+}
+
+Result ArrivePortal(const Context& ctx, const std::optional<size_t>& node_idx, double actual_distance)
+{
+    ctx.session->NoteCanonicalFinalGoalConsumed(node_idx, *ctx.position, "portal_entered");
+    ctx.session->AdvanceToNextWaypoint(ActionType::PORTAL, "portal_entered");
+    ctx.runtime_state->OnWaypointAdvance();
+    ctx.runtime_state->semantic.portal_transit_active = true;
+    ctx.runtime_state->semantic.portal_transit_keep_moving_until_fix = true;
+    ctx.runtime_state->semantic.portal_transit_needs_reacquire = false;
+    ctx.runtime_state->semantic.portal_transit_started = std::chrono::steady_clock::now();
+    ClearHeldZoneCandidate(ctx.runtime_state);
+    ctx.position_provider->ResetTracking();
+    ctx.motion_controller->SetForwardState(true);
+    LogInfo << "Action: PORTAL entered transit flow." << VAR(actual_distance);
+
+    if (!ctx.session->HasCurrentWaypoint()) {
+        ctx.runtime_state->semantic.portal_transit_active = false;
+        ctx.runtime_state->semantic.portal_transit_keep_moving_until_fix = false;
+        ctx.runtime_state->semantic.portal_transit_needs_reacquire = false;
+        ctx.runtime_state->semantic.portal_transit_started = {};
+    }
+    SelectPhaseForCurrentWaypoint(ctx, "portal_entered");
+    return { .consumed = true, .stay_in_current_tick = true };
+}
+
+Result ArriveDig(const Context& ctx, const Waypoint& waypoint, const std::optional<size_t>& node_idx, double actual_distance)
+{
+    StopMotionAndCommitment(ctx);
+    if (ctx.maa_context == nullptr) {
+        LogError << "Action: DIG triggered but maa_context is null." << VAR(actual_distance);
+        return { .request_failure = true,
+                 .failure_reason = "dig_context_missing",
+                 .failure_log_message = "MaaContext is null when dispatching dig subtask." };
+    }
+
+    LogInfo << "Action: DIG triggered, dispatching subtask." << VAR(kDefaultDigEntry) << VAR(actual_distance);
+    const MaaTaskId sub_id = MaaContextRunTask(ctx.maa_context, kDefaultDigEntry, kDigPipelineOverride);
+    if (sub_id == MaaInvalidId) {
+        LogError << "Action: DIG subtask failed to dispatch." << VAR(kDefaultDigEntry) << VAR(actual_distance);
+        return { .request_failure = true,
+                 .failure_reason = "dig_dispatch_failed",
+                 .failure_log_message = "MaaContextRunTask returned MaaInvalidId for dig subtask." };
+    }
+
+    LogInfo << "Action: DIG subtask returned." << VAR(sub_id);
+    utils::SleepFor(kDigPostSleepMs);
+    ctx.runtime_state->route.Reset();
+    return CompleteArrival(ctx, waypoint, node_idx, "dig_completed");
+}
+
+Result ArriveInteract(const Context& ctx, const Waypoint& waypoint, const std::optional<size_t>& node_idx, double actual_distance)
+{
+    // 到点兜底: 跑一次行进中那套权威识别, 没认出提示就当这里没东西可交互, 照样推进
+    if (waypoint.IsAsyncInteract() && ctx.maa_context != nullptr) {
+        StopMotionAndCommitment(ctx);
+        LogInfo << "Action: INTERACT reached, running the authoritative recognition." << VAR(actual_distance)
+                << VAR(waypoint.interact_text.size()) << VAR(waypoint.interact_scan) << VAR(waypoint.interact_rec);
+        RunPromptSubtask(ctx.maa_context, kInteractPromptSpec, &waypoint.interact_text, waypoint.interact_rec);
+        ctx.runtime_state->route.Reset();
+        return CompleteArrival(ctx, waypoint, node_idx, "async_interact_completed");
+    }
+
+    // rec 模式走到这里是文本没解析出来, 到点狂按 F 正是它要避开的
+    if (waypoint.IsRecInteract()) {
+        LogInfo << "Action: INTERACT in rec mode, skipping the key press." << VAR(waypoint.interact_text_node);
+    }
+    else {
+        ctx.action_executor->Interact();
+    }
+    return CompleteArrival(ctx, waypoint, node_idx, "waypoint_action_completed");
+}
+
+} // namespace
+
+Result HandleArrival(const Context& ctx, const Waypoint& waypoint, double actual_distance)
+{
+    const std::optional<size_t> node_idx = ctx.session->CurrentAbsoluteNodeIndex();
     if (waypoint.RequiresStrictArrival() && ctx.motion_controller->IsMoving()) {
         StopMotionAndCommitment(ctx);
         utils::SleepFor(kStopWaitMs);
     }
 
-    if (waypoint.action == ActionType::TRANSFER) {
-        StopMotionAndCommitment(ctx);
-        ctx.session->NoteCanonicalFinalGoalConsumed(arrived_absolute_node_idx, *ctx.position, "transfer_wait_started");
-        ctx.session->AdvanceToNextWaypoint(ActionType::TRANSFER, "transfer_wait_started");
-        ctx.runtime_state->OnWaypointAdvance();
-        ctx.runtime_state->semantic.transfer_anchor_pos = *ctx.position;
-        ctx.runtime_state->semantic.transfer_wait_started = std::chrono::steady_clock::now();
-        ctx.runtime_state->semantic.transfer_stable_hits = 0;
-        ctx.position_provider->ResetTracking();
-        LogInfo << "Action: TRANSFER reached." << VAR(actual_distance);
-
-        if (!ctx.session->HasCurrentWaypoint()) {
-            ctx.runtime_state->semantic.transfer_wait_started = {};
-            ctx.runtime_state->semantic.transfer_anchor_pos = {};
-            ctx.runtime_state->semantic.transfer_stable_hits = 0;
-            ctx.session->NoteRouteTailConsumed(*ctx.position, "route_tail_consumed");
-        }
-        else {
-            ctx.session->UpdatePhase(NaviPhase::WaitTransfer, "transfer_wait_started");
-        }
-
-        result.consumed = true;
-        result.stay_in_current_tick = true;
-        return result;
+    switch (waypoint.action) {
+    case ActionType::TRANSFER:
+        return ArriveTransfer(ctx, node_idx, actual_distance);
+    case ActionType::PORTAL:
+        return ArrivePortal(ctx, node_idx, actual_distance);
+    case ActionType::ZIPLINE:
+        return StartZiplineHop(ctx, waypoint, actual_distance, node_idx);
+    case ActionType::DIG:
+        return ArriveDig(ctx, waypoint, node_idx, actual_distance);
+    case ActionType::INTERACT:
+        return ArriveInteract(ctx, waypoint, node_idx, actual_distance);
+    case ActionType::SPRINT:
+        ctx.action_executor->Sprint();
+        break;
+    case ActionType::JUMP:
+        ctx.action_executor->Jump();
+        break;
+    case ActionType::FIGHT:
+        ctx.action_executor->Fight();
+        break;
+    // 经过即推进; HEADING/ZONE 没坐标、NAVMESH 展开后换成规划点, 实际到不了这里
+    case ActionType::RUN:
+    case ActionType::COLLECT:
+    case ActionType::HEADING:
+    case ActionType::NAVMESH:
+    case ActionType::ZONE:
+        break;
     }
-
-    if (waypoint.action == ActionType::PORTAL) {
-        ctx.session->NoteCanonicalFinalGoalConsumed(arrived_absolute_node_idx, *ctx.position, "portal_entered");
-        ctx.session->AdvanceToNextWaypoint(ActionType::PORTAL, "portal_entered");
-        ctx.runtime_state->OnWaypointAdvance();
-        ctx.runtime_state->semantic.portal_transit_active = true;
-        ctx.runtime_state->semantic.portal_transit_keep_moving_until_fix = true;
-        ctx.runtime_state->semantic.portal_transit_needs_reacquire = false;
-        ctx.runtime_state->semantic.portal_transit_started = std::chrono::steady_clock::now();
-        ClearHeldZoneCandidate(ctx.runtime_state);
-        ctx.position_provider->ResetTracking();
-        ctx.motion_controller->SetForwardState(true);
-        LogInfo << "Action: PORTAL entered transit flow." << VAR(actual_distance);
-
-        if (!ctx.session->HasCurrentWaypoint()) {
-            ctx.runtime_state->semantic.portal_transit_active = false;
-            ctx.runtime_state->semantic.portal_transit_keep_moving_until_fix = false;
-            ctx.runtime_state->semantic.portal_transit_needs_reacquire = false;
-            ctx.runtime_state->semantic.portal_transit_started = {};
-            ctx.session->NoteRouteTailConsumed(*ctx.position, "route_tail_consumed");
-        }
-        else {
-            SelectPhaseForCurrentWaypoint(ctx, "portal_entered");
-        }
-
-        result.consumed = true;
-        result.stay_in_current_tick = true;
-        return result;
-    }
-
-    if (waypoint.action == ActionType::ZIPLINE) {
-        return StartZiplineHop(ctx, waypoint, actual_distance, arrived_absolute_node_idx);
-    }
-
-    if (waypoint.action == ActionType::DIG) {
-        StopMotionAndCommitment(ctx);
-
-        if (ctx.maa_context == nullptr) {
-            LogError << "Action: DIG triggered but maa_context is null." << VAR(actual_distance);
-            result.request_failure = true;
-            result.failure_reason = "dig_context_missing";
-            result.failure_log_message = "MaaContext is null when dispatching dig subtask.";
-            return result;
-        }
-
-        LogInfo << "Action: DIG triggered, dispatching subtask." << VAR(kDefaultDigEntry) << VAR(actual_distance);
-        const MaaTaskId sub_id = MaaContextRunTask(ctx.maa_context, kDefaultDigEntry, kDigPipelineOverride);
-        if (sub_id == MaaInvalidId) {
-            LogError << "Action: DIG subtask failed to dispatch." << VAR(kDefaultDigEntry) << VAR(actual_distance);
-            result.request_failure = true;
-            result.failure_reason = "dig_dispatch_failed";
-            result.failure_log_message = "MaaContextRunTask returned MaaInvalidId for dig subtask.";
-            return result;
-        }
-
-        LogInfo << "Action: DIG subtask returned." << VAR(sub_id);
-        utils::SleepFor(kDigPostSleepMs);
-
-        ctx.session->NoteCanonicalFinalGoalConsumed(arrived_absolute_node_idx, *ctx.position, "dig_completed");
-        ctx.session->AdvanceToNextWaypoint(waypoint.action, "dig_completed");
-        ctx.runtime_state->OnWaypointAdvance();
-        ctx.runtime_state->route.Reset();
-
-        if (!ctx.session->HasCurrentWaypoint()) {
-            ctx.session->NoteRouteTailConsumed(*ctx.position, "route_tail_consumed");
-        }
-        else {
-            SelectPhaseForCurrentWaypoint(ctx, "dig_completed");
-        }
-
-        result.consumed = true;
-        result.stay_in_current_tick = true;
-        return result;
-    }
-
-    // Fallback once the point is reached: run the same authoritative subtask the walking detector would. No prompt
-    // means there is nothing to interact with here, so the route advances anyway rather than failing.
-    if (waypoint.IsAsyncInteract() && ctx.maa_context != nullptr) {
-        StopMotionAndCommitment(ctx);
-
-        LogInfo << "Action: INTERACT reached, running the authoritative recognition." << VAR(actual_distance)
-                << VAR(waypoint.interact_text.size()) << VAR(waypoint.interact_scan) << VAR(waypoint.interact_rec);
-        RunPromptSubtask(ctx.maa_context, kInteractPromptSpec, &waypoint.interact_text, waypoint.interact_rec);
-
-        ctx.session->NoteCanonicalFinalGoalConsumed(arrived_absolute_node_idx, *ctx.position, "async_interact_completed");
-        ctx.session->AdvanceToNextWaypoint(waypoint.action, "async_interact_completed");
-        ctx.runtime_state->OnWaypointAdvance();
-        ctx.runtime_state->route.Reset();
-
-        if (!ctx.session->HasCurrentWaypoint()) {
-            ctx.session->NoteRouteTailConsumed(*ctx.position, "route_tail_consumed");
-        }
-        else {
-            SelectPhaseForCurrentWaypoint(ctx, "async_interact_completed");
-        }
-
-        result.consumed = true;
-        result.stay_in_current_tick = true;
-        return result;
-    }
-
-    return result;
+    return CompleteArrival(ctx, waypoint, node_idx, "waypoint_action_completed");
 }
 
 } // namespace semantic_nodes
