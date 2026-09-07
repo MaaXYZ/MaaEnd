@@ -12,9 +12,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "攻击",
                                         "ATK",
@@ -53,9 +51,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "生命",
                                         "HP",
@@ -90,9 +86,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "灼热",
                                         "Heat",
@@ -129,9 +123,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "电磁",
                                         "Electric",
@@ -168,9 +160,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "暴击率",
                                         "Critical Rate",
@@ -209,9 +199,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "终结技充能",
                                         "Ultimate Gain",
@@ -250,9 +238,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "法术",
                                         "Arts",
@@ -291,9 +277,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "治疗",
                                         "Treatment",
@@ -332,9 +316,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "强攻",
                                         "強攻",
@@ -371,9 +353,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "粉碎",
                                         "Crusher",
@@ -410,9 +390,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "昂扬",
                                         "昂揚",
@@ -449,9 +427,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "残暴",
                                         "殘暴",
@@ -490,9 +466,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "医疗",
                                         "醫療",
@@ -531,9 +505,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "迸发",
                                         "迸發",
@@ -572,9 +544,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "夜幕",
                                         "Twilight",
@@ -609,9 +579,7 @@
                     "pipeline_override": {
                         "AutoEssenceEngraveCondition2OCR": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "流转",
                                         "流轉",

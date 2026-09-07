@@ -268,33 +268,6 @@
                     "name": "Location",
                     "label": "$option.AutoEssenceMenu.cases.Location.label",
                     "description": "$option.AutoEssenceMenu.cases.Location.description",
-                    "pipeline_override": {
-                        "AutoEssenceEngraveCondition1Base_s1_1": {
-                            "recognition": {
-                                "type": "DirectHit"
-                            }
-                        },
-                        "AutoEssenceEngraveCondition1Base_s1_2": {
-                            "recognition": {
-                                "type": "DirectHit"
-                            }
-                        },
-                        "AutoEssenceEngraveCondition1Base_s1_3": {
-                            "recognition": {
-                                "type": "DirectHit"
-                            }
-                        },
-                        "AutoEssenceEngraveCondition1Base_s1_4": {
-                            "recognition": {
-                                "type": "DirectHit"
-                            }
-                        },
-                        "AutoEssenceEngraveCondition1Base_s1_5": {
-                            "recognition": {
-                                "type": "DirectHit"
-                            }
-                        }
-                    },
                     "option": [
                         "AutoEssenceSelectLocation",
                         "AutoEssenceObtainModeClaimOnly",

@@ -38,9 +38,7 @@
                         },
                         "AutoEssenceEngraveCondition1Base_s1_1": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "主能力",
                                         "Main Attribute",
@@ -80,9 +78,7 @@
                         },
                         "AutoEssenceEngraveCondition1Base_s1_2": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "力量",
                                         "Strength",
@@ -121,9 +117,7 @@
                         },
                         "AutoEssenceEngraveCondition1Base_s1_3": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "意志",
                                         "Will",
@@ -161,9 +155,7 @@
                         },
                         "AutoEssenceEngraveCondition1Base_s1_4": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "敏捷",
                                         "Agility",
@@ -202,9 +194,7 @@
                         },
                         "AutoEssenceEngraveCondition1Base_s1_5": {
                             "recognition": {
-                                "type": "OCR",
                                 "param": {
-                                    "roi": "__AutoEssenceEngraveConditionHighlightColor",
                                     "expected": [
                                         "智识",
                                         "Intellect",

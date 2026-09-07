@@ -266,7 +266,7 @@
         ]
     },
     "AutoEssenceEngraveConditionsMatched": {
-        "desc": "识别预刻写条件正确",
+        "desc": "识别预刻写条件正确（基础属性默认 OCR 全部，勾选后收窄）",
         "recognition": {
             "type": "And",
             "param": {
@@ -287,40 +287,65 @@
             "Node.Recognition.Succeeded": "✅预刻写条件正确"
         }
     },
-    "__AutoEssenceEngraveConditionHighlightColor": {
-        "desc": "预刻写条件高亮颜色（通用）",
+    "__AutoEssenceEngraveCondition1HighlightColor": {
+        "desc": "预刻写基础条件高亮颜色",
         "recognition": {
             "type": "ColorMatch",
             "param": {
                 "roi": [
-                    823,
-                    557,
-                    400,
-                    66
+                    820,
+                    545,
+                    286,
+                    97
                 ],
                 "method": 40,
                 "lower": [
                     37,
-                    166,
-                    194
+                    140,
+                    140
                 ],
                 "upper": [
                     38,
-                    174,
-                    217
+                    200,
+                    230
                 ],
-                "connected": false,
+                "count": 100
+            }
+        }
+    },
+    "__AutoEssenceEngraveCondition2HighlightColor": {
+        "desc": "预刻写附加/武器条件高亮颜色",
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    1106,
+                    546,
+                    122,
+                    103
+                ],
+                "method": 40,
+                "lower": [
+                    37,
+                    140,
+                    140
+                ],
+                "upper": [
+                    38,
+                    200,
+                    230
+                ],
                 "count": 100
             }
         }
     },
     "AutoEssenceEngraveCondition1Matched": {
-        "desc": "预刻写条件 1：高亮颜色 + 五项基础属性（勾选 OCR，未勾选 DirectHit）",
+        "desc": "预刻写条件 1：高亮颜色 + 五项基础属性（默认 OCR 全部，勾选后收窄）",
         "recognition": {
             "type": "And",
             "param": {
                 "all_of": [
-                    "__AutoEssenceEngraveConditionHighlightColor",
+                    "__AutoEssenceEngraveCondition1HighlightColor",
                     "AutoEssenceEngraveCondition1Base_s1_1",
                     "AutoEssenceEngraveCondition1Base_s1_2",
                     "AutoEssenceEngraveCondition1Base_s1_3",
@@ -331,38 +356,73 @@
         }
     },
     "AutoEssenceEngraveCondition1Base_s1_1": {
-        "desc": "预刻写条件 1：基础属性 s1_1（未勾选时 DirectHit）",
+        "desc": "预刻写条件 1：基础属性 s1_1（默认识别全部文字）",
         "recognition": {
-            "type": "DirectHit",
-            "param": {}
+            "type": "OCR",
+            "param": {
+                "roi": "__AutoEssenceEngraveCondition1HighlightColor",
+                "only_rec": true,
+                "expected": [
+                    // @i18n-skip
+                    ""
+                ]
+            }
         }
     },
     "AutoEssenceEngraveCondition1Base_s1_2": {
-        "desc": "预刻写条件 1：基础属性 s1_2（未勾选时 DirectHit）",
+        "desc": "预刻写条件 1：基础属性 s1_2（默认识别全部文字）",
         "recognition": {
-            "type": "DirectHit",
-            "param": {}
+            "type": "OCR",
+            "param": {
+                "roi": "__AutoEssenceEngraveCondition1HighlightColor",
+                "only_rec": true,
+                "expected": [
+                    // @i18n-skip
+                    ""
+                ]
+            }
         }
     },
     "AutoEssenceEngraveCondition1Base_s1_3": {
-        "desc": "预刻写条件 1：基础属性 s1_3（未勾选时 DirectHit）",
+        "desc": "预刻写条件 1：基础属性 s1_3（默认识别全部文字）",
         "recognition": {
-            "type": "DirectHit",
-            "param": {}
+            "type": "OCR",
+            "param": {
+                "roi": "__AutoEssenceEngraveCondition1HighlightColor",
+                "only_rec": true,
+                "expected": [
+                    // @i18n-skip
+                    ""
+                ]
+            }
         }
     },
     "AutoEssenceEngraveCondition1Base_s1_4": {
-        "desc": "预刻写条件 1：基础属性 s1_4（未勾选时 DirectHit）",
+        "desc": "预刻写条件 1：基础属性 s1_4（默认识别全部文字）",
         "recognition": {
-            "type": "DirectHit",
-            "param": {}
+            "type": "OCR",
+            "param": {
+                "roi": "__AutoEssenceEngraveCondition1HighlightColor",
+                "only_rec": true,
+                "expected": [
+                    // @i18n-skip
+                    ""
+                ]
+            }
         }
     },
     "AutoEssenceEngraveCondition1Base_s1_5": {
-        "desc": "预刻写条件 1：基础属性 s1_5（未勾选时 DirectHit）",
+        "desc": "预刻写条件 1：基础属性 s1_5（默认识别全部文字）",
         "recognition": {
-            "type": "DirectHit",
-            "param": {}
+            "type": "OCR",
+            "param": {
+                "roi": "__AutoEssenceEngraveCondition1HighlightColor",
+                "only_rec": true,
+                "expected": [
+                    // @i18n-skip
+                    ""
+                ]
+            }
         }
     },
     "AutoEssenceEngraveCondition2Matched": {
@@ -371,21 +431,22 @@
             "type": "And",
             "param": {
                 "all_of": [
-                    "__AutoEssenceEngraveConditionHighlightColor",
+                    "__AutoEssenceEngraveCondition2HighlightColor",
                     "AutoEssenceEngraveCondition2OCR"
                 ]
             }
         }
     },
     "AutoEssenceEngraveCondition2OCR": {
-        "desc": "预刻写条件 2 文字（由任务选项 attach 初始化）",
+        "desc": "预刻写条件 2 文字（默认识别全部文字，勾选后收窄 expected）",
         "recognition": {
             "type": "OCR",
             "param": {
-                "roi": "__AutoEssenceEngraveConditionHighlightColor",
+                "roi": "__AutoEssenceEngraveCondition2HighlightColor",
+                "only_rec": true,
                 "expected": [
                     // @i18n-skip
-                    "a^"
+                    ""
                 ]
             }
         }
