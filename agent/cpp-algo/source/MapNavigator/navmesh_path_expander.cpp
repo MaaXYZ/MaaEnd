@@ -48,7 +48,7 @@ struct CachedNavmesh
     explicit CachedNavmesh(navmesh::BaseNavPack nav_pack)
         : pack(std::move(nav_pack))
         , planner(pack)
-        , engine(pack, planner)
+        , engine(pack, planner, NoGoTablePath())
     {
         pack.releaseLinks();
     }
@@ -61,6 +61,8 @@ struct NavmeshExpansionState
     std::optional<double> route_start_floor_y;
     std::string current_zone;
     std::string navmesh_zone;
+    // 某一腿被虚拟禁区判掉。终态: 整条展开到此为止, 回放作者提示也只会再撞同一块禁区。
+    bool no_go_rejected = false;
 
     // 起点一挪，原来那张面的证据就不再成立：新起点属于哪层由生成它的那一段自己决定。
     // 两者绑在一起改，免得哪条支路只挪了点忘了清证据，把上一腿的层带进下一腿。
@@ -575,6 +577,9 @@ navmesh::BaseNavRouteResult PlanCorridorRoute(
     result.gap_distance = plan.debug.gap_distance;
     if (!plan.ok || plan.points.size() < 2) {
         result.error = plan.error.empty() ? "规划结果没有可执行路径点" : plan.error;
+        if (plan.no_go) {
+            result.status = navmesh::BaseNavRouteStatus::NoGo;
+        }
         if (!detour_probe) {
             LogWarn << "RECAST plan failed." << VAR(request.zone_name) << VAR(result.error);
         }
@@ -966,7 +971,8 @@ bool AppendNavmeshWaypoint(
     auto route_result = PlanCorridorRoute(navmesh, request, should_stop, out_diagnostics == nullptr ? nullptr : &route_diagnostic);
     bool start_recovered = false;
     std::string start_recovery_error;
-    if (!route_result.ok() && AppendStartRecovery(param, navmesh, request, state, out_path, &start_recovery_error)) {
+    if (!route_result.ok() && route_result.status != navmesh::BaseNavRouteStatus::NoGo
+        && AppendStartRecovery(param, navmesh, request, state, out_path, &start_recovery_error)) {
         request.start = state.route_start;
         route_diagnostic = {};
         route_result = PlanCorridorRoute(navmesh, request, should_stop, out_diagnostics == nullptr ? nullptr : &route_diagnostic);
@@ -975,6 +981,21 @@ bool AppendNavmeshWaypoint(
     const int64_t plan_ms =
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - plan_started_at).count();
     if (!route_result.ok()) {
+        // 禁区是作者画死的约束，下面每一条兜底都不看可走面，交给它们就等于让角色从禁区里穿过去。
+        if (route_result.status == navmesh::BaseNavRouteStatus::NoGo) {
+            LogError << "NAVMESH waypoint rejected by a virtual no-go zone." << VAR(state.navmesh_zone) << VAR(state.current_zone)
+                     << VAR(target.point.x) << VAR(target.point.y) << VAR(route_result.error);
+            RecordWaypointFailure(
+                "route_no_go",
+                " 无法规划：" + route_result.error,
+                waypoint,
+                authored_index,
+                state,
+                &route_result,
+                target.point);
+            state.no_go_rejected = true;
+            return false;
+        }
         // 纯步行不连通不代表整腿不可达：连续滑索可能分别接上起终两侧的可走面。它是完整
         // 规划结果，优先级高于二维盲走和作者提示回退，也能保住整条连续链而不被提示点切碎。
         if (TryAppendZiplineLeg(param, navmesh, target, nullptr, should_stop, state, out_path, out_diagnostics)) {
@@ -1175,6 +1196,10 @@ bool AppendGlobalRouteGroup(
         RecordExpansionFailure("cancelled", "路线规划已取消", &state);
         return false;
     }
+    // 禁区是终态: 作者提示要么落在同一块禁区里, 要么最后仍要接到这个终点, 回放只是多撞几次。
+    if (state.no_go_rejected) {
+        return false;
+    }
 
     state = original_state;
     out_path.resize(original_path_size);
@@ -1328,6 +1353,11 @@ navmesh::WorldPoint OffsetPoint(const NaviPosition& position, double heading, do
 std::filesystem::path ResolveNavmeshFilePath(const std::string& configured_path)
 {
     return ResolveNavmeshFile(configured_path);
+}
+
+std::filesystem::path NoGoTablePath()
+{
+    return get_exe_dir() / ".." / kNoGoTableRelativePath;
 }
 
 void NormalizeLivePositionToBase(const NaviParam& param, NaviPosition& pos)

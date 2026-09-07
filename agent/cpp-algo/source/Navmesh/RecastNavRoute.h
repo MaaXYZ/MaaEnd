@@ -13,6 +13,7 @@
 #include "BaseNavPlanner.h"
 #include "RecastNavFieldsIO.h"
 #include "RecastNavGridIO.h"
+#include "RecastNavNoGoIO.h"
 #include "RecastNavZone.h"
 
 namespace navmesh::recast
@@ -22,6 +23,8 @@ struct RecastPlanResult
 {
     bool ok = false;
     std::string error;
+    // 端点落在虚拟禁区里被判掉。这是作者画的硬约束, 调用方不该再拿兜底手段去凑一条线。
+    bool no_go = false;
     std::vector<WorldPoint> points;
     std::vector<double> clearance; // 逐点通道半宽 px
     double length = 0.0;
@@ -82,8 +85,9 @@ class RecastNavEngine
 {
 public:
     // 预烘场旁包从主包同目录按名找 (base.nav.gz → base.fields.nav.gz), 读不到或对不上主包
-    // 就没法规划 —— 运行期不再重建那些场。
-    RecastNavEngine(const BaseNavPack& pack, const BaseNavPlanner& planner);
+    // 就没法规划 —— 运行期不再重建那些场。nogo_table 是作者圈的虚拟禁区表, 由调用方定位:
+    // 它是本仓库的配置, 不跟主包放在一起。
+    RecastNavEngine(const BaseNavPack& pack, const BaseNavPlanner& planner, const std::filesystem::path& nogo_table);
 
     // start/goal 各带楼层高度(<= kBaseNavFloorYValidMin ⇒ floor 盲吸附);
     // goal_deck_y = 终点所在重叠面的高度,选层用,与吸附用的 floor_y 是两件事;
@@ -141,6 +145,7 @@ private:
     uint64_t zone_clock_ = 0;
     GridPack grid_;     // 包里的预烘格图,没有它就没法规划
     FieldsPack fields_; // 旁包里的预烘场, 同样缺不得
+    NoGoTable nogo_;    // 虚拟禁区表, 缺了就是没有禁区
     std::string grid_error_;
 };
 

@@ -341,6 +341,8 @@ constexpr double kPostTurnForwardCommitMinDegrees = 15.0;
 
 constexpr const char* kDefaultNavmeshRelativePath = "assets/resource/model/map/navmesh/base.nav";
 constexpr const char* kDefaultCompressedNavmeshRelativePath = "assets/resource/model/map/navmesh/base.nav.gz";
+// 作者圈的虚拟禁区表。resource/model 是另一个仓库的子模块, 本仓库的配置统一放 data/<模块>/。
+constexpr const char* kNoGoTableRelativePath = "data/MapNavigator/nogo_zones.json";
 
 // Prompt-driven actions (collect / async interact), three nodes per kind: entry, authoritative recognition, exit.
 // The recognition node is also the ROI source, the pre-warm target and where the route's text is injected.

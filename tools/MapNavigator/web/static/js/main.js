@@ -27,6 +27,17 @@ import {advanceQuickRouteTest, buildQuickRouteTestRequest} from "./quick_route_t
 import {applyAssertRectDrag, assertRectCursor, hitTestAssertRect, normalizeAssertRect} from "./assert_rect.js";
 import {EscapeAction, resolveEscapeAction} from "./escape_action.js";
 import {NavmeshField} from "./navmesh_field.js";
+import {
+  addPoly,
+  emptyNoGoDoc,
+  NOGO_MIN_RING,
+  parseNoGoDoc,
+  polyContains,
+  polyOnLayer,
+  removePoly,
+  serializeNoGoDoc,
+  zonePolys,
+} from "./nogo_zones.js";
 import {AppState, Mode} from "./state.js";
 import {logZiplineGeometry, logZiplineTowers, parseMapNavigatorLog} from "./log_analysis.js";
 import {groupLogInputFiles, openZipArchive, selectMaaEndArchiveEntries} from "./log_archive.js";
@@ -63,10 +74,15 @@ import {
   exportPath,
   exportAssert,
   locateOnce,
+  fetchNoGoZones,
+  saveNoGoZones,
   RecordingSocket,
 } from "./rpc.js";
 
 const DRAG_ACTIVATION_DISTANCE = 4; // px (tk RouteEditorApp.DRAG_ACTIVATION_DISTANCE)
+// Pick radii (canvas px) for a selected no-go polygon: its vertex handles, then its edges.
+const NOGO_HANDLE_RADIUS = 7;
+const NOGO_EDGE_RADIUS = 6;
 const NAVMESH_PROBE_SNAP_RADIUS = 5.0;
 const LOAD_POLL_MS = 400;
 // CSS px the floating left column covers (gap + card + gap); fit-view centers in the rest.
@@ -210,6 +226,25 @@ class MapNavigatorApp {
     this._autoPlanTimer = null;
     this._autoPlanKey = null;
     this._editRoutePending = false;
+
+    // --- virtual no-go zones (authored here, read by the planner from nogo_zones.json) ---
+    this.noGoDoc = emptyNoGoDoc();
+    this._noGoLoaded = false;
+    this._noGoLoading = false;
+    this._noGoFailed = false;
+    /** @type {Array<[number, number]>} base-px vertices of the ring being drawn */
+    this.noGoDraft = [];
+    /** @type {?[number, number]} base-px pointer position closing the draft */
+    this.noGoCursor = null;
+    /** @type {?number} index into the displayed zone's polygon list */
+    this.noGoSelected = null;
+    this.noGoDirty = false;
+    this._noGoListZone = "";
+    this._noGoListTier = null;
+    /** @type {?number} vertex of the selected polygon that Delete removes */
+    this.noGoVertex = null;
+    /** @type {?{vertex:?number, startX:number, startY:number, last:number[], moved:boolean}} drag in progress */
+    this._noGoGesture = null;
     /** Guards against a stale off-mesh probe overwriting newer edit state. */
     this._probeToken = 0;
     /** @type {?string} NAVMESH-waypoint signature the edit-mode badges were probed for. */
@@ -347,6 +382,8 @@ class MapNavigatorApp {
       mapLogLayerGroup: $("map-log-layer-group"),
       toolAssertPan: $("tool-assert-pan"),
       toolAssertEdit: $("tool-assert-edit"),
+      toolNoGoPan: $("tool-nogo-pan"),
+      toolNoGoDraw: $("tool-nogo-draw"),
       kindCombo: $("connection-kind-combo"),
       win32Group: $("win32-group"),
       win32Entry: $("win32-entry"),
@@ -398,6 +435,7 @@ class MapNavigatorApp {
       tabEdit: $("tab-edit"),
       tabAssert: $("tab-assert"),
       tabLog: $("tab-log"),
+      tabNoGo: $("tab-nogo"),
       btnClearAssert: $("btn-clear-assert"),
       btnSelectTier: $("btn-select-tier"),
       btnSelectAssertTier: $("btn-select-assert-tier"),
@@ -430,6 +468,11 @@ class MapNavigatorApp {
       panelProperties: $("panel-properties"),
       panelAssert: $("panel-assert"),
       panelLog: $("panel-log"),
+      panelNoGoMap: $("panel-nogo-map"),
+      panelNoGo: $("panel-nogo"),
+      noGoZoneName: $("nogo-zone-name"),
+      noGoList: $("nogo-list"),
+      btnNoGoSave: $("btn-nogo-save"),
       btnLogImport: $("btn-log-import"),
       btnLogClear: $("btn-log-clear"),
       logFileInput: $("log-file-input"),
@@ -986,6 +1029,7 @@ class MapNavigatorApp {
     e.tabEdit.addEventListener("click", () => this._selectModeTab("edit"));
     e.tabAssert.addEventListener("click", () => this._selectModeTab("assert"));
     e.tabLog.addEventListener("click", () => this._selectModeTab("log"));
+    e.tabNoGo.addEventListener("click", () => this._selectModeTab("nogo"));
     e.btnLogImport.addEventListener("click", () => e.logFileInput.click());
     e.btnLogClear.addEventListener("click", () => this._clearLogAnalysis());
     e.logFileInput.addEventListener("change", () => this._importLogFiles(e.logFileInput.files));
@@ -1078,6 +1122,14 @@ class MapNavigatorApp {
     });
     e.toolAssertPan.addEventListener("click", () => this._setActiveTool("assert-pan"));
     e.toolAssertEdit.addEventListener("click", () => this._setActiveTool("assert-edit"));
+    e.toolNoGoPan.addEventListener("click", () => this._setActiveTool("nogo-pan"));
+    e.toolNoGoDraw.addEventListener("click", () => this._setActiveTool("nogo-draw"));
+    e.btnNoGoSave.addEventListener("click", () => void this._saveNoGo());
+    e.overlayCanvas.addEventListener("dblclick", (ev) => {
+      if (this.state.mode !== Mode.NOGO || this.activeTool !== "nogo-draw" || !this.noGoDraft.length) return;
+      ev.preventDefault();
+      this._closeNoGoDraft();
+    });
 
     this._wireWaypointList(e.waypointList);
 
@@ -1112,6 +1164,8 @@ class MapNavigatorApp {
           this._setActiveTool("assert-pan");
         } else if (this.state.mode === Mode.LOG) {
           this._setActiveTool("log-pan");
+        } else if (this.state.mode === Mode.NOGO) {
+          this._setActiveTool("nogo-pan");
         }
       }
     });
@@ -1229,7 +1283,7 @@ class MapNavigatorApp {
   /** @returns {?number} zone id of the translated tier backing the canvas, else null. */
   _activeDisplayTierId() {
     if (!this.field) return null;
-    const editZone = this.state.mode === Mode.EDIT ? this._editViewZone() : "";
+    const editZone = this.state.mode === Mode.EDIT || this.state.mode === Mode.NOGO ? this._editViewZone() : "";
     const zoneId = editZone ? this._resolveZoneId(editZone) : this._displayTierZoneId();
     if (Number.isNaN(zoneId)) return null;
     if (!this.field.isTier(zoneId)) return null;
@@ -1289,6 +1343,7 @@ class MapNavigatorApp {
         return x === p.x && y === p.y ? p : {...p, x, y};
       });
     } else if (mode === Mode.ASSERT) overlayPoints = this._displayRealPoints();
+    else if (mode === Mode.NOGO) overlayPoints = this._displayRealPoints(this._resolveZoneId(this._displayZoneId()));
 
     if (mode === Mode.EDIT) {
       this._scheduleEditOffMeshProbe();
@@ -1346,6 +1401,7 @@ class MapNavigatorApp {
       assertLocateHint: displayAssertLocateHint,
       logAnalysis: displayLogAnalysis,
       offMeshMarks: displayOffMeshMarks,
+      noGo: this._noGoForDisplay(),
     };
     this.renderer.requestRender(this.camera);
     this.overlay.render(this.camera, vm);
@@ -1482,6 +1538,428 @@ class MapNavigatorApp {
     if (Number.isNaN(zoneId)) return "";
     const base = this.field.zoneById(this.field.geometryZoneId(zoneId));
     return base ? base.name : "";
+  }
+
+  // ==================================================================================
+  //  Virtual no-go zones — authored here, read by the planner from nogo_zones.json
+  // ==================================================================================
+
+  /** Display frame → base px of the displayed map's geometry zone. */
+  _displayToBase(wx, wy) {
+    const tierId = this._activeDisplayTierId();
+    if (tierId === null || !this.field) return [wx, wy];
+    return this.field.tierToBase(tierId, wx, wy);
+  }
+
+  /** @returns {string} the geometry zone name the planner keys no-go polygons by. */
+  _noGoZoneName() {
+    return this._geometryZoneName(this._displayZoneId());
+  }
+
+  /** @returns {?string} name of the tier on screen, null while the base map is shown. */
+  _noGoViewTier() {
+    const tierId = this._activeDisplayTierId();
+    const zone = tierId === null ? null : this.field.zoneById(tierId);
+    return zone && zone.name ? zone.name : null;
+  }
+
+  /** @returns {string} what the list and header call a polygon's layer. */
+  _noGoLayerLabel(tier) {
+    return tier ? `仅 ${tier}` : "全层";
+  }
+
+  /**
+   * Bring a polygon's own layer on screen, the way the tier picker does it, so a row
+   * click on a polygon drawn on another tier shows it instead of nothing.
+   * @param {?string} tier tier zone name, null for the base map
+   */
+  _showNoGoLayer(tier) {
+    const zoneName = tier || this._noGoZoneName();
+    const zoneId = this._resolveZoneId(zoneName);
+    if (Number.isNaN(zoneId)) return;
+    if (this.state.points.length) this._setEditViewZone(zoneName);
+    if (this._selectDisplayZoneById(zoneId)) this._onDisplayTierChanged(false);
+    this._syncMapControls();
+  }
+
+  /**
+   * Fetch the saved table once. The overlay auto-loads it, so a failed read must not retry
+   * on every frame; entering the tab passes retry to ask again.
+   * @param {boolean} [retry]
+   */
+  async _ensureNoGoLoaded(retry = false) {
+    if (this._noGoLoaded || this._noGoLoading || (this._noGoFailed && !retry)) return;
+    this._noGoLoading = true;
+    this._noGoFailed = false;
+    try {
+      this.noGoDoc = parseNoGoDoc(await fetchNoGoZones());
+      this._noGoLoaded = true;
+    } catch (err) {
+      this._noGoFailed = true;
+      setStatus(`读取禁区表失败: ${err.message}`, "#ef4444");
+      return;
+    } finally {
+      this._noGoLoading = false;
+    }
+    this._renderNoGoList();
+    this._paint();
+  }
+
+  /**
+   * Append a ring vertex — or, with no ring in progress, select the polygon under the click.
+   * @param {number} canvasX @param {number} canvasY
+   * @returns {void}
+   */
+  _onNoGoClick(canvasX, canvasY) {
+    const zoneName = this._noGoZoneName();
+    if (!zoneName) {
+      setStatus("请先选择地图。", "#ef4444");
+      return;
+    }
+    const [wx, wy] = this.camera.canvasToWorld(canvasX, canvasY);
+    const [bx, by] = this._displayToBase(wx, wy);
+    if (!this.noGoDraft.length) {
+      const viewTier = this._noGoViewTier();
+      const hit = zonePolys(this.noGoDoc, zoneName).findIndex(
+        (poly) => polyOnLayer(poly, viewTier) && polyContains(poly.ring, bx, by),
+      );
+      if (hit >= 0) {
+        this.noGoSelected = hit;
+        this.noGoVertex = null;
+        this._renderNoGoList();
+        this._paint();
+        return;
+      }
+    }
+    this.noGoDraft.push([bx, by]);
+    this.noGoCursor = null;
+    this._paint();
+  }
+
+  /** Commit the ring being drawn into the current zone. */
+  _closeNoGoDraft() {
+    // A double click already landed both of its mousedowns as vertices — drop the repeat.
+    const ring = this.noGoDraft.filter(
+      (pt, i, all) => i === 0 || Math.hypot(pt[0] - all[i - 1][0], pt[1] - all[i - 1][1]) > 1e-6,
+    );
+    const zoneName = this._noGoZoneName();
+    const tier = this._noGoViewTier();
+    const poly = addPoly(this.noGoDoc, zoneName, ring, tier);
+    if (!poly) {
+      // Too few vertices: keep what was drawn so the author can add more instead of restarting.
+      this.noGoDraft = ring;
+      setStatus("禁区至少 3 个顶点。", "#ef4444");
+      this._paint();
+      return;
+    }
+    this.noGoDraft = [];
+    this.noGoCursor = null;
+    this.noGoSelected = zonePolys(this.noGoDoc, zoneName).length - 1;
+    this.noGoVertex = null;
+    this.noGoDirty = true;
+    this._renderNoGoList();
+    this._paint();
+    // Naming is the next step of drawing: hand the new row's name field the cursor.
+    const names = this.els.noGoList.querySelectorAll(".nogo-name");
+    const name = names[this.noGoSelected];
+    if (name) {
+      name.focus();
+      name.select();
+    }
+    setStatus(`已新建禁区 · ${this._noGoLayerLabel(tier)}，保存后生效。`, "#10b981");
+  }
+
+  /** @returns {boolean} whether a ring in progress was discarded */
+  _cancelNoGoDraft() {
+    if (!this.noGoDraft.length) return false;
+    this.noGoDraft = [];
+    this.noGoCursor = null;
+    return true;
+  }
+
+  /** Delete key / toolbar delete while on the no-go tab: the picked vertex, else the polygon. */
+  _deleteSelectedNoGo() {
+    const zoneName = this._noGoZoneName();
+    const poly = this.noGoSelected === null ? null : zonePolys(this.noGoDoc, zoneName)[this.noGoSelected];
+    if (poly && this.noGoVertex !== null) {
+      if (poly.ring.length <= NOGO_MIN_RING) {
+        setStatus("仅剩 3 个顶点；Esc 取消顶点选择后 Delete 删除整个禁区。", "#f59e0b");
+        return;
+      }
+      poly.ring.splice(this.noGoVertex, 1);
+      this.noGoVertex = null;
+      this.noGoDirty = true;
+      this._renderNoGoHeader();
+      this._paint();
+      setStatus("已删除顶点，保存后生效。", "#10b981");
+      return;
+    }
+    if (!poly || !removePoly(this.noGoDoc, zoneName, this.noGoSelected)) {
+      setStatus("先选中禁区再按 Delete。", "#f59e0b");
+      return;
+    }
+    this.noGoSelected = null;
+    this.noGoDirty = true;
+    this._renderNoGoList();
+    this._paint();
+    setStatus("已删除禁区，保存后生效。", "#10b981");
+  }
+
+  /**
+   * The selected polygon with its ring in canvas px, or null when none is on this layer.
+   * @returns {?{poly:Object, canvas:Array<[number, number]>}}
+   */
+  _noGoSelectedOnScreen() {
+    if (this.noGoSelected === null) return null;
+    const poly = zonePolys(this.noGoDoc, this._noGoZoneName())[this.noGoSelected];
+    if (!poly || !polyOnLayer(poly, this._noGoViewTier())) return null;
+    const canvas = poly.ring.map(([bx, by]) => {
+      const [wx, wy] = this._baseToDisplay(bx, by);
+      return this.camera.worldToCanvas(wx, wy);
+    });
+    return {poly, canvas};
+  }
+
+  /**
+   * What the pointer is over on the selected polygon: a vertex handle first, then an
+   * edge (with the point to insert at), then the interior.
+   * @param {number} x @param {number} y canvas px
+   * @returns {?{kind:'vertex'|'edge'|'inside', vertex?:number, edge?:number, at?:[number, number]}}
+   */
+  _noGoHitSelected(x, y) {
+    const sel = this._noGoSelectedOnScreen();
+    if (!sel) return null;
+    const {canvas} = sel;
+    for (let i = 0; i < canvas.length; i++) {
+      if (Math.hypot(canvas[i][0] - x, canvas[i][1] - y) <= NOGO_HANDLE_RADIUS) return {kind: "vertex", vertex: i};
+    }
+    for (let i = 0; i < canvas.length; i++) {
+      const [ax, ay] = canvas[i];
+      const [bx, by] = canvas[(i + 1) % canvas.length];
+      const len2 = (bx - ax) ** 2 + (by - ay) ** 2;
+      const t = len2 ? Math.max(0, Math.min(1, ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) / len2)) : 0;
+      const px = ax + (bx - ax) * t;
+      const py = ay + (by - ay) * t;
+      if (Math.hypot(px - x, py - y) <= NOGO_EDGE_RADIUS) return {kind: "edge", edge: i, at: [px, py]};
+    }
+    const [wx, wy] = this.camera.canvasToWorld(x, y);
+    const [bx, by] = this._displayToBase(wx, wy);
+    return polyContains(sel.poly.ring, bx, by) ? {kind: "inside"} : null;
+  }
+
+  /**
+   * Start dragging a vertex (a press on an edge inserts one there first) or, from the
+   * interior, the whole polygon. Nothing is grabbed while a ring is being drawn.
+   * @param {number} x @param {number} y canvas px
+   * @returns {boolean} true when the press was taken by the selected polygon
+   */
+  _beginNoGoGesture(x, y) {
+    if (this.noGoDraft.length) return false;
+    const hit = this._noGoHitSelected(x, y);
+    if (!hit) return false;
+    const poly = zonePolys(this.noGoDoc, this._noGoZoneName())[this.noGoSelected];
+    const [wx, wy] = this.camera.canvasToWorld(x, y);
+    let vertex = null;
+    if (hit.kind === "vertex") vertex = hit.vertex;
+    else if (hit.kind === "edge") {
+      const [ew, eh] = this.camera.canvasToWorld(hit.at[0], hit.at[1]);
+      poly.ring.splice(hit.edge + 1, 0, this._displayToBase(ew, eh));
+      vertex = hit.edge + 1;
+    }
+    this.noGoVertex = vertex;
+    this._noGoGesture = {
+      vertex,
+      inserted: hit.kind === "edge",
+      startX: x,
+      startY: y,
+      last: this._displayToBase(wx, wy),
+      moved: false,
+    };
+    this._renderNoGoHeader();
+    this._paint();
+    return true;
+  }
+
+  /** @param {number} x @param {number} y canvas px */
+  _updateNoGoGesture(x, y) {
+    const g = this._noGoGesture;
+    if (!g.moved && !this._movedExceeded(g.startX, g.startY, x, y)) return;
+    g.moved = true;
+    const poly = zonePolys(this.noGoDoc, this._noGoZoneName())[this.noGoSelected];
+    if (!poly) return;
+    const [wx, wy] = this.camera.canvasToWorld(x, y);
+    const base = this._displayToBase(wx, wy);
+    if (g.vertex !== null) {
+      poly.ring[g.vertex] = base;
+    } else {
+      const dx = base[0] - g.last[0];
+      const dy = base[1] - g.last[1];
+      poly.ring = poly.ring.map(([bx, by]) => [bx + dx, by + dy]);
+    }
+    g.last = base;
+    this.noGoDirty = true;
+    this.els.overlayCanvas.style.cursor = "grabbing";
+    this._paint();
+  }
+
+  /** Pointer-up of a polygon drag; a press that never moved only picked the vertex,
+   *  and an unmoved edge press takes its provisional vertex back out. */
+  _endNoGoGesture() {
+    const g = this._noGoGesture;
+    this._noGoGesture = null;
+    if (g.inserted && !g.moved) {
+      const poly = zonePolys(this.noGoDoc, this._noGoZoneName())[this.noGoSelected];
+      if (poly) poly.ring.splice(g.vertex, 1);
+      this.noGoVertex = null;
+    }
+    this._setActiveTool(this.activeTool);
+    this._renderNoGoHeader();
+    this._paint();
+    if (g.moved) setStatus(g.vertex !== null ? "已移动顶点，保存后生效。" : "已移动禁区，保存后生效。", "#10b981");
+  }
+
+  /** Rebuild the sidebar list: one row per polygon — editable name, its layer, a delete button. */
+  _renderNoGoList() {
+    const zoneName = this._noGoZoneName();
+    const viewTier = this._noGoViewTier();
+    this._noGoListZone = zoneName;
+    this._noGoListTier = viewTier;
+    this._renderNoGoHeader();
+    const host = this.els.noGoList;
+    host.textContent = "";
+    const polys = zonePolys(this.noGoDoc, zoneName);
+    if (!polys.length) {
+      const empty = document.createElement("div");
+      empty.className = "nogo-empty";
+      empty.textContent = this._noGoLoaded ? "暂无禁区" : "读取中…";
+      host.appendChild(empty);
+      return;
+    }
+    polys.forEach((poly, index) => {
+      const row = document.createElement("div");
+      const onScreen = polyOnLayer(poly, viewTier);
+      row.className = `nogo-row${index === this.noGoSelected ? " selected" : ""}${onScreen ? "" : " off-layer"}`;
+      row.addEventListener("click", () => {
+        this.noGoSelected = index;
+        this.noGoVertex = null;
+        if (!onScreen) this._showNoGoLayer(poly.tier);
+        this._renderNoGoList();
+        this._paint();
+      });
+
+      const name = document.createElement("input");
+      name.type = "text";
+      name.className = "entry nogo-name";
+      name.placeholder = "名称";
+      name.title = "规划失败信息中引用该名称";
+      name.value = poly.id || "";
+      name.addEventListener("click", (ev) => ev.stopPropagation());
+      name.addEventListener("change", () => this._setNoGoName(index, name.value));
+      row.appendChild(name);
+
+      const layer = document.createElement("span");
+      layer.className = "nogo-row-layer";
+      layer.textContent = this._noGoLayerLabel(poly.tier);
+      layer.title = poly.tier ? `仅 ${poly.tier} 生效；点击切到该层` : "底图，全层生效";
+      row.appendChild(layer);
+
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "btn-ghost";
+      del.title = "删除";
+      del.textContent = "✕";
+      del.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        // The row button removes the whole polygon; a vertex picked on another polygon must not redirect it.
+        this.noGoSelected = index;
+        this.noGoVertex = null;
+        this._deleteSelectedNoGo();
+      });
+      row.appendChild(del);
+      host.appendChild(row);
+    });
+  }
+
+  /**
+   * Rename a polygon. The name is what the planner quotes back and what the map label shows.
+   * @param {number} index @param {string} raw
+   * @returns {void}
+   */
+  _setNoGoName(index, raw) {
+    const poly = zonePolys(this.noGoDoc, this._noGoZoneName())[index];
+    if (!poly) return;
+    poly.id = raw.trim();
+    this.noGoDirty = true;
+    this._renderNoGoHeader();
+    this._paint();
+  }
+
+  /** Zone name, the layer being drawn on, and the unsaved marker above the list. */
+  _renderNoGoHeader() {
+    const zoneName = this._noGoZoneName();
+    const tier = this._noGoViewTier();
+    const dirty = this.noGoDirty ? " · 未保存" : "";
+    this.els.noGoZoneName.textContent = zoneName ? `${zoneName} · ${this._noGoLayerLabel(tier)}${dirty}` : "未选择地图";
+  }
+
+  /** Write the table back; the backend cold-starts the planner session so it re-reads it. */
+  async _saveNoGo() {
+    const payload = serializeNoGoDoc(this.noGoDoc);
+    setStatus("保存中，navmesh 重载…", "#3b82f6");
+    let result;
+    try {
+      result = await saveNoGoZones(payload);
+    } catch (err) {
+      setStatus(`保存失败: ${err.message}`, "#ef4444");
+      return;
+    }
+    this.noGoDirty = false;
+    // The previews on screen were planned against the old table; the editor re-plans on return.
+    this._autoPlanKey = null;
+    this._renderNoGoList();
+    if (result.reloaded) {
+      setStatus(`已保存 ${result.zones} 个区的禁区，navmesh 已重载。`, "#10b981");
+    } else {
+      setStatus(`已保存，navmesh 重载失败: ${result.error || "未知错误"}`, "#f59e0b");
+    }
+  }
+
+  /** @returns {?Object} display-frame no-go view model, or null when there is nothing to draw */
+  _noGoForDisplay() {
+    // Saved zones stay visible across EDIT too: the point of the feature is watching a
+    // route preview bend around them.
+    const mode = this.state.mode;
+    if (mode !== Mode.EDIT && mode !== Mode.NOGO) return null;
+    if (!this._noGoLoaded) {
+      void this._ensureNoGoLoaded();
+      return null;
+    }
+    const editing = mode === Mode.NOGO;
+    // Switching maps swaps the whole list; rebuilding on every paint would eat input focus.
+    const viewTier = this._noGoViewTier();
+    if (this._noGoListZone !== this._noGoZoneName()) {
+      this.noGoSelected = null;
+      this.noGoVertex = null;
+      this._cancelNoGoDraft();
+      if (editing) this._renderNoGoList();
+      else this._noGoListZone = this._noGoZoneName();
+    } else if (this._noGoListTier !== viewTier) {
+      // A ring belongs to the layer it is closed on, so a layer switch mid-draw discards it.
+      this._cancelNoGoDraft();
+      if (editing) this._renderNoGoList();
+      else this._noGoListTier = viewTier;
+    }
+    const project = ([bx, by]) => this._baseToDisplay(bx, by);
+    return {
+      // Same layer filter as the click hit test, so nothing invisible is selectable.
+      polys: zonePolys(this.noGoDoc, this._noGoZoneName()).flatMap((poly, index) => {
+        if (!polyOnLayer(poly, viewTier)) return [];
+        const selected = editing && index === this.noGoSelected;
+        return [{id: poly.id, ring: poly.ring.map(project), selected, vertex: selected ? this.noGoVertex : null}];
+      }),
+      draft: editing ? this.noGoDraft.map(project) : [],
+      cursor: editing && this.noGoCursor ? project(this.noGoCursor) : null,
+    };
   }
 
   /** Open or close the shared map-layer panel. */
@@ -2082,6 +2560,8 @@ class MapNavigatorApp {
       hasMapInspection: this._hasMapInspection(),
       isAssertGesture: this.isAssertSelecting,
       assertRectSelected: this.assertRectSelected,
+      hasNoGoDraft: this.noGoDraft.length > 0,
+      noGoSelected: this.noGoSelected !== null,
     });
 
     if (action === EscapeAction.CLEAR_QUICK_TEST) {
@@ -2118,6 +2598,28 @@ class MapNavigatorApp {
       this._clearMapInspection("log-inspect");
       this._paint();
       setStatus("已取消日志点位或测距选择。", "#10b981");
+      return true;
+    }
+
+    if (action === EscapeAction.CANCEL_NOGO_DRAFT) {
+      this._cancelNoGoDraft();
+      this._paint();
+      setStatus("已取消绘制。", "#10b981");
+      return true;
+    }
+
+    if (action === EscapeAction.CLEAR_NOGO_SELECTION) {
+      // A picked vertex goes first, so Delete falls back to the whole polygon next.
+      if (this.noGoVertex !== null) {
+        this.noGoVertex = null;
+        this._paint();
+        setStatus("已取消顶点选择。", "#10b981");
+        return true;
+      }
+      this.noGoSelected = null;
+      this._renderNoGoList();
+      this._paint();
+      setStatus("已取消禁区选择。", "#10b981");
       return true;
     }
 
@@ -2434,9 +2936,8 @@ class MapNavigatorApp {
    * goes `own zone → base → display frame`; points of another map are dropped.
    * @returns {Array<Object>} copies of the points with display-frame `x`/`y`
    */
-  _displayRealPoints() {
+  _displayRealPoints(displayZoneId = this._displayTierZoneId()) {
     if (!this.field || !this.state.points.length) return [];
-    const displayZoneId = this._displayTierZoneId();
     if (Number.isNaN(displayZoneId)) return [];
     const displayGeomId = this.field.geometryZoneId(displayZoneId);
 
@@ -3427,11 +3928,27 @@ class MapNavigatorApp {
       return;
     }
 
-    if (this.activeTool === "pan" || this.activeTool === "assert-pan") {
+    if (this.activeTool === "pan" || this.activeTool === "assert-pan" || this.activeTool === "nogo-pan") {
       this.isPanning = true;
       this.dragStartX = x;
       this.dragStartY = y;
       this.els.overlayCanvas.style.cursor = "grabbing";
+      return;
+    }
+
+    if (this.state.mode === Mode.NOGO) {
+      this.isDragging = false;
+      this.isPanning = false;
+      this.isBoxSelecting = false;
+      // A press on the selected polygon drags it; elsewhere a press that moves pans the
+      // map and one that stays put becomes a click on pointer-up.
+      if (this.activeTool === "nogo-draw" && this._beginNoGoGesture(x, y)) {
+        this.isPanCandidate = false;
+        return;
+      }
+      this.isPanCandidate = true;
+      this.pointerDownX = x;
+      this.pointerDownY = y;
       return;
     }
 
@@ -3524,6 +4041,22 @@ class MapNavigatorApp {
   _onPointerMove(e) {
     const [x, y] = this._evtXY(e);
 
+    if (this.state.mode === Mode.NOGO && this.activeTool === "nogo-draw" && this.noGoDraft.length) {
+      const [wx, wy] = this.camera.canvasToWorld(x, y);
+      this.noGoCursor = this._displayToBase(wx, wy);
+      this._paint();
+    }
+    if (this.state.mode === Mode.NOGO) {
+      if (this._noGoGesture) {
+        this._updateNoGoGesture(x, y);
+        return;
+      }
+      if (this.activeTool === "nogo-draw" && !this.isPanning && !this.isPanCandidate && !this.noGoDraft.length) {
+        const hit = this._noGoHitSelected(x, y);
+        this.els.overlayCanvas.style.cursor = hit ? (hit.kind === "inside" ? "move" : "pointer") : "crosshair";
+      }
+    }
+
     if (
       (this.state.mode === Mode.LOG || this.state.mode === Mode.EDIT || this.state.mode === Mode.ASSERT) &&
       !this.isPanning &&
@@ -3612,6 +4145,15 @@ class MapNavigatorApp {
         this._updatePointHoverCursor(x, y);
       }
       this._paint();
+      return;
+    }
+
+    if (this.state.mode === Mode.NOGO) {
+      if (this._noGoGesture) this._endNoGoGesture();
+      else if (this.isPanCandidate) {
+        this.isPanCandidate = false;
+        if (this.activeTool === "nogo-draw") this._onNoGoClick(x, y);
+      }
       return;
     }
 
@@ -5107,6 +5649,10 @@ class MapNavigatorApp {
       setStatus("日志分析模式为只读；请用“清除”移除导入的日志。", "#f59e0b");
       return;
     }
+    if (this.state.mode === Mode.NOGO) {
+      this._deleteSelectedNoGo();
+      return;
+    }
     if (this.state.mode === Mode.ASSERT) {
       if (!this.assertRectWorld) {
         setStatus("当前没有可删除的 Assert 区域", "#f59e0b");
@@ -5330,14 +5876,21 @@ class MapNavigatorApp {
       e.preventDefault();
       return;
     }
+    if (e.key === "Enter" && this.state.mode === Mode.NOGO && this.noGoDraft.length) {
+      this._closeNoGoDraft();
+      e.preventDefault();
+      return;
+    }
     if (e.key === "1") {
       if (this.state.mode === Mode.EDIT) this._activateEditTool("add");
       else if (this.state.mode === Mode.ASSERT) this._setActiveTool("assert-edit");
+      else if (this.state.mode === Mode.NOGO) this._setActiveTool("nogo-draw");
       e.preventDefault();
       return;
     }
     if (e.key === "2") {
       if (this.state.mode === Mode.EDIT) this._activateEditTool("select");
+      else if (this.state.mode === Mode.NOGO) this._setActiveTool("nogo-pan");
       e.preventDefault();
       return;
     }
@@ -5369,13 +5922,17 @@ class MapNavigatorApp {
 
   /**
    * Switch the active canvas tool, updating toolbar highlight + canvas cursor.
-   * @param {'pan'|'add'|'select'|'route-test'|'edit-start'|'assert-pan'|'assert-edit'|'log-inspect'|'zipline-measure'|'log-pan'} tool
+   * @param {'pan'|'add'|'select'|'route-test'|'edit-start'|'assert-pan'|'assert-edit'|'nogo-pan'|'nogo-draw'|'log-inspect'|'zipline-measure'|'log-pan'} tool
    * @returns {void}
    */
   _setActiveTool(tool) {
+    const leftNoGoDraw = this.activeTool === "nogo-draw" && tool !== "nogo-draw";
     this.activeTool = tool;
+    if (leftNoGoDraw) this._cancelNoGoDraft();
 
     const e = this.els;
+    if (e.toolNoGoPan) e.toolNoGoPan.classList.toggle("active", tool === "nogo-pan");
+    if (e.toolNoGoDraw) e.toolNoGoDraw.classList.toggle("active", tool === "nogo-draw");
     if (e.toolPan) e.toolPan.classList.toggle("active", tool === "pan");
     if (e.toolAdd) e.toolAdd.classList.toggle("active", tool === "add");
     if (e.toolSelect) e.toolSelect.classList.toggle("active", tool === "select");
@@ -5398,7 +5955,7 @@ class MapNavigatorApp {
     }
 
     const canvas = e.overlayCanvas;
-    if (tool === "pan" || tool === "assert-pan" || tool === "log-pan") {
+    if (tool === "pan" || tool === "assert-pan" || tool === "log-pan" || tool === "nogo-pan") {
       canvas.style.cursor = "grab";
     } else if (tool === "zipline-measure") {
       canvas.style.cursor = "crosshair";
@@ -5408,7 +5965,7 @@ class MapNavigatorApp {
       canvas.style.cursor = "crosshair";
     } else if (tool === "select") {
       canvas.style.cursor = "default";
-    } else if (tool === "assert-edit") {
+    } else if (tool === "assert-edit" || tool === "nogo-draw") {
       canvas.style.cursor = "crosshair";
     } else {
       canvas.style.cursor = "default";
@@ -5424,13 +5981,13 @@ class MapNavigatorApp {
 
   /** @returns {void} */
   _undo() {
-    if (this.state.mode === Mode.LOG) return;
+    if (this.state.mode === Mode.LOG || this.state.mode === Mode.NOGO) return;
     if (this.state.undo()) this._afterHistory();
   }
 
   /** @returns {void} */
   _redo() {
-    if (this.state.mode === Mode.LOG) return;
+    if (this.state.mode === Mode.LOG || this.state.mode === Mode.NOGO) return;
     if (this.state.redo()) this._afterHistory();
   }
 
@@ -5958,6 +6515,14 @@ class MapNavigatorApp {
       this.els.editSelectedTierLabel.textContent =
         !Number.isNaN(zoneId) && this.field ? this.field.zoneLabel(zoneId) || zone : zone || "未选择层级";
       this.els.editSelectedTierLabel.style.display = "inline-block";
+    } else if (this.state.mode === Mode.NOGO) {
+      // No-go zones share the editor's display frame, so the map bar keeps switching it.
+      this.els.btnSelectTier.disabled = !(this.field && this.field.displayBaseNames().length);
+      const zone = this._displayZoneId();
+      const zoneId = this._resolveZoneId(zone);
+      this.els.editSelectedTierLabel.textContent =
+        !Number.isNaN(zoneId) && this.field ? this.field.zoneLabel(zoneId) || zone : zone || "未选择层级";
+      this.els.editSelectedTierLabel.style.display = "inline-block";
     } else {
       this.els.btnSelectTier.disabled = true;
       this.els.editSelectedTierLabel.style.display = "none";
@@ -6104,7 +6669,13 @@ class MapNavigatorApp {
     this.deckPreview = null;
     this.renderer.setDeckBand(null);
 
-    if (modeName !== "edit") {
+    if (this.state.mode === Mode.NOGO && modeName !== "nogo") {
+      this._cancelNoGoDraft();
+      this.noGoSelected = null;
+      if (this.noGoDirty) setStatus("禁区未保存，规划仍按旧表。", "#f59e0b");
+    }
+    // The no-go tab only looks at the route, so the previews it exists to influence stay put.
+    if (modeName !== "edit" && modeName !== "nogo") {
       this._clearEditPreview();
       this._clearQuickRouteTest();
     }
@@ -6137,6 +6708,15 @@ class MapNavigatorApp {
           : "日志分析模式：请选择 MaaEnd ZIP 分包或解压后的 cpp-algo/debug/maafw*.log。",
         "#3b82f6",
       );
+    } else if (modeName === "nogo") {
+      this.state.mode = Mode.NOGO;
+      if (!normalizeZoneId(this._displayZoneId())) {
+        setStatus("无可用底图，无法编辑禁区。", "#ef4444");
+        this._selectModeTab("edit");
+        return;
+      }
+      void this._ensureNoGoLoaded(true);
+      setStatus("禁区：单击落点，双击/回车闭合，Esc 取消；保存后生效。", "#3b82f6");
     }
 
     this._syncAssertControls();
@@ -6160,6 +6740,9 @@ class MapNavigatorApp {
     e.tabEdit.classList.remove("active");
     e.tabAssert.classList.remove("active");
     e.tabLog.classList.remove("active");
+    e.tabNoGo.classList.remove("active");
+    e.canvasWrap.classList.remove("mode-edit", "mode-assert", "mode-log", "mode-nogo");
+    document.body.classList.remove("mode-edit", "mode-assert", "mode-log", "mode-nogo");
 
     const logWorkspace = mode === Mode.LOG;
     const navtestAvailable = mode !== Mode.LOG;
@@ -6178,9 +6761,11 @@ class MapNavigatorApp {
     e.panelRecording.hidden = true;
     e.panelEditMap.hidden = true;
     e.panelAssertMap.hidden = true;
+    e.panelNoGoMap.hidden = true;
     e.panelProperties.hidden = true;
     e.panelAssert.hidden = true;
     e.panelLog.hidden = true;
+    e.panelNoGo.hidden = true;
     e.btnDelPointFloat.hidden = mode === Mode.LOG;
     if (this.navtest) this.navtest.setDisabled(!navtestAvailable);
 
@@ -6188,33 +6773,36 @@ class MapNavigatorApp {
       e.tabAssert.classList.add("active");
       e.panelAssertMap.hidden = false;
       e.panelAssert.hidden = false;
-      e.canvasWrap.classList.remove("mode-edit", "mode-log");
       e.canvasWrap.classList.add("mode-assert");
-      document.body.classList.remove("mode-edit", "mode-log");
       document.body.classList.add("mode-assert");
       this._setActiveTool("assert-edit");
     } else if (mode === Mode.LOG) {
       e.panelLog.hidden = false;
-      e.canvasWrap.classList.remove("mode-edit", "mode-assert");
       e.canvasWrap.classList.add("mode-log");
-      document.body.classList.remove("mode-edit", "mode-assert");
       document.body.classList.add("mode-log");
       this._setActiveTool(
         this.activeTool === "zipline-measure" || this.activeTool === "log-inspect" ? this.activeTool : "log-inspect",
       );
+    } else if (mode === Mode.NOGO) {
+      e.tabNoGo.classList.add("active");
+      e.panelNoGoMap.hidden = false;
+      e.panelNoGo.hidden = false;
+      e.canvasWrap.classList.add("mode-nogo");
+      document.body.classList.add("mode-nogo");
+      this._renderNoGoList();
+      this._setActiveTool("nogo-draw");
     } else {
       e.tabEdit.classList.add("active");
       e.panelEditMap.hidden = false;
       e.panelRecording.hidden = false;
       e.panelProperties.hidden = false;
-      e.canvasWrap.classList.remove("mode-assert", "mode-log");
       e.canvasWrap.classList.add("mode-edit");
-      document.body.classList.remove("mode-assert", "mode-log");
       document.body.classList.add("mode-edit");
       this._setActiveTool("add");
     }
     e.tabAssert.setAttribute("aria-pressed", String(mode === Mode.ASSERT));
     e.tabEdit.setAttribute("aria-pressed", String(mode === Mode.EDIT));
+    e.tabNoGo.setAttribute("aria-pressed", String(mode === Mode.NOGO));
     this._syncViewModeUI();
     this._renderEditInspection();
     this._renderPointInspection();
@@ -6261,7 +6849,7 @@ class MapNavigatorApp {
         this._onDisplayTierChanged();
         if (routeHasPoints) {
           this._syncMapControls();
-          if (this._editViewDetached())
+          if (this._editViewDetached() && this.state.mode === Mode.EDIT)
             setStatus("这张底图上没有当前路点，路点原样保留，切回去就能继续编辑。", "#3b82f6");
         }
       },
