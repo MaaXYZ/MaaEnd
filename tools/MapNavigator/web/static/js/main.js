@@ -2061,6 +2061,8 @@ class MapNavigatorApp {
     if (this.inspectedPoint?.kind === "tower") this.inspectedPoint = null;
     this._clearQuickRouteTest();
     this._clearEditPreview();
+    // _paint() never touches the 3D view, so drop the previous account's route from it here.
+    this._syncThreeOverlays();
     this._renderPointInspection();
     this._renderZiplineDistance();
     this._paint();
