@@ -98,8 +98,7 @@
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
-            "__ScenePrivateMenuListEnterWorld",
-            "__ScenePrivateAnyEnterWorldSuccess"
+            "__ScenePrivateAnyEnterMenuListSuccess"
         ]
     },
     "__ScenePrivateMenuSettingClickPerformanceGraphicIcon": {
@@ -170,64 +169,6 @@
             ]
         },
         "pre_delay": 0,
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressQFromPerformanceGraphic": {
-        "desc": "设置当前在性能与画面，按 Q 向左切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingPerformanceGraphic"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 81
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressEFromPerformanceGraphic": {
-        "desc": "设置当前在性能与画面，按 E 向右切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingPerformanceGraphic"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 69
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
         "post_delay": 0,
         "rate_limit": 0
     },
@@ -302,64 +243,6 @@
         "post_delay": 0,
         "rate_limit": 0
     },
-    "__ScenePrivateMenuSettingPressQFromAudio": {
-        "desc": "设置当前在音频，按 Q 向左切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingAudio"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 81
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressEFromAudio": {
-        "desc": "设置当前在音频，按 E 向右切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingAudio"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 69
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
     "__ScenePrivateMenuSettingClickControlsIcon": {
         "desc": "在设置顶栏点击未选中的操控图标",
         "recognition": {
@@ -428,64 +311,6 @@
             ]
         },
         "pre_delay": 0,
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressQFromControls": {
-        "desc": "设置当前在操控，按 Q 向左切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingControls"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 81
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressEFromControls": {
-        "desc": "设置当前在操控，按 E 向右切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingControls"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 69
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
         "post_delay": 0,
         "rate_limit": 0
     },
@@ -560,64 +385,6 @@
         "post_delay": 0,
         "rate_limit": 0
     },
-    "__ScenePrivateMenuSettingPressQFromKeybinding": {
-        "desc": "设置当前在按键，按 Q 向左切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingKeybinding"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 81
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressEFromKeybinding": {
-        "desc": "设置当前在按键，按 E 向右切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingKeybinding"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 69
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
     "__ScenePrivateMenuSettingClickLanguageIcon": {
         "desc": "在设置顶栏点击未选中的语言图标",
         "recognition": {
@@ -686,64 +453,6 @@
             ]
         },
         "pre_delay": 0,
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressQFromLanguage": {
-        "desc": "设置当前在语言，按 Q 向左切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingLanguage"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 81
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressEFromLanguage": {
-        "desc": "设置当前在语言，按 E 向右切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingLanguage"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 69
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
         "post_delay": 0,
         "rate_limit": 0
     },
@@ -818,64 +527,6 @@
         "post_delay": 0,
         "rate_limit": 0
     },
-    "__ScenePrivateMenuSettingPressQFromPlatformAccount": {
-        "desc": "设置当前在平台与账户，按 Q 向左切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingPlatformAccount"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 81
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressEFromPlatformAccount": {
-        "desc": "设置当前在平台与账户，按 E 向右切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingPlatformAccount"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 69
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
     "__ScenePrivateMenuSettingClickOthersIcon": {
         "desc": "在设置顶栏点击未选中的其他图标",
         "recognition": {
@@ -944,64 +595,6 @@
             ]
         },
         "pre_delay": 0,
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressQFromOthers": {
-        "desc": "设置当前在其他，按 Q 向左切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingOthers"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 81
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
-        "post_delay": 0,
-        "rate_limit": 0
-    },
-    "__ScenePrivateMenuSettingPressEFromOthers": {
-        "desc": "设置当前在其他，按 E 向右切换一栏",
-        "recognition": {
-            "type": "And",
-            "param": {
-                "all_of": [
-                    "InSettingOthers"
-                ]
-            }
-        },
-        "pre_delay": 0,
-        "action": {
-            "type": "ClickKey",
-            "param": {
-                "key": 69
-            }
-        },
-        "post_wait_freezes": {
-            "time": 80,
-            "target": [
-                0,
-                40,
-                300,
-                180
-            ]
-        },
         "post_delay": 0,
         "rate_limit": 0
     }

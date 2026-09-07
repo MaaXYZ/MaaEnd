@@ -7,7 +7,6 @@
         "rate_limit": 0,
         "next": [
             "__ScenePrivateCloseADBExit",
-            "__ScenePrivateMenuSettingEnterMenuList",
             "__ScenePrivateMenuListLoadingEnterWorld",
             "__ScenePrivateMenuListEnterWorld",
             "__ScenePrivateTrialOfSwordmancyEnterWorld",

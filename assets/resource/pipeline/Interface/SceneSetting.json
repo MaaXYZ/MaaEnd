@@ -18,12 +18,6 @@
         "next": [
             "__ScenePrivateAnyEnterMenuSettingPerformanceGraphicSuccess",
             "__ScenePrivateMenuSettingClickPerformanceGraphicIcon",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromAudio",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromControls",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromKeybinding",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromLanguage",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromPlatformAccount",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromOthers",
             "[JumpBack]SceneEnterMenuSetting"
         ]
     },
@@ -35,12 +29,6 @@
         "next": [
             "__ScenePrivateAnyEnterMenuSettingAudioSuccess",
             "__ScenePrivateMenuSettingClickAudioIcon",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromPerformanceGraphic",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromControls",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromKeybinding",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromLanguage",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromPlatformAccount",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromOthers",
             "[JumpBack]SceneEnterMenuSetting"
         ]
     },
@@ -52,12 +40,6 @@
         "next": [
             "__ScenePrivateAnyEnterMenuSettingControlsSuccess",
             "__ScenePrivateMenuSettingClickControlsIcon",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromPerformanceGraphic",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromAudio",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromKeybinding",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromLanguage",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromPlatformAccount",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromOthers",
             "[JumpBack]SceneEnterMenuSetting"
         ]
     },
@@ -69,12 +51,6 @@
         "next": [
             "__ScenePrivateAnyEnterMenuSettingKeybindingSuccess",
             "__ScenePrivateMenuSettingClickKeybindingIcon",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromPerformanceGraphic",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromAudio",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromControls",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromLanguage",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromPlatformAccount",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromOthers",
             "[JumpBack]SceneEnterMenuSetting"
         ]
     },
@@ -86,12 +62,6 @@
         "next": [
             "__ScenePrivateAnyEnterMenuSettingLanguageSuccess",
             "__ScenePrivateMenuSettingClickLanguageIcon",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromPerformanceGraphic",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromAudio",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromControls",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromKeybinding",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromPlatformAccount",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromOthers",
             "[JumpBack]SceneEnterMenuSetting"
         ]
     },
@@ -103,12 +73,6 @@
         "next": [
             "__ScenePrivateAnyEnterMenuSettingPlatformAccountSuccess",
             "__ScenePrivateMenuSettingClickPlatformAccountIcon",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromPerformanceGraphic",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromAudio",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromControls",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromKeybinding",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromLanguage",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromOthers",
             "[JumpBack]SceneEnterMenuSetting"
         ]
     },
@@ -120,12 +84,6 @@
         "next": [
             "__ScenePrivateAnyEnterMenuSettingOthersSuccess",
             "__ScenePrivateMenuSettingClickOthersIcon",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromPerformanceGraphic",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromAudio",
-            "[JumpBack]__ScenePrivateMenuSettingPressQFromControls",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromKeybinding",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromLanguage",
-            "[JumpBack]__ScenePrivateMenuSettingPressEFromPlatformAccount",
             "[JumpBack]SceneEnterMenuSetting"
         ]
     }
