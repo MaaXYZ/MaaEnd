@@ -96,6 +96,113 @@
             "Node.Action.Starting": "🤔**未选择任何地区**\n请在任务设置中至少勾选一个地区后重试~"
         }
     },
+    "AutoEssenceTargetPrepare": {
+        "desc": "目标模式：首次强制盘点无暇基质库存（export_inventory）后加载内存仓储；max_hit=1",
+        "max_hit": 1,
+        "pre_delay": 0,
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "PipelineOverride",
+                "custom_action_param": {
+                    "patch": {
+                        "EssenceFilterInit": {
+                            "attach": {
+                                "export_inventory": true
+                            }
+                        },
+                        "EssenceFilterCheckItemOCRFallback": {
+                            "action": "StopTask"
+                        },
+                        "EssenceGridClickPending": {
+                            "on_error": [
+                                "EssenceFilterCheckItemOCRFallback"
+                            ]
+                        },
+                        "EssenceFilterMainFailed": {
+                            "action": "StopTask"
+                        },
+                        "EssenceFilterNavigateToInventory": {
+                            "action": "StopTask"
+                        }
+                    }
+                }
+            }
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoEssenceTargetRunInventoryFilter"
+        ],
+        "on_error": [
+            "AutoEssenceTargetPrepareFailed"
+        ],
+        "focus": {
+            "Node.Action.Starting": "📦目标模式：开始盘点基质库存"
+        }
+    },
+    "AutoEssenceTargetRunInventoryFilter": {
+        "desc": "目标模式：SubTask 跑 EssenceFilterMain（库存导出）",
+        "pre_delay": 0,
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "SubTask",
+                "custom_action_param": {
+                    "sub": [
+                        "EssenceFilterMain"
+                    ],
+                    "continue": false,
+                    "strict": true
+                }
+            }
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoEssenceTargetLoadInventory"
+        ],
+        "on_error": [
+            "AutoEssenceTargetPrepareFailed"
+        ]
+    },
+    "AutoEssenceTargetLoadInventory": {
+        "desc": "目标模式：将 EssenceInventory.json 载入内存仓储",
+        "pre_delay": 0,
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "AutoEssenceLoadInventoryAction"
+            }
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoEssenceTargetPlan"
+        ],
+        "on_error": [
+            "AutoEssenceTargetPrepareFailed"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": "📦目标模式：基质仓储已加载"
+        }
+    },
+    "AutoEssenceTargetPrepareFailed": {
+        "desc": "目标模式库存盘点失败，禁止空库存开刷",
+        "action": "StopTask",
+        "focus": {
+            "Node.Action.Starting": "❌**目标模式：基质库存盘点失败**\n请确认已在基质界面可盘点后重试"
+        }
+    },
+    "AutoEssenceTargetPlan": {
+        "desc": "目标模式 A1：按缺口选刷取点与预刻写条件，OverrideNext 交还 Pipeline",
+        "pre_delay": 0,
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "AutoEssenceTargetPlanAction"
+            }
+        },
+        "post_delay": 0,
+        "attach": {}
+    },
     "AutoEssenceInteract": {
         "desc": "淤积点交互分发器：激发 / 开启挑战 / 领取 / 放弃等；未命中则回落到寻路分发",
         "pre_delay": 0,
@@ -361,11 +468,11 @@
             "type": "OCR",
             "param": {
                 "roi": "__AutoEssenceEngraveCondition1HighlightColor",
-                "only_rec": true,
                 "expected": [
                     // @i18n-skip
                     ""
-                ]
+                ],
+                "only_rec": true
             }
         }
     },
@@ -375,11 +482,11 @@
             "type": "OCR",
             "param": {
                 "roi": "__AutoEssenceEngraveCondition1HighlightColor",
-                "only_rec": true,
                 "expected": [
                     // @i18n-skip
                     ""
-                ]
+                ],
+                "only_rec": true
             }
         }
     },
@@ -389,11 +496,11 @@
             "type": "OCR",
             "param": {
                 "roi": "__AutoEssenceEngraveCondition1HighlightColor",
-                "only_rec": true,
                 "expected": [
                     // @i18n-skip
                     ""
-                ]
+                ],
+                "only_rec": true
             }
         }
     },
@@ -403,11 +510,11 @@
             "type": "OCR",
             "param": {
                 "roi": "__AutoEssenceEngraveCondition1HighlightColor",
-                "only_rec": true,
                 "expected": [
                     // @i18n-skip
                     ""
-                ]
+                ],
+                "only_rec": true
             }
         }
     },
@@ -417,11 +524,11 @@
             "type": "OCR",
             "param": {
                 "roi": "__AutoEssenceEngraveCondition1HighlightColor",
-                "only_rec": true,
                 "expected": [
                     // @i18n-skip
                     ""
-                ]
+                ],
+                "only_rec": true
             }
         }
     },
@@ -443,11 +550,11 @@
             "type": "OCR",
             "param": {
                 "roi": "__AutoEssenceEngraveCondition2HighlightColor",
-                "only_rec": true,
                 "expected": [
                     // @i18n-skip
                     ""
-                ]
+                ],
+                "only_rec": true
             }
         }
     },

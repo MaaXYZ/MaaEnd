@@ -280,7 +280,11 @@
                     "description": "$option.AutoEssenceMenu.cases.Target.description",
                     "pipeline_override": {
                         "AutoEssenceMain": {
-                            "max_hit": 999999
+                            "max_hit": 999999,
+                            "next": [
+                                "AutoEssenceTargetPrepare",
+                                "AutoEssenceTargetPlan"
+                            ]
                         },
                         "AutoEssenceOnSuccess": {
                             "next": [
@@ -288,6 +292,11 @@
                                 "[JumpBack]AutoEssenceAfterBattleRunEndLootReport",
                                 "AutoEssenceOnComplete"
                             ]
+                        },
+                        "AutoEssenceOnComplete": {
+                            "focus": {
+                                "Node.Action.Starting": "🎉**目标模式：基质目标已满足或任务结束**"
+                            }
                         }
                     },
                     "option": [

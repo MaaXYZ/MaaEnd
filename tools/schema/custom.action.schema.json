@@ -17,6 +17,7 @@
                 "AutoDeliveryResolveDepotAction",
                 "AutoDeliveryResolveDestinationAction",
                 "AutoEssenceLoadInventoryAction",
+                "AutoEssenceTargetPlanAction",
                 "AutoSellItemExecuteItemTaskAction",
                 "AutoStockStapleQuantityControlAction",
                 "AutoStockpile.CaptureUid",
