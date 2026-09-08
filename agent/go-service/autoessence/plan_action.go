@@ -12,10 +12,11 @@ import (
 )
 
 const (
-	componentPlan     = "AutoEssenceTargetPlan"
-	essenceFilterData = "data/EssenceFilter"
-	nodeOnComplete    = "AutoEssenceOnComplete"
-	nodeDispatcher    = "AutoEssenceDispatcher"
+	componentPlan          = "AutoEssenceTargetPlan"
+	essenceFilterData      = "data/EssenceFilter"
+	nodeOnComplete         = "AutoEssenceOnComplete"
+	nodeDispatcher         = "AutoEssenceDispatcher"
+	nodeLootReportJumpBack = "[JumpBack]AutoEssenceAfterBattleRunEndLootReport"
 )
 
 var _ maa.CustomActionRunner = &TargetPlanAction{}
@@ -37,7 +38,7 @@ func (a *TargetPlanAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	if len(selected) == 0 {
 		log.Error().Str("component", componentPlan).Msg("no weapons selected in attach")
 		maafocus.Print(ctx, "🎯目标模式：未勾选任何武器，结束任务")
-		return overrideNext(ctx, arg.CurrentTaskName, nodeOnComplete)
+		return overrideNextFinish(ctx, arg.CurrentTaskName)
 	}
 
 	missing := make([]string, 0, len(selected))
@@ -49,7 +50,7 @@ func (a *TargetPlanAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	if len(missing) == 0 {
 		log.Info().Str("component", componentPlan).Int("selected", len(selected)).Msg("all targets satisfied")
 		maafocus.Print(ctx, "🎯目标模式：勾选武器的基质均已满足，结束任务")
-		return overrideNext(ctx, arg.CurrentTaskName, nodeOnComplete)
+		return overrideNextFinish(ctx, arg.CurrentTaskName)
 	}
 
 	if err := loadSkillExpected(essenceFilterData); err != nil {
@@ -71,7 +72,7 @@ func (a *TargetPlanAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	if plan == nil {
 		log.Error().Str("component", componentPlan).Strs("missing", missing).Msg("no feasible farm plan")
 		maafocus.Print(ctx, "🎯目标模式：找不到可覆盖缺口武器的刷取方案，结束任务")
-		return overrideNext(ctx, arg.CurrentTaskName, nodeOnComplete)
+		return overrideNextFinish(ctx, arg.CurrentTaskName)
 	}
 
 	engravePatch, err := buildEngravePipelineOverride(plan)
@@ -133,6 +134,23 @@ func fixedSlotLabel(slot int) string {
 func overrideNext(ctx *maa.Context, current, next string) bool {
 	if err := ctx.OverrideNext(current, []maa.NextItem{{Name: next}}); err != nil {
 		log.Error().Err(err).Str("component", componentPlan).Str("next", next).Msg("OverrideNext failed")
+		return false
+	}
+	return true
+}
+
+// finishNextItems runs enabled AfterBattle loot report (JumpBack) then OnComplete,
+// matching Target-mode OnSuccess chaining so EssenceFilterFinishAction still fires.
+func finishNextItems() []maa.NextItem {
+	return []maa.NextItem{
+		{Name: nodeLootReportJumpBack},
+		{Name: nodeOnComplete},
+	}
+}
+
+func overrideNextFinish(ctx *maa.Context, current string) bool {
+	if err := ctx.OverrideNext(current, finishNextItems()); err != nil {
+		log.Error().Err(err).Str("component", componentPlan).Msg("OverrideNext finish path failed")
 		return false
 	}
 	return true
