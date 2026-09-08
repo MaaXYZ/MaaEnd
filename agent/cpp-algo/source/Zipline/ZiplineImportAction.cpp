@@ -68,7 +68,7 @@ struct SniffState
     // 有新进展就叫醒业务线程，省得它盲睡到超时。
     std::condition_variable cv;
     // 最近一次「命中的请求有动静」的时刻，业务线程据此判断页面是不是已经取完了。
-    std::chrono::steady_clock::time_point last_event { };
+    std::chrono::steady_clock::time_point last_event {};
     // 响应头已到、路径命中的请求；等 loadingFinished 才能安全取响应体。
     std::unordered_set<std::string> watching;
     std::unordered_map<std::string, std::string> request_urls;
@@ -116,7 +116,7 @@ std::string QueryValue(const std::string& url, const std::string& key)
     const std::string needle = key + "=";
     size_t pos = url.find('?');
     if (pos == std::string::npos) {
-        return { };
+        return {};
     }
 
     while (pos != std::string::npos) {
@@ -128,7 +128,7 @@ std::string QueryValue(const std::string& url, const std::string& key)
         }
         pos = url.find('&', start);
     }
-    return { };
+    return {};
 }
 
 // 请求 URL 会携带 roleId/serverId。它们只能在内存里参与账号匹配，任何日志都必须先打码；
@@ -188,12 +188,12 @@ bool ParseMarks(
         const auto& mark_obj = item.as_object();
 
         ZiplineMark mark;
-        mark.template_id = mark_obj.get("templateId", std::string { });
+        mark.template_id = mark_obj.get("templateId", std::string {});
         if (!template_ids.empty() && std::find(template_ids.begin(), template_ids.end(), mark.template_id) == template_ids.end()) {
             continue;
         }
 
-        std::string map_id = mark_obj.get("mapId", std::string { });
+        std::string map_id = mark_obj.get("mapId", std::string {});
         if (map_id.empty()) {
             map_id = fallback_map_id;
         }
@@ -206,7 +206,7 @@ bool ParseMarks(
             continue;
         }
         const auto& pos = mark_obj.at("pos").as_object();
-        mark.level_id = mark_obj.get("levelId", std::string { });
+        mark.level_id = mark_obj.get("levelId", std::string {});
         mark.x = pos.get("x", 0.0);
         mark.y = pos.get("y", 0.0);
         mark.z = pos.get("z", 0.0);
@@ -234,7 +234,7 @@ size_t PersistCaptured(const std::vector<CapturedResponse>& captured, const std:
     for (const auto& response : captured) {
         const std::string fallback_map_id = QueryValue(response.url, "mapId");
         std::unordered_map<std::string, std::vector<ZiplineMark>> all_marks;
-        if (!ParseMarks(response.body, { }, fallback_map_id, all_marks) || all_marks.empty()) {
+        if (!ParseMarks(response.body, {}, fallback_map_id, all_marks) || all_marks.empty()) {
             continue;
         }
 
@@ -318,12 +318,12 @@ void SubscribeSniffers(const std::shared_ptr<WebView2>& webview, const std::shar
             return;
         }
         const auto& obj = parsed->as_object();
-        const std::string request_id = obj.get("requestId", std::string { });
+        const std::string request_id = obj.get("requestId", std::string {});
         if (request_id.empty() || !obj.contains("response") || !obj.at("response").is_object()) {
             return;
         }
 
-        const std::string url = obj.at("response").as_object().get("url", std::string { });
+        const std::string url = obj.at("response").as_object().get("url", std::string {});
         if (url.find(mark_list_path) == std::string::npos) {
             return;
         }
@@ -343,7 +343,7 @@ void SubscribeSniffers(const std::shared_ptr<WebView2>& webview, const std::shar
         if (!parsed || !parsed->is_object()) {
             return;
         }
-        const std::string request_id = parsed->as_object().get("requestId", std::string { });
+        const std::string request_id = parsed->as_object().get("requestId", std::string {});
 
         std::string url;
         {
@@ -379,7 +379,7 @@ void SubscribeSniffers(const std::shared_ptr<WebView2>& webview, const std::shar
                     return;
                 }
 
-                const std::string body = body_obj.get("body", std::string { });
+                const std::string body = body_obj.get("body", std::string {});
                 if (body.empty()) {
                     return;
                 }
@@ -467,7 +467,7 @@ MaaBool MAA_CALL ZiplineImportActionRun(
     while (true) {
         std::vector<CapturedResponse> fresh;
         bool inflight = false;
-        std::chrono::steady_clock::time_point last_event { };
+        std::chrono::steady_clock::time_point last_event {};
         {
             std::unique_lock<std::mutex> lock(state->mutex);
             if (state->captured.empty()) {
@@ -482,7 +482,7 @@ MaaBool MAA_CALL ZiplineImportActionRun(
         for (auto& response : fresh) {
             // 只为了知道这条覆盖了哪几张图，过滤留到落盘时再做。
             std::unordered_map<std::string, std::vector<ZiplineMark>> by_map;
-            if (!ParseMarks(response.body, { }, QueryValue(response.url, "mapId"), by_map)) {
+            if (!ParseMarks(response.body, {}, QueryValue(response.url, "mapId"), by_map)) {
                 captured.push_back(std::move(response));
                 continue;
             }

@@ -56,7 +56,7 @@ std::filesystem::file_time_type FileStamp(const std::filesystem::path& path)
 {
     std::error_code ec;
     const auto stamp = std::filesystem::last_write_time(path, ec);
-    return ec ? std::filesystem::file_time_type { } : stamp;
+    return ec ? std::filesystem::file_time_type {} : stamp;
 }
 
 // 标定与滑索记录都是只读的，但导入动作会在同一次运行里改写它们，所以按 mtime 决定重不重读：
@@ -66,8 +66,8 @@ std::shared_ptr<const ZiplineData> SharedData()
 {
     static std::mutex mutex;
     static std::shared_ptr<const ZiplineData> cached;
-    static std::filesystem::file_time_type frames_stamp { };
-    static std::filesystem::file_time_type store_stamp { };
+    static std::filesystem::file_time_type frames_stamp {};
+    static std::filesystem::file_time_type store_stamp {};
 
     const std::filesystem::path frames_path = zipline::ZiplineFrames::DefaultPath();
     const std::filesystem::path store_path = zipline::ZiplineStore::DefaultPath();
@@ -448,14 +448,13 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
         for (const auto& mark : record.marks) {
             const zipline::ZiplinePowerSource* source = data->frames.powerSource(mark.template_id);
             if (source != nullptr) {
-                supplies.push_back(
-                    SupplyPoint {
-                        .x = mark.x,
-                        .z = mark.z,
-                        .radius = source->radius,
-                        .footprint = source->footprint,
-                        .coverage_size = source->coverage_size,
-                    });
+                supplies.push_back(SupplyPoint {
+                    .x = mark.x,
+                    .z = mark.z,
+                    .radius = source->radius,
+                    .footprint = source->footprint,
+                    .coverage_size = source->coverage_size,
+                });
                 supply_points.push_back(ToWorld(frame->project(mark)));
             }
         }
