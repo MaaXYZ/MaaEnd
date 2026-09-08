@@ -420,83 +420,33 @@
         ]
     },
     "AutoCollectLoop": {
-        "desc": "依次执行已启用的自动采集路线",
+        "desc": "依次调度已勾选的自动采集路线，未选路线不进入库存判断",
         "next": [
-            "[JumpBack]AutoCollectRoute1SubSkipped",
-            "[JumpBack]AutoCollectRoute1SubGated",
-            "[JumpBack]AutoCollectRoute1Sub",
-            "[JumpBack]AutoCollectRoute2SubSkipped",
-            "[JumpBack]AutoCollectRoute2SubGated",
-            "[JumpBack]AutoCollectRoute2Sub",
-            "[JumpBack]AutoCollectRoute3SubSkipped",
-            "[JumpBack]AutoCollectRoute3SubGated",
-            "[JumpBack]AutoCollectRoute3Sub",
-            "[JumpBack]AutoCollectRoute4SubSkipped",
-            "[JumpBack]AutoCollectRoute4SubGated",
-            "[JumpBack]AutoCollectRoute4Sub",
-            "[JumpBack]AutoCollectRoute5SubSkipped",
-            "[JumpBack]AutoCollectRoute5SubGated",
-            "[JumpBack]AutoCollectRoute5Sub",
-            "[JumpBack]AutoCollectRoute6SubSkipped",
-            "[JumpBack]AutoCollectRoute6SubGated",
-            "[JumpBack]AutoCollectRoute6Sub",
-            "[JumpBack]AutoCollectRoute7SubSkipped",
-            "[JumpBack]AutoCollectRoute7SubGated",
-            "[JumpBack]AutoCollectRoute7Sub",
-            "[JumpBack]AutoCollectRoute8SubSkipped",
-            "[JumpBack]AutoCollectRoute8SubGated",
-            "[JumpBack]AutoCollectRoute8Sub",
-            "[JumpBack]AutoCollectRoute9SubSkipped",
-            "[JumpBack]AutoCollectRoute9SubGated",
-            "[JumpBack]AutoCollectRoute9Sub",
-            "[JumpBack]AutoCollectRoute10SubSkipped",
-            "[JumpBack]AutoCollectRoute10SubGated",
-            "[JumpBack]AutoCollectRoute10Sub",
-            "[JumpBack]AutoCollectRoute11SubSkipped",
-            "[JumpBack]AutoCollectRoute11SubGated",
-            "[JumpBack]AutoCollectRoute11Sub",
-            "[JumpBack]AutoCollectRoute12SubSkipped",
-            "[JumpBack]AutoCollectRoute12SubGated",
-            "[JumpBack]AutoCollectRoute12Sub",
-            "[JumpBack]AutoCollectRoute13SubSkipped",
-            "[JumpBack]AutoCollectRoute13SubGated",
-            "[JumpBack]AutoCollectRoute13Sub",
-            "[JumpBack]AutoCollectRoute14SubSkipped",
-            "[JumpBack]AutoCollectRoute14SubGated",
-            "[JumpBack]AutoCollectRoute14Sub",
-            "[JumpBack]AutoCollectRoute15SubSkipped",
-            "[JumpBack]AutoCollectRoute15SubGated",
-            "[JumpBack]AutoCollectRoute15Sub",
-            "[JumpBack]AutoCollectRoute16SubSkipped",
-            "[JumpBack]AutoCollectRoute16SubGated",
-            "[JumpBack]AutoCollectRoute16Sub",
-            "[JumpBack]AutoCollectRoute17SubSkipped",
-            "[JumpBack]AutoCollectRoute17SubGated",
-            "[JumpBack]AutoCollectRoute17Sub",
-            "[JumpBack]AutoCollectCommonRoute1SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute1SubGated",
-            "[JumpBack]AutoCollectCommonRoute1Sub",
-            "[JumpBack]AutoCollectCommonRoute2SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute2SubGated",
-            "[JumpBack]AutoCollectCommonRoute2Sub",
-            "[JumpBack]AutoCollectCommonRoute3SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute3SubGated",
-            "[JumpBack]AutoCollectCommonRoute3Sub",
-            "[JumpBack]AutoCollectCommonRoute4SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute4SubGated",
-            "[JumpBack]AutoCollectCommonRoute4Sub",
-            "[JumpBack]AutoCollectCommonRoute5SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute5SubGated",
-            "[JumpBack]AutoCollectCommonRoute5Sub",
-            "[JumpBack]AutoCollectCommonRoute6SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute6SubGated",
-            "[JumpBack]AutoCollectCommonRoute6Sub",
-            "[JumpBack]AutoCollectCommonRoute7SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute7SubGated",
-            "[JumpBack]AutoCollectCommonRoute7Sub",
-            "[JumpBack]AutoCollectCommonRoute8SubSkipped",
-            "[JumpBack]AutoCollectCommonRoute8SubGated",
-            "[JumpBack]AutoCollectCommonRoute8Sub",
+            "[JumpBack]AutoCollectRoute1Dispatch",
+            "[JumpBack]AutoCollectRoute2Dispatch",
+            "[JumpBack]AutoCollectRoute3Dispatch",
+            "[JumpBack]AutoCollectRoute4Dispatch",
+            "[JumpBack]AutoCollectRoute5Dispatch",
+            "[JumpBack]AutoCollectRoute6Dispatch",
+            "[JumpBack]AutoCollectRoute7Dispatch",
+            "[JumpBack]AutoCollectRoute8Dispatch",
+            "[JumpBack]AutoCollectRoute9Dispatch",
+            "[JumpBack]AutoCollectRoute10Dispatch",
+            "[JumpBack]AutoCollectRoute11Dispatch",
+            "[JumpBack]AutoCollectRoute12Dispatch",
+            "[JumpBack]AutoCollectRoute13Dispatch",
+            "[JumpBack]AutoCollectRoute14Dispatch",
+            "[JumpBack]AutoCollectRoute15Dispatch",
+            "[JumpBack]AutoCollectRoute16Dispatch",
+            "[JumpBack]AutoCollectRoute17Dispatch",
+            "[JumpBack]AutoCollectCommonRoute1Dispatch",
+            "[JumpBack]AutoCollectCommonRoute2Dispatch",
+            "[JumpBack]AutoCollectCommonRoute3Dispatch",
+            "[JumpBack]AutoCollectCommonRoute4Dispatch",
+            "[JumpBack]AutoCollectCommonRoute5Dispatch",
+            "[JumpBack]AutoCollectCommonRoute6Dispatch",
+            "[JumpBack]AutoCollectCommonRoute7Dispatch",
+            "[JumpBack]AutoCollectCommonRoute8Dispatch",
             "AutoCollectAfterStashBackpack"
         ]
     },
@@ -527,6 +477,22 @@
     "AutoCollectEnd": {
         "pre_delay": 0,
         "post_delay": 0
+    },
+    "AutoCollectRoute1Dispatch": {
+        "desc": "AutoCollectRoute1调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute1SubSkipped",
+            "AutoCollectRoute1SubGated",
+            "AutoCollectRoute1Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute1Sub": {
         "desc": "AutoCollectRoute1常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute1SubGated 按库存决定",
@@ -591,6 +557,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute2Dispatch": {
+        "desc": "AutoCollectRoute2调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute2SubSkipped",
+            "AutoCollectRoute2SubGated",
+            "AutoCollectRoute2Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute2Sub": {
         "desc": "AutoCollectRoute2常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute2SubGated 按库存决定",
         "enabled": true,
@@ -653,6 +635,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute3Dispatch": {
+        "desc": "AutoCollectRoute3调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute3SubSkipped",
+            "AutoCollectRoute3SubGated",
+            "AutoCollectRoute3Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute3Sub": {
         "desc": "AutoCollectRoute3常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute3SubGated 按库存决定",
@@ -717,6 +715,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute4Dispatch": {
+        "desc": "AutoCollectRoute4调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute4SubSkipped",
+            "AutoCollectRoute4SubGated",
+            "AutoCollectRoute4Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute4Sub": {
         "desc": "AutoCollectRoute4常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute4SubGated 按库存决定",
         "enabled": true,
@@ -779,6 +793,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute5Dispatch": {
+        "desc": "AutoCollectRoute5调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute5SubSkipped",
+            "AutoCollectRoute5SubGated",
+            "AutoCollectRoute5Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute5Sub": {
         "desc": "AutoCollectRoute5常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute5SubGated 按库存决定",
@@ -843,6 +873,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute6Dispatch": {
+        "desc": "AutoCollectRoute6调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute6SubSkipped",
+            "AutoCollectRoute6SubGated",
+            "AutoCollectRoute6Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute6Sub": {
         "desc": "AutoCollectRoute6常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute6SubGated 按库存决定",
         "enabled": true,
@@ -905,6 +951,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute7Dispatch": {
+        "desc": "AutoCollectRoute7调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute7SubSkipped",
+            "AutoCollectRoute7SubGated",
+            "AutoCollectRoute7Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute7Sub": {
         "desc": "AutoCollectRoute7常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute7SubGated 按库存决定",
@@ -969,6 +1031,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute8Dispatch": {
+        "desc": "AutoCollectRoute8调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute8SubSkipped",
+            "AutoCollectRoute8SubGated",
+            "AutoCollectRoute8Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute8Sub": {
         "desc": "AutoCollectRoute8常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute8SubGated 按库存决定",
         "enabled": true,
@@ -1031,6 +1109,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute9Dispatch": {
+        "desc": "AutoCollectRoute9调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute9SubSkipped",
+            "AutoCollectRoute9SubGated",
+            "AutoCollectRoute9Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute9Sub": {
         "desc": "AutoCollectRoute9常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute9SubGated 按库存决定",
@@ -1095,6 +1189,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute10Dispatch": {
+        "desc": "AutoCollectRoute10调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute10SubSkipped",
+            "AutoCollectRoute10SubGated",
+            "AutoCollectRoute10Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute10Sub": {
         "desc": "AutoCollectRoute10常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute10SubGated 按库存决定",
         "enabled": true,
@@ -1157,6 +1267,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute11Dispatch": {
+        "desc": "AutoCollectRoute11调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute11SubSkipped",
+            "AutoCollectRoute11SubGated",
+            "AutoCollectRoute11Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute11Sub": {
         "desc": "AutoCollectRoute11常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute11SubGated 按库存决定",
@@ -1221,6 +1347,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute12Dispatch": {
+        "desc": "AutoCollectRoute12调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute12SubSkipped",
+            "AutoCollectRoute12SubGated",
+            "AutoCollectRoute12Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute12Sub": {
         "desc": "AutoCollectRoute12常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute12SubGated 按库存决定",
         "enabled": true,
@@ -1283,6 +1425,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute13Dispatch": {
+        "desc": "AutoCollectRoute13调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute13SubSkipped",
+            "AutoCollectRoute13SubGated",
+            "AutoCollectRoute13Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute13Sub": {
         "desc": "AutoCollectRoute13常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute13SubGated 按库存决定",
@@ -1347,6 +1505,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute14Dispatch": {
+        "desc": "AutoCollectRoute14调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute14SubSkipped",
+            "AutoCollectRoute14SubGated",
+            "AutoCollectRoute14Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute14Sub": {
         "desc": "AutoCollectRoute14常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute14SubGated 按库存决定",
         "enabled": true,
@@ -1409,6 +1583,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute15Dispatch": {
+        "desc": "AutoCollectRoute15调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute15SubSkipped",
+            "AutoCollectRoute15SubGated",
+            "AutoCollectRoute15Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute15Sub": {
         "desc": "AutoCollectRoute15常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute15SubGated 按库存决定",
@@ -1473,6 +1663,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectRoute16Dispatch": {
+        "desc": "AutoCollectRoute16调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute16SubSkipped",
+            "AutoCollectRoute16SubGated",
+            "AutoCollectRoute16Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectRoute16Sub": {
         "desc": "AutoCollectRoute16常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute16SubGated 按库存决定",
         "enabled": true,
@@ -1535,6 +1741,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectRoute17Dispatch": {
+        "desc": "AutoCollectRoute17调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRoute17SubSkipped",
+            "AutoCollectRoute17SubGated",
+            "AutoCollectRoute17Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectRoute17Sub": {
         "desc": "AutoCollectRoute17常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectRoute17SubGated 按库存决定",
@@ -1599,6 +1821,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectCommonRoute1Dispatch": {
+        "desc": "AutoCollectCommonRoute1调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute1SubSkipped",
+            "AutoCollectCommonRoute1SubGated",
+            "AutoCollectCommonRoute1Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectCommonRoute1Sub": {
         "desc": "AutoCollectCommonRoute1常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute1SubGated 按库存决定",
         "enabled": true,
@@ -1661,6 +1899,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectCommonRoute2Dispatch": {
+        "desc": "AutoCollectCommonRoute2调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute2SubSkipped",
+            "AutoCollectCommonRoute2SubGated",
+            "AutoCollectCommonRoute2Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectCommonRoute2Sub": {
         "desc": "AutoCollectCommonRoute2常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute2SubGated 按库存决定",
@@ -1725,6 +1979,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectCommonRoute3Dispatch": {
+        "desc": "AutoCollectCommonRoute3调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute3SubSkipped",
+            "AutoCollectCommonRoute3SubGated",
+            "AutoCollectCommonRoute3Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectCommonRoute3Sub": {
         "desc": "AutoCollectCommonRoute3常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute3SubGated 按库存决定",
         "enabled": true,
@@ -1787,6 +2057,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectCommonRoute4Dispatch": {
+        "desc": "AutoCollectCommonRoute4调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute4SubSkipped",
+            "AutoCollectCommonRoute4SubGated",
+            "AutoCollectCommonRoute4Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectCommonRoute4Sub": {
         "desc": "AutoCollectCommonRoute4常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute4SubGated 按库存决定",
@@ -1851,6 +2137,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectCommonRoute5Dispatch": {
+        "desc": "AutoCollectCommonRoute5调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute5SubSkipped",
+            "AutoCollectCommonRoute5SubGated",
+            "AutoCollectCommonRoute5Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectCommonRoute5Sub": {
         "desc": "AutoCollectCommonRoute5常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute5SubGated 按库存决定",
         "enabled": true,
@@ -1913,6 +2215,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectCommonRoute6Dispatch": {
+        "desc": "AutoCollectCommonRoute6调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute6SubSkipped",
+            "AutoCollectCommonRoute6SubGated",
+            "AutoCollectCommonRoute6Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectCommonRoute6Sub": {
         "desc": "AutoCollectCommonRoute6常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute6SubGated 按库存决定",
@@ -1977,6 +2295,22 @@
         "post_delay": 0,
         "rate_limit": 0
     },
+    "AutoCollectCommonRoute7Dispatch": {
+        "desc": "AutoCollectCommonRoute7调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute7SubSkipped",
+            "AutoCollectCommonRoute7SubGated",
+            "AutoCollectCommonRoute7Sub",
+            "AutoCollectEnd"
+        ]
+    },
     "AutoCollectCommonRoute7Sub": {
         "desc": "AutoCollectCommonRoute7常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute7SubGated 按库存决定",
         "enabled": true,
@@ -2039,6 +2373,22 @@
         },
         "post_delay": 0,
         "rate_limit": 0
+    },
+    "AutoCollectCommonRoute8Dispatch": {
+        "desc": "AutoCollectCommonRoute8调度入口：仅勾选后启用，再按采集模式与库存选择分支",
+        "enabled": false,
+        "max_hit": 1,
+        "recognition": "DirectHit",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectCommonRoute8SubSkipped",
+            "AutoCollectCommonRoute8SubGated",
+            "AutoCollectCommonRoute8Sub",
+            "AutoCollectEnd"
+        ]
     },
     "AutoCollectCommonRoute8Sub": {
         "desc": "AutoCollectCommonRoute8常规调度：Always 模式启用；目标库存模式关闭，改由 AutoCollectCommonRoute8SubGated 按库存决定",
