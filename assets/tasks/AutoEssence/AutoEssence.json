@@ -491,7 +491,6 @@
         },
         "AutoEssenceSpMedicationExpireWithinDays": {
             "label": "$option.AutoUseSpMedicationExpireWithinDays.label",
-            "description": "$option.AutoUseSpMedicationExpireWithinDays.description",
             "type": "select",
             "default_case": "Days3",
             "cases": [

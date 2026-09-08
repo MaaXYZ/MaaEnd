@@ -245,7 +245,6 @@
         "tasks/ZiplineImport.json",
         "tasks/AeroSalvage.json",
         // group: sanity_sink
-        "tasks/AutoUseSpMedication.json",
         "tasks/AutoEssence/AutoEssence.json",
         "tasks/AutoEssence/Location/SelectLocation.json",
         "tasks/AutoEssence/Location/Slot1.json",
