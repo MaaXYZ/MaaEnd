@@ -104,5 +104,18 @@
             "__AutoUseSpMedicationOCRRecognitionEmergencySanityBoosterRemainingTime"
         ],
         "box_index": 2
+    },
+    "AutoUseSpMedicationDialogText": {
+        "desc": "识别恢复理智界面标题",
+        "recognition": "OCR",
+        "roi": [
+            180,
+            180,
+            200,
+            100
+        ],
+        "expected": [
+            "恢复理智"
+        ]
     }
 }

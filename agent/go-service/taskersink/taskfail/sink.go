@@ -16,7 +16,6 @@ var feedbackHintEntries = map[string]struct{}{
 	"AutoSellMain":                {},
 	"AutoStockpileMain":           {},
 	"AutoStockStapleSchedule":     {},
-	"AutoUseSpMedicationEntry":    {},
 	"BatchAddFriendsMain":         {},
 	"BatchUseDetectorMain":        {},
 	"SimSpaceEntry":               {},
