@@ -16,7 +16,7 @@ const ENDPOINT_ICON = "DeliveryPoint";
 //   deliver_target_map02_lv005_02（裴令容）             → 无 description，按排除法 + 几何（u 最小、v 最小 = 左上）对应 "一号丙型辅桩区（左上）"
 //   deliver_target_map02_lv005_03（阿禾）               → "三号丙型辅桩区（右上）"
 // 也与 assets/tasks/SeizeDeliveryJobs.json 的区域分组一致：武陵城 = lv002 四个，试验园区 = lv005 三个。
-// 数组顺序即 candidates 的书写顺序：首个确认到图标的候选胜出，排在其后的不再看。
+// 数组顺序即同区域内 candidates 的书写顺序：首个确认到图标的候选胜出，排在其后的不再看。
 const ENDPOINT_DESTINATIONS = [
     {
         endpoint: "Owl",
@@ -62,8 +62,8 @@ const destinationById = new Map(
     ]),
 );
 
-// 每个终点解析出节点后缀、说明、地图区域、底图坐标，驱动两处产物：
-// candidates 节点的候选数组，以及每个终点的「开关 + 命中落点」叶子节点。
+// 每个终点解析出节点后缀、说明、所属区域、地图区域、底图坐标，驱动三处产物：
+// 各区域的 candidates 节点、守卫节点的 next 路由表，以及每个终点的「开关 + 命中落点」叶子节点。
 const endpointEntries = ENDPOINT_DESTINATIONS.map(({endpoint, landmark, destinationId}) => {
     const destination = destinationById.get(destinationId);
     if (!destination) {
@@ -72,6 +72,9 @@ const endpointEntries = ENDPOINT_DESTINATIONS.map(({endpoint, landmark, destinat
     return {
         EndpointId: endpoint,
         Desc: `「${landmark}」送货终点（${destinationId}）：candidates 候选开关，命中后前往接取`,
+        AreaId: destination.areaId,
+        AreaName: destination.area.zh_cn,
+        AreaTexts: destination.area,
         MapZone: destination.mapZone,
         DestinationMapAt: destination.mapAt,
     };
@@ -86,24 +89,53 @@ export const endpointFilterRows = endpointEntries.map(({EndpointId, Desc}) => ({
 
 export const endpointNodeNames = endpointEntries.map((row) => `SeizeDeliveryJobsEndpointFilter${row.EndpointId}`);
 
-// candidates 整组必须同 zone（一个 MapFind 节点只有一个 zone）。若将来新增了别的地图区域的终点，
-// 需要为不同 zone 各起一个 candidates 节点，这里直接报错提示，避免默默生成一个跨区认不对的节点。
-const zones = [
-    ...new Set(endpointEntries.map((entry) => entry.MapZone)),
-];
-if (zones.length !== 1) {
-    throw new Error(`[SeizeDeliveryJobs] candidates 需所有终点同 zone，当前有 ${zones.join(", ")}；请为不同 zone 各起一个 candidates 节点`);
+// 按区域分组：每个区域生成一个 candidates 节点，节点名 SeizeDeliveryJobsEndpointCandidates{AreaId}。
+// 终点区域 == 委托出发地（取货仓储）区域（AutoDelivery 目录强制校验区域↔仓储 1:1），且点「查看位置」后
+// 地图以终点为中心打开——所以运行时按出发地只路由到对应区域节点，本区域候选基本落在屏内，无需跨区域来回拖动。
+// 分组保持 ENDPOINT_DESTINATIONS 的书写顺序（区域内候选顺序、区域间先后顺序）。
+const areaOrder = [];
+const entriesByArea = new Map();
+for (const entry of endpointEntries) {
+    if (!entriesByArea.has(entry.AreaId)) {
+        entriesByArea.set(entry.AreaId, []);
+        areaOrder.push(entry.AreaId);
+    }
+    entriesByArea.get(entry.AreaId).push(entry);
 }
 
-// candidates 节点数据（单行）：候选按 ENDPOINT_DESTINATIONS 顺序书写，共享一次缩放与视口求解。
-export const candidatesRows = [
-    {
+// 每个区域一个 candidates 节点（多行）：区域内候选共享一次缩放与视口求解。
+// 一个 MapFind 节点只有一个 zone，故同区域候选必须同 zone；跨 zone 直接报错，避免默默生成认不对的节点。
+export const candidatesRows = areaOrder.map((areaId) => {
+    const entries = entriesByArea.get(areaId);
+    const zones = [
+        ...new Set(entries.map((entry) => entry.MapZone)),
+    ];
+    if (zones.length !== 1) {
+        throw new Error(`[SeizeDeliveryJobs] 区域 ${areaId} 的 candidates 需同 zone，当前有 ${zones.join(", ")}；请为不同 zone 各起一个 candidates 节点`);
+    }
+    return {
+        AreaId: areaId,
+        AreaName: entries[0].AreaName,
         Zone: zones[0],
         Icon: ENDPOINT_ICON,
-        Candidates: endpointEntries.map((entry) => ({
+        Candidates: entries.map((entry) => ({
             at: entry.DestinationMapAt,
             next: `SeizeDeliveryJobsEndpointFilter${entry.EndpointId}`,
         })),
+        Expected: [
+            ...new Set(entries.flatMap((entry) => Object.values(entry.AreaTexts))),
+        ],
+    };
+});
+
+// 守卫节点数据（单行）：next 列出全部区域门控节点 + NotMatched 兜底。
+// 框架对 next 逐个识别、首个命中胜出：当前子区域不匹配的门控 OCR miss，匹配的门控 hit 进对应 candidates。
+export const dispatcherRows = [
+    {
+        NextList: [
+            ...areaOrder.map((areaId) => `SeizeDeliveryJobsEndpointRegion${areaId}`),
+            "SeizeDeliveryJobsEndpointNotMatched",
+        ],
     },
 ];
 

@@ -1,8 +1,10 @@
 {
-    // 终点筛选：守卫节点确认地图已打开，再交给 candidates 节点一次判定全部终点。
-    // 两个节点均由 endpoint-filter-data.mjs 的终点映射表生成，新增终点只改映射表。
+    // 终点筛选守卫：确认地图已打开后，交给各区域门控节点（OCR 左上角子区域名）路由。
+    // next 由 endpoint-filter-data.mjs 生成（全部区域门控节点 + NotMatched 兜底）；
+    // 框架对 next 逐个识别、首个命中胜出，匹配当前子区域的门控放行到对应 candidates 节点，
+    // 避免「不限来源」时先判另一区域、再跨区域来回拖动地图。
     "SeizeDeliveryJobsEndpointFilter": {
-        "desc": "检查地图已打开后，交给 candidates 节点筛选终点",
+        "desc": "检查地图已打开后，交给区域门控按左上角子区域名路由到对应 candidates",
         "enabled": false,
         "recognition": "Or",
         "any_of": [
@@ -12,22 +14,6 @@
         "pre_delay": 0,
         "post_wait_freezes": 500,
         "post_delay": 0,
-        "next": [
-            "SeizeDeliveryJobsEndpointCandidates",
-            "SeizeDeliveryJobsEndpointNotMatched"
-        ]
-    },
-    // 一次缩放 + 一次视口求解判全部已启用终点：命中的候选把自己的 next 交回框架（顶掉本节点 next），
-    // 前往对应落点节点；全部未中则本节点识别失败，回退到守卫 next 里的 NotMatched。
-    // 候选的开关就是它 next 那个落点节点的 enabled（task 选项逐个打开），关掉的候选直接跳过、连认都不认。
-    "SeizeDeliveryJobsEndpointCandidates": {
-        "desc": "一次判定全部已启用的送货终点，命中即前往接取（共享一次缩放与视口求解）",
-        "recognition": "Custom",
-        "custom_recognition": "MapFind",
-        "custom_recognition_param": {
-            "zone": "${Zone}",
-            "icon": "${Icon}",
-            "candidates": "${Candidates}"
-        }
+        "next": "${NextList}"
     }
 }
