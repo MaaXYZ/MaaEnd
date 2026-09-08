@@ -162,6 +162,21 @@ func TestBuildEngraveOverride(t *testing.T) {
 	}
 }
 
+func TestSetAnchorOverrideEnablesNode(t *testing.T) {
+	patch := map[string]any{}
+	anchor := SetAnchorNode("WLYinglungPass")
+	patch[anchor] = map[string]any{
+		"enabled": true,
+		"next": []string{
+			"AutoEssenceDispatcher",
+		},
+	}
+	node := patch[anchor].(map[string]any)
+	if node["enabled"] != true {
+		t.Fatal("anchor must be enabled for OverrideNext")
+	}
+}
+
 func TestLocationKeyByName(t *testing.T) {
 	key, ok := LocationKeyByName("重度能量淤积点·枢纽区")
 	if !ok || key != "VFTheHub" {

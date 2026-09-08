@@ -82,7 +82,10 @@ func (a *TargetPlanAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 
 	anchor := SetAnchorNode(plan.LocationKey)
 	engravePatch[anchor] = map[string]any{
-		"next": []string{nodeDispatcher},
+		"enabled": true,
+		"next": []string{
+			nodeDispatcher,
+		},
 	}
 
 	if err := ctx.OverridePipeline(engravePatch); err != nil {
