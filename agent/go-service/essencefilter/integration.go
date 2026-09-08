@@ -327,7 +327,8 @@ func loadMatchEngine(ctx *maa.Context, nodeName string) (*matchapi.Engine, *Esse
 		return nil, nil, fmt.Errorf("load options from %s: %w", nodeName, err)
 	}
 
-	locale := matchapi.NormalizeInputLocale(opts.InputLanguage)
+	locale := resolveInputLanguage(ctx, opts.InputLanguage)
+	opts.InputLanguage = locale
 	engine, err := matchapi.NewEngineFromDirWithLocale(essenceFilterDataDir, locale)
 	if err != nil {
 		return nil, nil, fmt.Errorf("load match engine: %w", err)
