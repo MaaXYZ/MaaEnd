@@ -1336,6 +1336,54 @@ void TestTransferEmptyGridDiagnosticsSkipUnexecutedRarity()
     Check(diagnostics.rejected_reasons.empty(), "skipped rarity scans must not report rejected rarity evidence");
 }
 
+void TestTransferEmptyGridRefinesInsetShadowsBeforeRejectingCandidate()
+{
+    constexpr int kCellSize = 64;
+    constexpr int kPitch = 69;
+    constexpr int kColumns = 5;
+    constexpr int kRows = 4;
+    const cv::Point origin(771, 203);
+    cv::Mat image(720, 1280, CV_8UC3, cv::Scalar(90, 90, 90));
+    // 半透明面板会透出平滑变化的背景；均匀背景无法复现旧候选抢先胜出的排序。
+    for (int y = 0; y < image.rows; ++y) {
+        for (int x = 0; x < image.cols; ++x) {
+            const auto value = cv::saturate_cast<unsigned char>(90.0 + 20.0 * std::sin(x / 71.0) * std::cos(y / 53.0));
+            image.at<cv::Vec3b>(y, x) = cv::Vec3b(value, value, value);
+        }
+    }
+    // 空槽的内阴影向内部衰减；顶部被面板裁去 6px，但其余行仍能确定共同边框相位。
+    for (int row = 0; row < kRows; ++row) {
+        for (int column = 0; column < kColumns; ++column) {
+            const cv::Rect cell(origin.x + column * kPitch, origin.y + row * kPitch, kCellSize, kCellSize);
+            for (int y = 0; y < kCellSize; ++y) {
+                for (int x = 0; x < kCellSize; ++x) {
+                    const int distance = std::min({ x, y, kCellSize - 1 - x, kCellSize - 1 - y });
+                    const auto value = cv::saturate_cast<unsigned char>(
+                        image.at<cv::Vec3b>(cell.y + y, cell.x + x)[0] * 0.85 - 20.0 * std::exp(-distance / 1.5));
+                    image.at<cv::Vec3b>(cell.y + y, cell.x + x) = cv::Vec3b(value, value, value);
+                }
+            }
+        }
+    }
+    const auto grid = iconrecognition::detail::DetectGrid(image, iconrecognition::GridType::Transfer, cv::Rect(739, 202, 398, 291), 1.0);
+    Check(grid.grids.size() == 1 && grid.grids.front().selection_diagnostics, "inset-shadow grid must retain diagnostics");
+    const auto& layout = grid.grids.front();
+    Check(layout.columns == kColumns && layout.rows == kRows, "inset-shadow grid must preserve all twenty empty cells");
+    Check(
+        layout.selection_diagnostics->fallback_reason == "empty-grid-structure",
+        "inset shadows must reach boundary refinement before candidate rejection");
+    for (const auto& cell : layout.cells) {
+        Check(
+            std::abs(cell.cell_box.x - (origin.x + cell.column * kPitch)) <= 1
+                && std::abs(cell.cell_box.y - (origin.y + cell.row * kPitch)) <= 1,
+            "inset-shadow grid must follow measured borders");
+        const auto texture = iconrecognition::detail::ForegroundTextureScore(image, cell.cell_box, iconrecognition::GridType::Transfer);
+        Check(
+            texture && *texture < iconrecognition::detail::kDefaultLowTextureThreshold,
+            "inset shadows must stay outside content sampling");
+    }
+}
+
 void TestPortStoragerWideRoiUsesStablePanelPartitions()
 {
     const auto win32 = iconrecognition::detail::PartitionPortStoragerRegions(cv::Size(880, 350));
@@ -2221,6 +2269,7 @@ int main()
         TestTransferEmptyGridFitsOneCompleteLattice();
         TestTransferEmptyGridSkipsCroppedTopRowAndKeepsWeakColumn();
         TestTransferEmptyGridDiagnosticsSkipUnexecutedRarity();
+        TestTransferEmptyGridRefinesInsetShadowsBeforeRejectingCandidate();
         TestPortStoragerWideRoiUsesStablePanelPartitions();
         TestCreditTradeGridUsesDimCardStructures();
         TestCreditTradeGridUsesSixColumnsWhenRoiCannotContainSeven();
