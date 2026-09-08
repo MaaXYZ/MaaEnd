@@ -427,7 +427,7 @@ bool NavigationStateMachine::Run()
 
     if (!Bootstrap()) {
         StopMotion();
-        sensitivity::EndRun(maa_context_, true);
+        sensitivity::EndRun(maa_context_);
         return false;
     }
 
@@ -441,7 +441,7 @@ bool NavigationStateMachine::Run()
         if (!TickPhase(session_->phase())) {
             StopScanners();
             StopMotion();
-            sensitivity::EndRun(maa_context_, true);
+            sensitivity::EndRun(maa_context_);
             return false;
         }
     }
@@ -455,10 +455,8 @@ bool NavigationStateMachine::Run()
     StopScanners();
     StopMotion();
 
-    // 用户主动停的不算走坏，别借着这个把门槛放下来。
-    const bool stopped_by_user = should_stop_();
-    const bool succeeded = !stopped_by_user && session_->success();
-    sensitivity::EndRun(maa_context_, !succeeded && !stopped_by_user);
+    const bool succeeded = !should_stop_() && session_->success();
+    sensitivity::EndRun(maa_context_);
     return succeeded;
 }
 
@@ -1798,8 +1796,9 @@ bool NavigationStateMachine::TickNavigate()
         steering_rate.has_cmd = true;
         steering_rate.pending_turn_deg += issued_delta_deg;
     }
-    // 只有走到这里的拍才记账。自救、绕障、语义转向在上面就返回了，留下的拍号缺口正好标出账不连续。
-    sensitivity::RecordTick(maa_context_, tick_seq, current_heading, issued_delta_deg, degraded_fix);
+    // 只有走到这里的拍才记账。在上面就返回的拍留下拍号缺口，估计器拿输入出口的账判断那拍有没有发过转向。
+    const int64_t now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    sensitivity::RecordTick(maa_context_, tick_seq, now_ms, current_heading, issued_delta_deg, degraded_fix);
 
     // Closed the loop on the forward hold: the keydown goes out once on the transition, so a swallowed one
     // strands the agent aimed correctly and walking nowhere until an obstacle recovery notices seconds later.
