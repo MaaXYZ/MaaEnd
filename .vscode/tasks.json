@@ -100,6 +100,16 @@
             "group": "build"
         },
         {
+            "label": "Generate: SeizeDeliveryJobs",
+            "type": "shell",
+            "command": "pnpm generate:SeizeDeliveryJobs",
+            "runOptions": {
+                "instanceLimit": 1
+            },
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
             "label": "Format: All",
             "type": "shell",
             "command": "pnpm format:all",
