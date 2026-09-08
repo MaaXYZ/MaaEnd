@@ -124,5 +124,6 @@ captureuid.ClearCache()
 | CreditShopping | `agent/go-service/creditshopping/action_record.go` | Go API（`Capture`） | 记录货架快照时关联 UID |
 | AccountSwitch | `assets/resource/pipeline/AccountSwitch.json`（`__AccountSwitchClearUidCache` 节点） | Pipeline（`clear_cache`） | 切换账号后清空缓存 |
 | MapNavigator | `assets/resource/pipeline/Common/AccountIdentity.json` | Resource 通用状态节点 | 运行时自动选择当前账号的滑索记录 |
+| ZiplineImport（Linux） | `agent/go-service/ziplineimport/parse.go` | Go API（`AccountIDFromRawUID`） | 从网页 `roleId` 生成同一账号标识，按账号落盘滑索记录 |
 
 `AccountSwitch` 成功后还会把场景图像检查状态重置为未完成，使同一次任务队列中的下一个场景任务重新执行 UID 捕获；不会沿用切号前的账号身份。

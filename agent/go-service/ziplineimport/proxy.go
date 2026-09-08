@@ -24,6 +24,8 @@ import (
 
 	"github.com/elazarl/goproxy"
 	"github.com/rs/zerolog/log"
+
+	"github.com/MaaXYZ/MaaEnd/agent/go-service/captureuid"
 )
 
 // 需要解密取数的目标主机：提供 mark/list 的就是这个 API 域名（页面壳是 game.skland.com，
@@ -175,13 +177,18 @@ func (m *mitmProxy) captureResponse(resp *http.Response, ctx *goproxy.ProxyCtx) 
 	if len(content) == 0 || !saveMarksPresent(content) {
 		return respWith(resp, restored)
 	}
+	requestURL := ctx.Req.URL.String()
 	m.mu.Lock()
 	// 只保留真正的响应（带 data.saveMarks 结构）。未登录也是空数组，仍算一条捕获，
 	// 用于在日志里提示「是否已登录」。
-	m.responses = append(m.responses, capturedResponse{url: ctx.Req.URL.String(), body: content})
+	m.responses = append(m.responses, capturedResponse{url: requestURL, body: content})
 	// 增量维护 covered：抓到即解析一次，避免 launch 轮询时反复反序列化全部响应。
-	for id := range marksByMap(content, nil, queryValue(ctx.Req.URL.String(), "mapId")) {
-		m.covered[id] = true
+	// roleId 缺失或非法的响应（未登录、页面初始化阶段、关卡子列表）不能归属账号，
+	// 不推进完成判据，否则未登录时官方点位会把 covered 撑满、提前判成抓齐。
+	if captureuid.IsValidRawUID(queryValue(requestURL, "roleId")) {
+		for id := range marksByMap(content, nil, queryValue(requestURL, "mapId")) {
+			m.covered[id] = true
+		}
 	}
 	m.mu.Unlock()
 	log.Info().Str("component", componentName).Str("path", ctx.Req.URL.Path).

@@ -4,10 +4,15 @@ package ziplineimport
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/rs/zerolog/log"
+
+	"github.com/MaaXYZ/MaaEnd/agent/go-service/captureuid"
 )
 
 // markDTO 对应 mark/list 响应里 data.marks / data.saveMarks 的单条标记。
@@ -104,17 +109,73 @@ func marksByMap(body []byte, templateIDs []string, fallbackMapID string) map[str
 	return out
 }
 
-// coveredMaps 汇总所有响应里「出现真实标记」的地图集合。不按 template 过滤（与 cpp 的
-// covered 一致）：只要任何标记带落点就算该图被覆盖；真正是否作为滑索留下由落盘时的
-// template_ids 过滤决定。
+// coveredMaps 汇总所有响应里「出现真实标记且能归属账号」的地图集合。不按 template 过滤
+// （与 cpp 的 covered 一致）：只要任何标记带落点就算该图被覆盖；真正是否作为滑索留下由
+// 落盘时的 template_ids 过滤决定。
+//
+// roleId 缺失或非法的响应（未登录、页面初始化阶段、关卡子列表）不推进覆盖，否则未登录时
+// 官方点位会把 covered 撑满，导致提前判成抓齐。
 func coveredMaps(responses []capturedResponse) map[string]bool {
 	out := make(map[string]bool)
 	for _, r := range responses {
+		if !captureuid.IsValidRawUID(queryValue(r.url, "roleId")) {
+			continue
+		}
 		for id := range marksByMap(r.body, nil, queryValue(r.url, "mapId")) {
 			out[id] = true
 		}
 	}
 	return out
+}
+
+// deriveAccountID 是 accountScopedMarks 计算伪匿名账号标识的注入点；默认走 captureuid 的
+// 加盐 SHA-256，单元测试可替换为固定值，避免在测试目录里生成真实盐文件。
+var deriveAccountID = captureuid.AccountIDFromRawUID
+
+// accountScopedMarks 把本次抓到的响应归集为「唯一账号 + 按地图分组的标记」。
+//
+// 与 cpp PersistCaptured 一致：只有带回非空 saveMarks 的响应才参与账号判定；roleId 缺失
+// 或格式非法的响应一律忽略，既不推进 covered 也不落盘。一次导入必须恰好对应一个 roleId，
+// 否则返回错误让调用方整批拒绝——宁可本次不保存，也不能把两个账号的坐标混在一起，或猜
+// 一个账号归属。
+//
+// templateIDs 为空表示不过滤，全量保留（供电结构必须随滑索架一并入库）。
+func accountScopedMarks(responses []capturedResponse, templateIDs []string) (string, map[string][]ziplineMark, error) {
+	byMap := make(map[string][]ziplineMark)
+	roleIDs := make([]string, 0, 1)
+	seenRoleIDs := make(map[string]bool)
+	for _, r := range responses {
+		fallbackMapID := queryValue(r.url, "mapId")
+		// 先不过滤地解析一次：只有真的带标记的响应才需要判定账号，登录前的公开空列表
+		// 不应该污染账号集合。
+		if len(marksByMap(r.body, nil, fallbackMapID)) == 0 {
+			continue
+		}
+
+		roleID := queryValue(r.url, "roleId")
+		if !captureuid.IsValidRawUID(roleID) {
+			log.Debug().Str("component", componentName).Int("role_id_len", len(roleID)).
+				Msg("zipline import: ignore mark response without valid roleId")
+			continue
+		}
+		if !seenRoleIDs[roleID] {
+			seenRoleIDs[roleID] = true
+			roleIDs = append(roleIDs, roleID)
+		}
+
+		for mapID, marks := range marksByMap(r.body, templateIDs, fallbackMapID) {
+			byMap[mapID] = append(byMap[mapID], marks...)
+		}
+	}
+
+	if len(roleIDs) != 1 {
+		return "", nil, fmt.Errorf("one import must contain exactly one roleId, got %d", len(roleIDs))
+	}
+	accountID, err := deriveAccountID(roleIDs[0])
+	if err != nil {
+		return "", nil, fmt.Errorf("derive account identity: %w", err)
+	}
+	return accountID, byMap, nil
 }
 
 // dedupMarks 去掉完全重合（template_id/level_id/x/y/z 完全相同）的重复标记，并按该键

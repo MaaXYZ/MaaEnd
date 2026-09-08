@@ -22,3 +22,40 @@ func TestSafeUIDForLogMasksRawUID(t *testing.T) {
 		t.Fatalf("safeUIDForLog = %q, want %q", got, want)
 	}
 }
+
+func TestAccountIDFromRawUIDMatchesFormatUID(t *testing.T) {
+	original := loadSaltFunc
+	loadSaltFunc = func() (string, error) { return "0123456789abcdef0123456789abcdef", nil }
+	t.Cleanup(func() { loadSaltFunc = original })
+
+	got, err := AccountIDFromRawUID("1234567890")
+	if err != nil {
+		t.Fatalf("AccountIDFromRawUID returned error: %v", err)
+	}
+	if want := "052184dd51ec6feb"; got != want {
+		t.Fatalf("AccountIDFromRawUID = %q, want %q", got, want)
+	}
+}
+
+func TestAccountIDFromRawUIDRejectsInvalidUID(t *testing.T) {
+	for _, uid := range []string{"", "1234567", "1234567890123", "12345678a", "１２３４５６７８"} {
+		if _, err := AccountIDFromRawUID(uid); err == nil {
+			t.Fatalf("AccountIDFromRawUID(%q) accepted an invalid uid", uid)
+		}
+	}
+}
+
+func TestIsValidRawUIDBoundaries(t *testing.T) {
+	valid := []string{"12345678", "123456789", "1234567890", "12345678901", "123456789012"}
+	for _, uid := range valid {
+		if !IsValidRawUID(uid) {
+			t.Fatalf("IsValidRawUID(%q) = false, want true", uid)
+		}
+	}
+	invalid := []string{"", "1234567", "1234567890123", "1234 6789", "1234567a", "+12345678", "１２３４５６７８"}
+	for _, uid := range invalid {
+		if IsValidRawUID(uid) {
+			t.Fatalf("IsValidRawUID(%q) = true, want false", uid)
+		}
+	}
+}

@@ -11,7 +11,11 @@ import (
 //
 // url / timeout / template_ids 与 cpp-algo 的 WebView2 版共享（cpp 也读这几个键）；
 // firefox / proxy_port 是 Linux 特有（firefox 可执行路径、本机受限 MITM 代理端口）。
-// 不读任何 window/显示器相关的键。
+//
+// cpp 版的 mark_list_path / width / height / clear_login 在 Linux 被接受但有意忽略：接口
+// 路径固定为 /map/mark/list，窗口由独立 Firefox 进程自己管理，每次导入都用一次性临时
+// profile（等价于永远清除登录态），所以这三个键没有可生效的语义。json.Unmarshal 默认忽略
+// 未知字段，不必为它们建结构体字段。
 type actionParam struct {
 	// 登录窗口打开的页面地址（沿用 cpp 版的 url 语义）。
 	URL string `json:"url"`

@@ -22,8 +22,13 @@ type ziplineMark struct {
 	Z          float64 `json:"z"`
 }
 
-// ziplineMapRecord 是一张森空岛地图上的全部滑索，按 map_id 整张替换，不做逐条合并。
+// ziplineMapRecord 是一张森空岛地图在某个账号下的全部滑索，按 (account_id, map_id) 整张替换，
+// 不做逐条合并。
+//
+// account_id 是网页 roleId 经 captureuid 同款加盐哈希得到的伪匿名标识；空值表示旧版本遗留记录。
+// 遗留记录不能自动归入当前账号，否则换号后仍会静默使用错误坐标。
 type ziplineMapRecord struct {
+	AccountID string        `json:"account_id,omitempty"`
 	MapID     string        `json:"map_id"`
 	FetchedAt string        `json:"fetched_at"`
 	Marks     []ziplineMark `json:"marks"`
@@ -71,10 +76,11 @@ func loadRecord(path string) (*recordFile, error) {
 	return &rec, nil
 }
 
-// replaceMap 按 map_id 整张替换，拆掉的滑索必须随之消失（与 cpp 一致）。
+// replaceMap 按 (account_id, map_id) 整张替换，拆掉的滑索必须随之消失（与 cpp 一致）。
+// 不同账号的同一张图、以及旧版无 account_id 的同名图都是不同的记录，互不覆盖。
 func (r *recordFile) replaceMap(rec ziplineMapRecord) {
 	for i := range r.Maps {
-		if r.Maps[i].MapID == rec.MapID {
+		if r.Maps[i].AccountID == rec.AccountID && r.Maps[i].MapID == rec.MapID {
 			r.Maps[i] = rec
 			return
 		}

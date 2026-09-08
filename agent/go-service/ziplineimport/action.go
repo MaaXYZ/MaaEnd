@@ -79,14 +79,15 @@ func (a *Action) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool {
 		return false
 	}
 
-	// 把本次抓到的所有响应按地图归集后整图替换（与 cpp PersistCaptured 一致：所有出现过的图都落，
-	// 空图不动，已抓到的按部分成功处理）。不按 template 过滤：供电结构必须随滑索架一并入库。
+	// 把本次抓到的响应归集为「唯一账号 + 按地图分组」的标记（与 cpp PersistCaptured 一致：
+	// 所有出现过的图都落，空图不动，已抓到的按部分成功处理）。一次导入必须恰好对应一个
+	// roleId，否则整批拒绝；不按 template 过滤：供电结构必须随滑索架一并入库。
 	responses := proxy.responsesSnapshot()
-	byMap := make(map[string][]ziplineMark)
-	for _, r := range responses {
-		for mapID, marks := range marksByMap(r.body, p.TemplateIDs, queryValue(r.url, "mapId")) {
-			byMap[mapID] = append(byMap[mapID], marks...)
-		}
+	accountID, byMap, err := accountScopedMarks(responses, p.TemplateIDs)
+	if err != nil {
+		log.Error().Err(err).Str("component", componentName).Int("responses", len(responses)).
+			Msg("zipline import: cannot attribute captured marks to a single account, refuse to persist")
+		return false
 	}
 
 	rec, err := loadRecord(defaultRecordPath())
@@ -123,7 +124,7 @@ func (a *Action) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool {
 				Msg("zipline import: template marks captured")
 		}
 
-		rec.replaceMap(ziplineMapRecord{MapID: mapID, FetchedAt: currentTimestampUTC(), Marks: marks})
+		rec.replaceMap(ziplineMapRecord{AccountID: accountID, MapID: mapID, FetchedAt: currentTimestampUTC(), Marks: marks})
 		okMaps++
 		for _, m := range marks {
 			if towers[m.TemplateID] {
@@ -146,7 +147,7 @@ func (a *Action) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool {
 		return false
 	}
 
-	log.Info().Str("component", componentName).
+	log.Info().Str("component", componentName).Str("account_id", accountID).
 		Int("ok_maps", okMaps).Int("total_racks", totalRacks).
 		Msg("zipline import: done")
 	// 抓到数据后给用户一条焦点提示。

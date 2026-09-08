@@ -70,10 +70,11 @@ func runCapture(ctx *maa.Context, p actionParam, profileDir string, proxy *mitmP
 			}
 		} else if capturedN > 0 && !signinHintLogged &&
 			time.Since(lastEvent) >= time.Duration(kIdleCloseMs)*time.Millisecond {
-			// 有 mark/list 响应但一个真实标记都没有（未登录时 saveMarks 为空数组）。
+			// 有 mark/list 响应但一个可归属账号的真实标记都没有（未登录时 saveMarks 为空
+			// 数组；已登录但还没选角色时响应里也没有 roleId）。
 			signinHintLogged = true
 			log.Info().Str("component", componentName).
-				Msg("zipline import: mark lists carry no saved marks, waiting for the user to sign in")
+				Msg("zipline import: no account-scoped marks yet, waiting for sign-in or role selection")
 		}
 
 		// 超时即收工，已抓到的按部分成功处理（与 win32 参考一致：有数据就算抓到了）。
