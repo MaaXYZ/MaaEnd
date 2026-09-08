@@ -6,6 +6,7 @@
 #include <string>
 
 #include "navi_domain_types.h"
+#include "zipline_ride_machine.h"
 
 namespace mapnavigator
 {
@@ -69,25 +70,8 @@ struct SemanticState
     bool portal_transit_keep_moving_until_fix = false;
     bool portal_transit_needs_reacquire = false;
     std::chrono::steady_clock::time_point portal_transit_started {};
-    std::chrono::steady_clock::time_point zipline_ride_started {};
-    // 按下起滑那一刻人站在哪儿。滑一趟必然离开这里, 所以它是「到底滑没滑起来」的唯一凭据
-    NaviPosition zipline_mount_pos {};
-    ZiplineTarget zipline_landing {};
-    int zipline_landing_hits = 0;
-    // 起滑按了几次。按下去没滑走多半是俯仰没对上, 抬头角是开环发的, 只能换一档再按; 试满就退索
-    int zipline_launch_attempts = 0;
-    // 上索后先把镜头拉到俯仰上限, 再记住从这个固定基准发出的目标角；连续滑索沿用它按增量补
-    double zipline_pitch_deg = 0.0;
-    // 上一拍的位置和它连着重合了几次。滑行停稳却不在落点, 就是这趟滑岔了
-    NaviPosition zipline_last_pos {};
-    int zipline_settle_hits = 0;
-    // 滑反了正在原路滑回上索点。回去了就退索走路, 不会再滑第二趟
-    bool zipline_returning = false;
     // 这一次上索是行进预筛叫停的, 人可能还差几步。此时认不出提示只说明预筛看错了, 不该丢链
     bool zipline_prompt_probe = false;
-    // 人是不是站在架子上。链首上索时置位, 链尾下索或中途退索时清掉。站着时不能直接走路,
-    // 得先右键离开架子, 否则移动指令被架子上的选点状态吃掉
-    bool zipline_mounted = false;
     std::string held_zone_candidate;
     int held_zone_hits = 0;
 
@@ -100,17 +84,7 @@ struct SemanticState
         portal_transit_keep_moving_until_fix = false;
         portal_transit_needs_reacquire = false;
         portal_transit_started = {};
-        zipline_ride_started = {};
-        zipline_mount_pos = {};
-        zipline_landing = {};
-        zipline_landing_hits = 0;
-        zipline_launch_attempts = 0;
-        zipline_pitch_deg = 0.0;
-        zipline_last_pos = {};
-        zipline_settle_hits = 0;
-        zipline_returning = false;
         zipline_prompt_probe = false;
-        zipline_mounted = false;
         held_zone_candidate.clear();
         held_zone_hits = 0;
     }
@@ -370,10 +344,8 @@ struct NavigationRuntimeState
     // 由它自己按身份清, 换了整趟导航由 BeginNavigation 清
     ZiplineApproachState zipline_approach;
     ZiplineRecoveryState zipline_recovery;
-    // 顶层且不进任何一个 Reset: 封禁与弃索计数的生命周期是一整趟导航, 只由 BeginNavigation 清。
-    // 跟着重规划清零, 重展开就会再选中刚失败的索。
-    std::vector<ZiplineHopBan> zipline_hop_bans;
-    int32_t zipline_abandon_count = 0;
+    // 正在滑的这一跳和这趟导航每一跳的账本。账本跨越丢链和重规划, 只由 BeginNavigation 清
+    ZiplineRideMachine zipline_ride;
     // 置于顶层且不参与任何 Reset: 禁区按世界坐标记录障碍, 生命周期为整趟导航, 仅由 BeginNavigation 清空。
     // 若随重规划一并清零, 下一次规划会再次穿过刚判定出障碍的位置。
     std::vector<VirtualNoGoDisc> virtual_no_go;
@@ -412,9 +384,8 @@ struct NavigationRuntimeState
         cross_tier_escape.Reset();
         zipline_approach.Reset();
         zipline_recovery.Reset();
-        zipline_hop_bans.clear();
+        zipline_ride.ResetNavigation();
         virtual_no_go.clear();
-        zipline_abandon_count = 0;
         progress_identity.Reset();
         global_reacquire_streak = 0;
         dynamic_replan_requested = false;
@@ -438,6 +409,9 @@ struct NavigationRuntimeState
         nav_run_dirty = true;
         flow.last_auto_sprint_time = {};
     }
+
+    // 人站在滑索架上。这时移动指令会被架子吃掉, 上索提示也不用再认
+    bool IsZiplineMounted() const { return zipline_ride.OnTower(); }
 };
 
 } // namespace mapnavigator

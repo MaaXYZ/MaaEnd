@@ -10,6 +10,8 @@
 #include <meojson/json.hpp>
 
 #include "navi_config.h"
+#include "navi_position.h"
+#include "zipline_types.h"
 
 namespace mapnavigator
 {
@@ -110,45 +112,6 @@ constexpr ActionTraits TraitsOf(ActionType action)
     return {};
 }
 
-struct ZiplinePoint
-{
-    double x = 0.0;
-    double y = 0.0;
-};
-
-// 滑索的另一端。执行时先把镜头转向这里再交互上索，滑行结束后角色就落在这个点上。
-struct ZiplineTarget
-{
-    double x = 0.0;
-    double y = 0.0;
-    double height = 0.0;
-    // 索的仰角，正数是往上滑。落差大的一跳镜头不抬到这个角度就起不了滑。规划时按两端的世界
-    // 坐标算好，运行时不再碰单位——x/y 是缩放过的平面单位，跟 height 不同尺。
-    double elevation_deg = 0.0;
-    // 上索那根架子上其它索通向的架子。两根索靠得近时游戏可能挂错一根，落地定位把这些点
-    // 也当搜索先验，滑错了也能立刻认出落在哪。
-    std::vector<ZiplinePoint> alternates;
-};
-
-// 上索认不出提示时的备用站位。面板给的是离身位最近的那台设备, 架子边上贴着供电桩时会被它抢走,
-// 这个点从供电桩那侧让开一点点, 让架子重新成为最近的那个。
-struct ZiplineRestand
-{
-    double x = 0.0;
-    double y = 0.0;
-};
-
-// 执行侧判死过的一跳。重展开时滑索照常参与规划, 只是这两根架子之间的索不再是候选——
-// 不然重规划会再选中刚失败的链, 无限重试。坐标按规划产出的架子平面位置记; 链首航点站的
-// 是上索走位点而不是架子本身, 所以匹配放宽到 kZiplineHopBanMatchWu。
-struct ZiplineHopBan
-{
-    double from_x = 0.0;
-    double from_y = 0.0;
-    double to_x = 0.0;
-    double to_y = 0.0;
-};
-
 // 运行期在卡死点前方生成的圆形禁区, 用于占位网格中未记录的障碍, 此后每次规划都绕开它。
 // 圆心按生成时所在定位区的坐标记录, 仅对同区规划生效。push_through 表示该禁区封闭了唯一通路,
 // 规划时不再计入, 只作为恢复流程判定此处需要物理脱困的依据。
@@ -198,10 +161,9 @@ struct Waypoint
     // INTERACT 专用: rec 模式, 只认提示不按键。判定圈、行进中提示停车都照旧, 按不按、按哪个留给业务侧决定。
     // 写在路线顶层是整条路线的默认, 点上只能开不能关
     bool interact_rec;
-    // ZIPLINE only: 滑索落点。只由滑索规划写入; 缺这个字段的 ZIPLINE 点是配置写错了, 执行侧拒绝
-    std::optional<ZiplineTarget> zipline_target;
-    // ZIPLINE only: 备用站位, 只在上索按空一次之后才改瞄它。架子旁边没有供电结构就不写
-    std::optional<ZiplineRestand> mount_restand;
+    // ZIPLINE only: 这一跳的计划(两端架子、落点仰角、备用站位)。只由滑索规划写入; 缺这个字段的
+    // ZIPLINE 点是配置写错了, 执行侧拒绝
+    std::optional<ZiplineHopPlan> zipline_hop;
     // 展开路径专用: 这个点由原始作者 path 的哪一组(组首下标)展开而来。滑索链半路失败时按它把
     // 进度折回作者路线重新展开; 作者原始点和运行时生成的点不带(= max)。
     size_t authored_group_begin = std::numeric_limits<size_t>::max();
@@ -330,19 +292,6 @@ struct Waypoint
         waypoint.zone_id = std::move(zone);
         return waypoint;
     }
-};
-
-struct NaviPosition
-{
-    double x = 0.0;
-    double y = 0.0;
-    double angle = 0.0;
-    double score = 0.0;
-    // 角色站在哪张可走面。实机定位给不出这个信息，只有预览端选了层才有值，不传就按区的主层走。
-    std::optional<double> floor_y;
-    bool valid = false;
-    std::string zone_id;
-    std::chrono::steady_clock::time_point timestamp;
 };
 
 struct TurnCommandResult

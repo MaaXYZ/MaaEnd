@@ -278,12 +278,8 @@ constexpr double kZiplineLandingBandWu = 6.0;
 constexpr double kZiplineLandingHintRadiusWu = 24.0;
 constexpr int32_t kZiplineRideRetryIntervalMs = 150;
 constexpr int32_t kZiplineRideTimeoutMs = 30000;
-// 落点圈内还要连着读到这么多个非 held 定位才收工, 避免滑行途中恰好飞过落点上方就提前落地
-constexpr int32_t kZiplineLandingStableFixes = 2;
-// 站上架子后交互提示就没了, 所以确认只看「还认不认得出这条提示」。留一小段窗口是因为按下的
-// 那一帧提示往往还在
-constexpr int32_t kZiplineMountConfirmAttempts = 6;
-constexpr int32_t kZiplineMountConfirmIntervalMs = 250;
+// 起滑后连着这么多帧定位不到就当滑出去了: 滑行中小地图整个隐藏, 站在架子上没滑走时跟踪不会断
+constexpr int32_t kZiplineRideLostFixes = 3;
 // 起滑按完先等这么久再开始量位移, 免得把起步前的几帧当成没滑起来
 constexpr int32_t kZiplineLaunchSettleMs = 400;
 // 瞄准精度只能在按左键之前保证: 按下去人就滑走了, 半空里没有跟随层能把方向修回来。走路那套
@@ -292,6 +288,11 @@ constexpr double kZiplineAimToleranceDeg = 6.0;
 // 上索后的稳定等待与全部水平修正共用这个截止时间。每次只发一个后端批次并等待真实反馈，
 // 避免大角度转向在上索动画尚未结束时一次性排入多条输入。
 constexpr int32_t kZiplineAimHeadingTimeoutMs = 6000;
+// 第一批转完量一次「发了多少转了多少」当增益, 后面的 yaw 和俯仰都按它缩放。太小的一批量不准,
+// 增益夹在这个范围里, 一帧读歪不至于把俯仰整个放飞
+constexpr double kZiplineAimGainMinTurnDeg = 5.0;
+constexpr double kZiplineAimGainMin = 0.5;
+constexpr double kZiplineAimGainMax = 2.0;
 // 落差够大时镜头得抬到索的仰角上才起得了滑。小地图读不到俯仰, 所以每次从地面登上滑索架后
 // 先通过 Pipeline 把镜头拉到上限, 将该硬限位记作 +90 度, 再从这个固定基准开环调整。连续滑索
 // 没有上下索动作, 直接沿用上一跳记住的俯仰。游戏的俯仰范围不对称: 仰角最多 90 度, 俯角最多 60 度。
@@ -337,6 +338,14 @@ constexpr int32_t kZiplineAbandonWalkFallbackCount = 3;
 // 判定圈收到这里, 让人真把那点距离走完(有备用站位就是走过去, 没有就是再走近点)。
 // 再往下收就到定位噪声底下了, 收不拢只会白等看门狗
 constexpr double kZiplineRestandBandWu = 1.0;
+// 滑错索又滑回来之后, 同一跳最多再试这么多次, 用完就站在架子上等换路
+constexpr int32_t kZiplineHopRetryBudget = 2;
+// 下索键按完等定位稳定的基准时长: 两倍还不稳再按一次, 四倍还不稳当卡住
+constexpr int32_t kZiplineDismountTimeoutMs = 2000;
+// 落地定位对不上时给冷启动的时间, 到点还对不上这跳按丢失记
+constexpr int32_t kZiplineUnknownTimeoutMs = 8000;
+// 两个节点算同一根架子的世界坐标距离。架子是点状物, 同一 level 里两根架子挨不到这么近
+constexpr double kZiplineTowerIdentityWu = 2.0;
 
 constexpr double kNoProgressDistanceEpsilon = 0.5;
 constexpr double kRouteProgressEpsilon = 0.5;
@@ -370,7 +379,6 @@ constexpr const char* kInteractExitNode = "MapNavigatorInteractEnd";
 constexpr const char* kZiplineMountEntryNode = "MapNavigatorZiplineMountStart";
 constexpr const char* kZiplineMountRecognitionNode = "MapNavigatorZiplineMount";
 constexpr const char* kZiplineMountExitNode = "MapNavigatorZiplineMountEnd";
-constexpr const char* kZiplineMountScanEntryNode = "MapNavigatorZiplineMountScanStart";
 constexpr const char* kZiplineMountScanNode = "MapNavigatorZiplineMountScan";
 constexpr const char* kZiplinePitchResetNode = "MapNavigatorZiplinePitchReset";
 constexpr int32_t kPromptPostSleepMs = 80;

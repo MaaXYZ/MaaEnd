@@ -869,34 +869,53 @@ bool TryAppendZiplineLeg(
     // 上索点自己补, 不让通用追加代劳: 起点已经站在索下时它一个点都不会产出, 而这个点必须存在
     AppendGeneratedNavmeshWaypoints(route->approach, out_path, false, false, &navmesh.planner, route->approach.zone_id);
     const navmesh::WorldPoint mount = route->approach.points.back();
+    auto ToNodeRef = [](const zipline::ZiplineNode& node) -> ZiplineNodeRef {
+        ZiplineNodeRef ref;
+        ref.level_id = node.level_id;
+        ref.world_x = node.world_x;
+        ref.world_y = node.world_y;
+        ref.world_z = node.world_z;
+        ref.has_world = true;
+        ref.x = node.x;
+        ref.y = node.y;
+        ref.height = node.height;
+        return ref;
+    };
+
     // 一跳一个航点。中途落在下一根架子上, 人就站在下一跳的上索点上, 所以跳与跳之间不插走路点
     for (size_t hop = 0; hop + 1 < route->towers.size(); ++hop) {
         const zipline::ZiplineNode& from = route->towers[hop];
         const zipline::ZiplineNode& to = route->towers[hop + 1];
+        const ZiplineNodeRef from_ref = ToNodeRef(from);
+        const ZiplineNodeRef to_ref = ToNodeRef(to);
+
         // 头一跳的上索点取走路那一段的末点, 让两段严丝合缝地接上
         out_path.emplace_back(hop == 0 ? mount.x : from.x, hop == 0 ? mount.y : from.y, ActionType::ZIPLINE);
         out_path.back().strict_arrival = true;
         out_path.back().target_deck_y = from.height;
-        // 备用站位只挂在链首: 后面那些跳是从索上落下来的, 不再按上索提示
-        if (hop == 0 && route->mount_restand) {
-            out_path.back().mount_restand = ZiplineRestand { .x = route->mount_restand->x, .y = route->mount_restand->y };
-        }
         // 仰角只能用世界坐标算: 平面 x/y 是按地图比例缩放过的, 跟高度不同尺, 混着算出来的角
         // 没有意义
         const double span_x = to.world_x - from.world_x;
         const double span_z = to.world_z - from.world_z;
         const double rise = to.world_y - from.world_y;
-        out_path.back().zipline_target = ZiplineTarget {
-            .x = to.x,
-            .y = to.y,
-            .height = to.height,
-            .elevation_deg = std::atan2(rise, std::hypot(span_x, span_z)) * 180.0 / kPi,
-        };
+        const double elevation_deg = std::atan2(rise, std::hypot(span_x, span_z)) * 180.0 / kPi;
+
+        ZiplineHopPlan hop_plan;
+        hop_plan.mount = from_ref;
+        hop_plan.landing = to_ref;
+        hop_plan.planned_elevation_deg = elevation_deg;
+        // 备用站位只挂在链首: 后面那些跳是从索上落下来的, 不再按上索提示
+        if (hop == 0 && route->mount_restand) {
+            hop_plan.restand = ZiplineRestand { .x = route->mount_restand->x, .y = route->mount_restand->y };
+        }
         if (hop < route->hop_alternates.size()) {
             for (const zipline::ZiplineNode& other : route->hop_alternates[hop]) {
-                out_path.back().zipline_target->alternates.push_back(ZiplinePoint { .x = other.x, .y = other.y });
+                hop_plan.siblings.push_back(ToNodeRef(other));
             }
         }
+        // 落点后面还有一跳时, 人落地就站在下一跳的上索架上, 不下索直接接着瞄
+        hop_plan.chain_continues = hop + 2 < route->towers.size();
+        out_path.back().zipline_hop = hop_plan;
     }
 
     const size_t departure_index = out_path.size();
