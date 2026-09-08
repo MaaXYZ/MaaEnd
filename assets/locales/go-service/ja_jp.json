@@ -145,6 +145,7 @@
     "essencefilter.focus.error.load_engine_failed": "EssenceFilter の初期化に失敗しました: %s",
     "essencefilter.focus.error.match_failed": "EssenceFilter マッチングに失敗しました: %s",
     "essencefilter.focus.error.no_match_engine": "マッチングエンジンが未初期化です。先に初期化してください。",
+    "essencefilter.focus.warn.language_detect_failed": "画面からゲーム言語を判定できませんでした。簡体字中国語にフォールバックします。基質インベントリまたは戦利品画面で実行してください。",
     "essencefilter.focus.init.data_loaded": "武器データの読み込みが完了しました。",
     "essencefilter.focus.init.no_essence_type": "基質タイプが未選択です。少なくとも1つ選択してください。",
     "essencefilter.focus.init.no_weapon_rarity": "武器レアリティ未選択のため、拡張ルールのみ使用します。",

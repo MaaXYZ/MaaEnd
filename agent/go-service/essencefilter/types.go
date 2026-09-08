@@ -25,7 +25,9 @@ type EssenceFilterOptions struct {
 	ExportCalculatorScript bool `json:"export_calculator_script"`
 	// ExportInventory selects the read-only flawless inventory preset.
 	ExportInventory bool `json:"export_inventory"`
-	// InputLanguage is game/OCR language for skill matching: CN|TC|EN|JP|KR (default CN).
+	// InputLanguage is game/OCR language for skill matching: CN|TC|EN|JP|KR.
+	// Empty / omitted / AUTO: detect via __EssenceFilterDetectLang* OCR nodes at Init.
+	// Explicit CN|TC|EN|JP|KR: force that locale (debug / override).
 	InputLanguage string `json:"input_language"`
 }
 
