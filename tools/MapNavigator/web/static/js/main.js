@@ -41,7 +41,13 @@ import {
 import {AppState, Mode} from "./state.js";
 import {logZiplineGeometry, logZiplineTowers, parseMapNavigatorLog} from "./log_analysis.js";
 import {groupLogInputFiles, openZipArchive, selectMaaEndArchiveEntries} from "./log_archive.js";
-import {measureZiplinePair, nextZiplineMeasurementSelection, projectZiplineRecords} from "./zipline_records.js";
+import {
+  listZiplineAccounts,
+  measureZiplinePair,
+  nextZiplineMeasurementSelection,
+  projectZiplineRecords,
+  ziplineAccountLabel,
+} from "./zipline_records.js";
 import {
   ACTION_NAMES,
   ActionType,
@@ -188,6 +194,10 @@ class MapNavigatorApp {
     };
     /** @type {?Object} current installation's parsed debug/record/Ziplines.json. */
     this.mapZiplineRecords = null;
+    /** @type {Array<{accountId:string,fetchedAt:string}>} accounts available to offline planning. */
+    this.ziplineAccounts = [];
+    /** @type {string} pseudonymous account selected for offline planning and the local tower layer. */
+    this.ziplineAccountId = localStorage.getItem("maaend.mapnavigator.ziplineAccountId") || "";
     /** @type {Map<string,Array<Object>>} projected base-frame towers keyed by geometry zone name. */
     this._mapZiplineBaseByZone = new Map();
     this._mapZiplineLoadToken = 0;
@@ -356,6 +366,7 @@ class MapNavigatorApp {
       btnEditStartClear: $("btn-edit-start-clear"),
       chkAutoPlan: $("chk-auto-plan"),
       chkEditZipline: $("chk-edit-zipline"),
+      editZiplineAccount: $("edit-zipline-account"),
       btnCopyAssert: $("btn-copy-assert"),
       assertCopyFormat: $("assert-copy-format"),
       btnImport: $("btn-import"),
@@ -625,7 +636,7 @@ class MapNavigatorApp {
 
       this._loadZoneIds();
       this._pollLoadStatus();
-      if (this.mapLayers.showZiplines) void this._loadMapZiplines({announce: false});
+      void this._loadMapZiplines({announce: false});
     } catch (err) {
       alert("BOOT ERROR: " + err.message + "\nStack: " + err.stack);
     }
@@ -976,6 +987,7 @@ class MapNavigatorApp {
       else if (this.editRoute) this._calculateEditPreview();
       else this._scheduleAutoPlan();
     });
+    e.editZiplineAccount.addEventListener("change", () => this._selectZiplineAccount(e.editZiplineAccount.value));
     e.btnMapLayers.addEventListener("click", (event) => {
       event.stopPropagation();
       this._setMapLayerPanelOpen(e.mapLayerPanel.hidden);
@@ -2012,6 +2024,72 @@ class MapNavigatorApp {
     }
   }
 
+  /** Populate the planning-account selector, preserving a stored choice when it still exists. */
+  _populateZiplineAccounts() {
+    const previousAccountId = this.ziplineAccountId;
+    this.ziplineAccounts = listZiplineAccounts(this.mapZiplineRecords);
+    const combo = this.els.editZiplineAccount;
+    const selected = this.ziplineAccounts.some((account) => account.accountId === this.ziplineAccountId)
+      ? this.ziplineAccountId
+      : this.ziplineAccounts[0]?.accountId || "";
+
+    combo.textContent = "";
+    if (this.ziplineAccounts.length) {
+      for (const account of this.ziplineAccounts) {
+        const option = document.createElement("option");
+        option.value = account.accountId;
+        option.textContent = ziplineAccountLabel(account);
+        combo.appendChild(option);
+      }
+      combo.value = selected;
+    } else {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "没有账号记录";
+      combo.appendChild(option);
+    }
+
+    this.ziplineAccountId = selected;
+    if (selected) localStorage.setItem("maaend.mapnavigator.ziplineAccountId", selected);
+    else localStorage.removeItem("maaend.mapnavigator.ziplineAccountId");
+    this._syncZiplineAccountControl();
+    return selected !== previousAccountId;
+  }
+
+  /** Account choice is available once the current installation exposes scoped records. */
+  _syncZiplineAccountControl() {
+    this.els.editZiplineAccount.disabled = !this.ziplineAccounts.length;
+  }
+
+  /** Switch the account shared by route previews and the current-installation tower layer. */
+  _selectZiplineAccount(accountId) {
+    const selected = this.ziplineAccounts.some((account) => account.accountId === accountId) ? accountId : "";
+    if (!selected || selected === this.ziplineAccountId) return;
+    this.ziplineAccountId = selected;
+    localStorage.setItem("maaend.mapnavigator.ziplineAccountId", selected);
+    this._resetZiplineAccountView();
+    // The reset dropped the auto-plan key, so a checked "自动展开" re-expands under the new account.
+    this._scheduleAutoPlan();
+    const account = this.ziplineAccounts.find((entry) => entry.accountId === selected);
+    const hint = this.els.chkAutoPlan.checked ? "" : "；请重新规划路线";
+    setStatus(`已切换${ziplineAccountLabel(account)}${hint}。`, "#10b981");
+  }
+
+  /** Invalidate every local-map artifact that was filtered or planned for another account. */
+  _resetZiplineAccountView() {
+    this._mapZiplineBaseByZone.clear();
+    this.ziplineDistanceSelection = [];
+    this.ziplineDistanceContext = "";
+    if (this.inspectedPoint?.kind === "tower") this.inspectedPoint = null;
+    this._clearQuickRouteTest();
+    this._clearEditPreview();
+    // _paint() never touches the 3D view, so drop the previous account's route from it here.
+    this._syncThreeOverlays();
+    this._renderPointInspection();
+    this._renderZiplineDistance();
+    this._paint();
+  }
+
   /** Update one persistent non-zipline map layer. */
   _setMapLayerVisible(key, visible) {
     if (key !== "showBasemap" && key !== "showNavmesh") return;
@@ -2036,7 +2114,7 @@ class MapNavigatorApp {
     if (!this._mapZiplineBaseByZone.has(zoneName)) {
       this._mapZiplineBaseByZone.set(
         zoneName,
-        projectZiplineRecords(this.mapZiplineRecords, this.ziplineFrameConfig, zoneName),
+        projectZiplineRecords(this.mapZiplineRecords, this.ziplineFrameConfig, zoneName, this.ziplineAccountId),
       );
     }
     return this._mapZiplineBaseByZone.get(zoneName);
@@ -2054,7 +2132,6 @@ class MapNavigatorApp {
   async _setMapZiplinesVisible(visible) {
     if (!visible) {
       this.mapLayers.showZiplines = false;
-      this._mapZiplineLoadToken += 1;
       this.ziplineDistanceSelection = [];
       if (this.inspectedPoint?.kind === "tower") this.inspectedPoint = null;
       if (this.activeTool === "zipline-measure") {
@@ -2086,10 +2163,11 @@ class MapNavigatorApp {
     if (announce) setStatus("正在读取当前安装目录的滑索记录…", "#3b82f6");
     try {
       const [records, frames] = await Promise.all([getZiplineRecords(), getZiplineFrames()]);
-      if (token !== this._mapZiplineLoadToken || !this.mapLayers.showZiplines) return;
+      if (token !== this._mapZiplineLoadToken) return;
       this.mapZiplineRecords = records;
       this.ziplineFrameConfig = frames;
       this._mapZiplineBaseByZone.clear();
+      if (this._populateZiplineAccounts()) this._resetZiplineAccountView();
       this._paint();
       if (announce) {
         if (this.state.mode === Mode.LOG) {
@@ -2108,6 +2186,7 @@ class MapNavigatorApp {
       if (token !== this._mapZiplineLoadToken) return;
       this.mapZiplineRecords = null;
       this._mapZiplineBaseByZone.clear();
+      if (this._populateZiplineAccounts()) this._resetZiplineAccountView();
       if (announce) {
         setStatus(
           `当前安装的滑索架记录加载失败: ${error && error.message ? error.message : error}；日志 ZIP 快照不受影响。`,
@@ -2132,6 +2211,7 @@ class MapNavigatorApp {
       archiveGroup && archiveGroup.records,
       this.ziplineFrameConfig,
       this._logGeometryZoneName(run),
+      run.accountId,
     );
     const selected = [];
     let labelIndex = 1;
@@ -2186,7 +2266,7 @@ class MapNavigatorApp {
   /** Stable identity for the map or log run owning inspection and A/B selection. */
   _ziplineContextKey() {
     if (this.state.mode === Mode.EDIT || this.state.mode === Mode.ASSERT) {
-      return `map:${this._geometryZoneName(this._displayZoneId())}`;
+      return `map:${this.ziplineAccountId}:${this._geometryZoneName(this._displayZoneId())}`;
     }
     if (this.state.mode === Mode.LOG) return `log:${this.selectedLogRun?._uiKey || ""}`;
     return "";
@@ -4772,6 +4852,9 @@ class MapNavigatorApp {
     if (hops > 0) {
       return [`${subject}：采用 ${hops} 跳滑索，展开为 ${expanded} 个运行时路点。`, "#10b981"];
     }
+    if (route.zipline.account_unknown) {
+      return [`${subject}：没有可用于规划的账号记录，已回退为步行路线。`, "#f59e0b"];
+    }
     if (route.zipline.no_data) {
       return [`${subject}：当前区域没有可用的滑索记录，已回退为步行路线。`, "#f59e0b"];
     }
@@ -4812,7 +4895,10 @@ class MapNavigatorApp {
     setStatus("正在按运行时语义测试起终点…", "#3b82f6");
 
     try {
-      const result = await postRoutePreview(built.request);
+      const result = await postRoutePreview({
+        ...built.request,
+        zipline_account_id: this.els.chkEditZipline.checked ? this.ziplineAccountId : "",
+      });
       if (token !== this._quickRouteTestToken || (result && result.stale)) return;
       if (!result || !result.ok) {
         this.quickRouteTestFailure = result?.failure || null;
@@ -4871,6 +4957,7 @@ class MapNavigatorApp {
         position_zone: plan.positionZone,
         floor_y: plan.startDeckY,
         custom_action_param: customActionParam,
+        zipline_account_id: this.els.chkEditZipline.checked ? this.ziplineAccountId : "",
       });
       if (token !== this._editRouteToken || (result && result.stale)) return;
       if (!result || !result.ok) {
