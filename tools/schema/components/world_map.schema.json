@@ -23,6 +23,12 @@
                 { "required": [ "at" ] },
                 { "required": [ "candidates" ] }
             ],
+            "allOf": [
+                {
+                    "if": { "required": [ "candidates" ] },
+                    "then": { "required": [ "icon" ] }
+                }
+            ],
             "properties": {
                 "zone": {
                     "title": "Zone",

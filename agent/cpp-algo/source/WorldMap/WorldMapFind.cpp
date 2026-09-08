@@ -657,8 +657,11 @@ MaaBool MAA_CALL MapFindRun(
         if (probe == Probe::Miss) {
             continue;
         }
+        // 交不回去就不算认出来。命中即停，后面的候选已经没机会了，此时报成功等于让
+        // 上层拿着这个位置去走节点自己那份 next——点的是这个候选，走的是别处
         if (!target.next.empty() && !HandBackNext(context, node_name, target.next)) {
-            LogWarn << "WorldMap: failed to hand the hit back to the pipeline" << VAR(target.next);
+            LogError << "WorldMap: failed to hand the hit back to the pipeline" << VAR(target.next);
+            return false;
         }
         return true;
     }
