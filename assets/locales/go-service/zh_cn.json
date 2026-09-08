@@ -147,6 +147,7 @@
     "essencefilter.focus.error.load_engine_failed": "基质筛选初始化失败：%s",
     "essencefilter.focus.error.match_failed": "基质筛选匹配失败：%s",
     "essencefilter.focus.error.no_match_engine": "匹配引擎未就绪，请先完成初始化",
+    "essencefilter.focus.warn.language_detect_failed": "未能从界面识别游戏语言，已回退为简体中文；请确认在基质库存页或战利品界面",
     "essencefilter.focus.init.data_loaded": "武器数据加载完成",
     "essencefilter.focus.init.no_essence_type": "未选择任何基质类型，请至少选择一个基质类型作为筛选条件",
     "essencefilter.focus.init.no_weapon_rarity": "未选择武器稀有度，仅使用扩展规则",

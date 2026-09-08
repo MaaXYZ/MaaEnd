@@ -1685,5 +1685,14 @@
     "resource/image/GiftOperator/GiftOperatorGiftFullButton": "a8db626ab1f1c1a4e798afc93d871c0d636c88e0eae6180014f79597e5fc4bea",
     "resource/image/GiftOperator/GiftOperatorGiftButton": "3e85d0b7f03ebe25e159f6216e30eb633de46d83d6df29a7624163e954c917fc",
     "resource/image/GiftOperator/GiftFullOperatorGiftButton": "d6c17198f994990c61b30a9a8cc0b0ddfdfc34108fcf326344dc475bee85fa47",
-    "resource/image/AutoUseSpMedication/AddButton": "94cfcf1433609376110aafd2b28303b8962f1c70009fc16cdbc9ac4ba2c2f7fe"
+    "resource/image/AutoUseSpMedication/AddButton": "94cfcf1433609376110aafd2b28303b8962f1c70009fc16cdbc9ac4ba2c2f7fe",
+    "resource/image/SeizeDeliveryJobs/DeliveryPoint": "13a17db2ac4738cb0eb080f5f401f601272b9325dc97dbc44d385a46b80d6b16",
+    "resource/image/SceneManager/Setting/TabPlatformAccount": "be33080d03566ef84fc76ea67c472faa06d2ea5ba52cb234788dd0f0324a6d19",
+    "resource/image/SceneManager/Setting/TabControls": "544a98d95ec69d1339e71624ad5c4608678284249f1725ff07690043a4bc0660",
+    "resource/image/SceneManager/Setting/TabKeybinding": "982827d6064b5ad300487144b10467cc71d08ddb05bf8d2f5e7cf26db61fa6a2",
+    "resource/image/SceneManager/Setting/TabPerformanceGraphic": "70f279d4383cdae5e483d2c1cfe10241ad9d81bbd687cc4ce91ab465c2b8f4e3",
+    "resource/image/SceneManager/Setting/TabAudio": "78baf62653f69b3bb96616e6e511488fc92937d8da1f7aaf26520f55df86a1ea",
+    "resource/image/SceneManager/Setting/TabLanguage": "e7ffca4e3e714849ff0d4820f9ff9603e56dfb0d5b448cc59d0935c00ef0a049",
+    "resource/image/SceneManager/Setting/TabOthers": "6390dc3626f8fc2511861c01f0a9dc532613238443585b76f8b74c11db18cdda",
+    "resource/image/SceneManager/Setting/MenuGear": "055349a813c4c6595bf2ecf7799af0f389be9d23e200e2c871f29695f73d8bce"
 }

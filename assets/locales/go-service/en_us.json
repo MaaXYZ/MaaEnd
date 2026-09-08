@@ -147,6 +147,7 @@
     "essencefilter.focus.error.load_engine_failed": "EssenceFilter initialization failed: %s",
     "essencefilter.focus.error.match_failed": "EssenceFilter match failed: %s",
     "essencefilter.focus.error.no_match_engine": "Match engine is not ready. Please initialize first.",
+    "essencefilter.focus.warn.language_detect_failed": "Could not detect game language from the UI; falling back to Simplified Chinese. Stay on the essence inventory page or loot screen.",
     "essencefilter.focus.init.data_loaded": "Weapon data loaded.",
     "essencefilter.focus.init.no_essence_type": "No essence type selected. Please choose at least one as a filter condition.",
     "essencefilter.focus.init.no_weapon_rarity": "No weapon rarity selected. Extension rules only.",

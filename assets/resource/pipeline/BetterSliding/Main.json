@@ -155,6 +155,7 @@
             }
         },
         "repeat": 1,
+        "repeat_delay": 100,
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
@@ -240,6 +241,7 @@
             }
         },
         "repeat": 1,
+        "repeat_delay": 100,
         "post_delay": 0,
         "rate_limit": 0,
         "next": [
