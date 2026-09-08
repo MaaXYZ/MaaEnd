@@ -109,29 +109,6 @@ func marksByMap(body []byte, templateIDs []string, fallbackMapID string) map[str
 	return out
 }
 
-// coveredMaps 汇总所有响应里「出现真实标记且能归属账号」的地图集合。不按 template 过滤
-// （与 cpp 的 covered 一致）：只要任何标记带落点就算该图被覆盖；真正是否作为滑索留下由
-// 落盘时的 template_ids 过滤决定。
-//
-// roleId 缺失或非法的响应（未登录、页面初始化阶段、关卡子列表）不推进覆盖，否则未登录时
-// 官方点位会把 covered 撑满，导致提前判成抓齐。
-func coveredMaps(responses []capturedResponse) map[string]bool {
-	out := make(map[string]bool)
-	for _, r := range responses {
-		if !captureuid.IsValidRawUID(queryValue(r.url, "roleId")) {
-			continue
-		}
-		for id := range marksByMap(r.body, nil, queryValue(r.url, "mapId")) {
-			out[id] = true
-		}
-	}
-	return out
-}
-
-// deriveAccountID 是 accountScopedMarks 计算伪匿名账号标识的注入点；默认走 captureuid 的
-// 加盐 SHA-256，单元测试可替换为固定值，避免在测试目录里生成真实盐文件。
-var deriveAccountID = captureuid.AccountIDFromRawUID
-
 // accountScopedMarks 把本次抓到的响应归集为「唯一账号 + 按地图分组的标记」。
 //
 // 与 cpp PersistCaptured 一致：只有带回非空 saveMarks 的响应才参与账号判定；roleId 缺失
@@ -171,7 +148,7 @@ func accountScopedMarks(responses []capturedResponse, templateIDs []string) (str
 	if len(roleIDs) != 1 {
 		return "", nil, fmt.Errorf("one import must contain exactly one roleId, got %d", len(roleIDs))
 	}
-	accountID, err := deriveAccountID(roleIDs[0])
+	accountID, err := captureuid.AccountIDFromRawUID(roleIDs[0])
 	if err != nil {
 		return "", nil, fmt.Errorf("derive account identity: %w", err)
 	}
