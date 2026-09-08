@@ -2267,7 +2267,7 @@
     "option.AutoEssenceMenu.description": "Switch between random mode, region mode, and target selection",
     "option.AutoEssenceMenu.cases.Location.label": "Region",
     "option.AutoEssenceMenu.cases.Target.label": "Targets",
-    "option.AutoEssenceMenu.cases.Target.description": "Pick farming targets by weapon type. All 6-star weapons are selected by default.",
+    "option.AutoEssenceMenu.cases.Target.description": "Pick farming targets by weapon type. All 6-star weapons are selected by default. Post-battle essence filtering is always enabled.",
     "option.AutoEssenceSelectWeapons.label": "Weapons",
     "option.AutoEssenceWeaponTypeWand.label": "Arts Unit",
     "option.AutoEssenceWeaponTypeSword.label": "Sword",

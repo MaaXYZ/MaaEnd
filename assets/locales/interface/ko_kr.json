@@ -2267,7 +2267,7 @@
     "option.AutoEssenceMenu.description": "무작위 모드, 지역 모드, 목표 선택을 전환합니다",
     "option.AutoEssenceMenu.cases.Location.label": "지역 모드",
     "option.AutoEssenceMenu.cases.Target.label": "목표 선택",
-    "option.AutoEssenceMenu.cases.Target.description": "무기 유형별로 파밍 목표를 고릅니다. 6성 무기는 기본적으로 모두 선택됩니다.",
+    "option.AutoEssenceMenu.cases.Target.description": "무기 유형별로 파밍 목표를 고릅니다. 6성 무기는 기본적으로 모두 선택됩니다. 전투 후 기질 필터는 항상 켜집니다.",
     "option.AutoEssenceSelectWeapons.label": "무기 선택",
     "option.AutoEssenceWeaponTypeWand.label": "아츠 유닛",
     "option.AutoEssenceWeaponTypeSword.label": "한손검",

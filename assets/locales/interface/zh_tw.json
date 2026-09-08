@@ -2267,7 +2267,7 @@
     "option.AutoEssenceMenu.description": "在隨機模式、地區模式與目標選擇之間切換",
     "option.AutoEssenceMenu.cases.Location.label": "地區模式",
     "option.AutoEssenceMenu.cases.Target.label": "目標選擇",
-    "option.AutoEssenceMenu.cases.Target.description": "按武器類型勾選刷取目標；預設勾選全部 6 星武器",
+    "option.AutoEssenceMenu.cases.Target.description": "按武器類型勾選刷取目標；預設勾選全部 6 星武器；強制開啟戰後基質篩選",
     "option.AutoEssenceSelectWeapons.label": "選擇武器",
     "option.AutoEssenceWeaponTypeWand.label": "施術單元",
     "option.AutoEssenceWeaponTypeSword.label": "單手劍",

@@ -2267,7 +2267,7 @@
     "option.AutoEssenceMenu.description": "ランダムモード、地域モード、目標選択を切り替えます",
     "option.AutoEssenceMenu.cases.Location.label": "地域モード",
     "option.AutoEssenceMenu.cases.Target.label": "目標選択",
-    "option.AutoEssenceMenu.cases.Target.description": "武器タイプごとに周回目標を選択します。6星武器はデフォルトですべて選択されます。",
+    "option.AutoEssenceMenu.cases.Target.description": "武器タイプごとに周回目標を選択します。6星武器はデフォルトですべて選択されます。戦後の基質フィルタは常に有効です。",
     "option.AutoEssenceSelectWeapons.label": "武器を選択",
     "option.AutoEssenceWeaponTypeWand.label": "アーツユニット",
     "option.AutoEssenceWeaponTypeSword.label": "片手剣",
