@@ -37,9 +37,6 @@ var (
 	capturedUidMu sync.Mutex
 
 	uidDigitRe = regexp.MustCompile(`\d+`)
-
-	// loadSaltFunc 是加载（或首次生成）盐的注入点，单元测试可替换为固定盐。
-	loadSaltFunc = loadOrCreateSalt
 )
 
 // Capture 捕获玩家 UID，并按 outputType 返回格式化结果。
@@ -143,7 +140,7 @@ func AccountIDFromRawUID(uid string) (string, error) {
 	if !IsValidRawUID(uid) {
 		return "", fmt.Errorf("raw uid must be 8-12 digits")
 	}
-	salt, err := loadSaltFunc()
+	salt, err := loadOrCreateSalt()
 	if err != nil {
 		return "", fmt.Errorf("salt load/create failed: %w", err)
 	}
