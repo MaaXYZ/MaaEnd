@@ -1506,14 +1506,13 @@ struct TransferEmptyGridFit
 std::optional<TransferEmptyGridFit> FitTransferEmptyGrid(
     const TransferGridHint& hint,
     const std::vector<int>& x_seed_starts,
-    const std::vector<int>& baseline_y_starts,
     double pitch,
     const TransferGridProfile& profile,
     const cv::Mat& cell_score,
     const std::vector<float>& signed_x,
     const std::vector<float>& signed_y)
 {
-    if (x_seed_starts.empty() || baseline_y_starts.empty() || hint.y_starts.empty() || cell_score.empty() || pitch <= 0.0) {
+    if (x_seed_starts.empty() || hint.y_starts.empty() || cell_score.empty() || pitch <= 0.0) {
         return std::nullopt;
     }
     std::optional<TransferEmptyGridFit> best;
@@ -1589,27 +1588,9 @@ std::optional<TransferEmptyGridFit> FitTransferEmptyGrid(
             best = std::move(candidate);
         }
     }
-    std::vector<double> baseline_supports;
-    baseline_supports.reserve(x_seed_starts.size() * baseline_y_starts.size());
-    double baseline_total = 0.0;
-    for (int y : baseline_y_starts) {
-        for (int x : x_seed_starts) {
-            const double support = structure_support(x, y);
-            baseline_supports.push_back(support);
-            baseline_total += support;
-        }
-    }
-    const TransferEmptyGridFit baseline {
-        .x_starts = x_seed_starts,
-        .y_starts = baseline_y_starts,
-        .pitch = pitch,
-        .median_support = Median(baseline_supports),
-        .mean_support = baseline_total / baseline_supports.size(),
-    };
-    const bool equivalent_lattice = best && best->x_starts.size() == baseline.x_starts.size()
-                                    && best->y_starts.size() == baseline.y_starts.size() && !is_better(*best, baseline)
-                                    && !is_better(baseline, *best);
-    if (!best || best->median_support <= kEpsilon || (!is_better(*best, baseline) && !equivalent_lattice)) {
+    // 阴影内沿可能比真实格框有更强的结构响应；不能在双边缘校正前用旧相位分数淘汰候选。
+    // 校正后的候选仍须逐格通过低纹理判空，才可接管最终网格。
+    if (!best || best->median_support <= kEpsilon) {
         return std::nullopt;
     }
 
@@ -1864,16 +1845,9 @@ GridLayout BuildTransferLayout(
             maximum_columns,
             true,
             true);
-        const auto empty_grid = empty_x_fit ? FitTransferEmptyGrid(
-                                    hint,
-                                    empty_x_fit->starts,
-                                    *structural_y,
-                                    empty_x_fit->pitch,
-                                    profile,
-                                    cell_score,
-                                    signed_x,
-                                    signed_y)
-                                            : std::nullopt;
+        const auto empty_grid =
+            empty_x_fit ? FitTransferEmptyGrid(hint, empty_x_fit->starts, empty_x_fit->pitch, profile, cell_score, signed_x, signed_y)
+                        : std::nullopt;
         empty_grid_selected =
             empty_grid
             && IsTransferEmptyGridCandidate(image, roi, empty_grid->x_starts, empty_grid->y_starts, profile.cell_size, texture_context);
