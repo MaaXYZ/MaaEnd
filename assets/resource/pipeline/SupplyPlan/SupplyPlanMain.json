@@ -125,7 +125,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -233,7 +233,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -329,7 +329,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -425,7 +425,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -521,7 +521,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -617,7 +617,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -713,7 +713,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -821,7 +821,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -929,7 +929,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -1029,7 +1029,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -1140,7 +1140,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -1251,7 +1251,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -1283,7 +1283,7 @@
         }
     },
     "SupplyPlanSanityLowEnd": {
-        "desc": "目标库存模式：理智不足回到大世界后结束任务，不再重新调度刷取（播报已由 ProtocolSpaceRewardClaimSuccessSanityLowFinish 负责，此处不再重复 focus）",
+        "desc": "目标库存模式：理智不足回到大世界后结束任务，不再重新调度刷取（播报已由 ProtocolSpaceSanityLowExitToWorld 负责，此处不再重复 focus）",
         "recognition": {
             "type": "And",
             "param": {
@@ -1672,7 +1672,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -1802,7 +1802,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
@@ -1927,7 +1927,7 @@
                                 "ProtocolSpaceRewardClaimSuccessFinish"
                             ]
                         },
-                        "ProtocolSpaceRewardClaimSuccessSanityLowFinish": {
+                        "ProtocolSpaceSanityLowExitToWorld": {
                             "next": [
                                 "SupplyPlanSanityLowEnd",
                                 "[JumpBack]SceneAnyEnterWorld"
