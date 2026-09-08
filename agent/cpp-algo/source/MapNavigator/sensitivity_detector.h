@@ -18,14 +18,18 @@ using LagMatrix = std::array<LagVector, kLagCount>;
 
 struct Config
 {
-    // 只认转过头。转不到位有太多正常原因（指令被吞、贴墙转不动、掉帧），低倍率分不出是哪种。
+    // 倍率的两条判决线，正常机的估计值落在 1.00 附近 ±0.05。
     double overshoot_ratio = 1.20;
-    // 估计值减去这么多倍标准误差还过线才判。正常机的估计值落在 1.00 附近 ±0.05。
+    double undershoot_ratio = 1.0 / 1.20;
+    // 估计值往 1.0 的方向退这么多倍标准误差还过线才判。
     double sigma_margin = 3.0;
-    // 估计值再高就当观测本身出了问题，不改。
+    // 估计值超出这段范围就当观测本身出了问题，不改。
     double max_ratio = 2.5;
+    double min_ratio = 0.4;
     // 攒够这么多拍样本才开始判，之后样本每翻一倍再判一次，线路结束也判一次。
     int min_samples = 500;
+    // 单条线路攒到这么多样本，它自己的估计值才有资格否决偏慢的判决。
+    int min_run_samples = 50;
     // 拍号跳一格且那拍没发过转向，两拍相隔在此之内才把两拍并成一行记账。
     int64_t bridge_max_gap_ms = 600;
     // 出口记的账和这拍报的指令差出这么多度，就是别的路径发过转向，滞后链作废。
@@ -46,6 +50,19 @@ struct Estimate
     double se = 0.0;
     int sample_count = 0;
     double cmd_deg = 0.0;
+};
+
+// 正规方程的累加量。断拍只清滞后链，不动这些：只有「哪拍对哪拍」要连续，统计量不要。
+struct NormalSums
+{
+    LagMatrix xtx {};
+    LagVector xty {};
+    double yty = 0.0;
+    int sample_count = 0;
+    double cmd_deg = 0.0;
+
+    void Add(const LagVector& row, double heading_delta, double issued_delta_deg);
+    void Reset();
 };
 
 // 比对发出的转向指令和实测的朝向变化，算出实际转到了指令的百分之多少。
@@ -70,9 +87,9 @@ public:
 
 private:
     void PushLag(double cmd_deg);
-    void Accumulate(const LagVector& row, double heading_delta, double issued_delta_deg);
     void ResetAccumulators();
-    std::optional<Estimate> Solve() const;
+    std::optional<Estimate> Solve(const NormalSums& sums) const;
+    bool RunReadsNormal() const;
     std::optional<Verdict> Evaluate();
 
     Config config_;
@@ -88,12 +105,11 @@ private:
     LagVector cmd_lags_ {};
     int chain_len_ = 0;
 
-    // 正规方程的累加量。断拍只清滞后链，不动这些：只有「哪拍对哪拍」要连续，统计量不要。
-    LagMatrix xtx_ {};
-    LagVector xty_ {};
-    double yty_ = 0.0;
-    int sample_count_ = 0;
-    double cmd_deg_ = 0.0;
+    // 全程的累加量，和当前这条线路单独的一份。
+    // 卡墙时指令很大、朝向不动，一段就能把全程估计压到一半，所以偏慢要求没有任何一条线路单独读出正常值。
+    NormalSums total_;
+    NormalSums run_;
+    bool normal_run_seen_ = false;
     int next_eval_at_ = 0;
 
     std::optional<Estimate> last_estimate_;

@@ -110,28 +110,29 @@ void Detector::PushLag(double cmd_deg)
     }
 }
 
-void Detector::Accumulate(const LagVector& row, double heading_delta, double issued_delta_deg)
+void NormalSums::Add(const LagVector& row, double heading_delta, double issued_delta_deg)
 {
     for (int p = 0; p < kLagCount; ++p) {
-        xty_[p] += row[p] * heading_delta;
+        xty[p] += row[p] * heading_delta;
         for (int q = 0; q < kLagCount; ++q) {
-            xtx_[p][q] += row[p] * row[q];
+            xtx[p][q] += row[p] * row[q];
         }
     }
-    yty_ += heading_delta * heading_delta;
-    cmd_deg_ += std::abs(issued_delta_deg);
-    ++sample_count_;
+    yty += heading_delta * heading_delta;
+    cmd_deg += std::abs(issued_delta_deg);
+    ++sample_count;
+}
+
+void NormalSums::Reset()
+{
+    *this = NormalSums {};
 }
 
 void Detector::ResetAccumulators()
 {
-    xty_.fill(0.0);
-    for (LagVector& row : xtx_) {
-        row.fill(0.0);
-    }
-    yty_ = 0.0;
-    sample_count_ = 0;
-    cmd_deg_ = 0.0;
+    total_.Reset();
+    run_.Reset();
+    normal_run_seen_ = false;
     next_eval_at_ = config_.min_samples;
 }
 
@@ -161,7 +162,9 @@ std::optional<Verdict>
     const bool linked = has_prev_heading_ && !foreign_issued;
     if (linked && gap_ticks == 0) {
         if (chain_len_ >= kLagCount) {
-            Accumulate(cmd_lags_, NormalizeDeg(heading - prev_heading_deg_), issued_delta_deg);
+            const double heading_delta = NormalizeDeg(heading - prev_heading_deg_);
+            total_.Add(cmd_lags_, heading_delta, issued_delta_deg);
+            run_.Add(cmd_lags_, heading_delta, issued_delta_deg);
         }
     }
     else if (linked && gap_ticks == 1 && gap_ms <= config_.bridge_max_gap_ms) {
@@ -171,7 +174,9 @@ std::optional<Verdict>
             for (int i = 1; i < kLagCount; ++i) {
                 row[i] += cmd_lags_[i - 1];
             }
-            Accumulate(row, NormalizeDeg(heading - prev_heading_deg_), issued_delta_deg);
+            const double heading_delta = NormalizeDeg(heading - prev_heading_deg_);
+            total_.Add(row, heading_delta, issued_delta_deg);
+            run_.Add(row, heading_delta, issued_delta_deg);
         }
         PushLag(0.0);
     }
@@ -182,7 +187,7 @@ std::optional<Verdict>
     prev_heading_deg_ = heading;
     has_prev_heading_ = true;
 
-    if (sample_count_ < next_eval_at_) {
+    if (total_.sample_count < next_eval_at_) {
         return std::nullopt;
     }
     next_eval_at_ *= 2;
@@ -193,26 +198,31 @@ std::optional<Verdict> Detector::EndRun()
 {
     chain_len_ = 0;
     has_prev_heading_ = false;
-    return Evaluate();
+    std::optional<Verdict> verdict = Evaluate();
+    if (RunReadsNormal()) {
+        normal_run_seen_ = true;
+    }
+    run_.Reset();
+    return verdict;
 }
 
-std::optional<Estimate> Detector::Solve() const
+std::optional<Estimate> Detector::Solve(const NormalSums& sums) const
 {
-    if (sample_count_ <= kLagCount) {
+    if (sums.sample_count <= kLagCount) {
         return std::nullopt;
     }
     double trace = 0.0;
     for (int i = 0; i < kLagCount; ++i) {
-        trace += xtx_[i][i];
+        trace += sums.xtx[i][i];
     }
     // 岭正则按矩阵自身尺度取：用绝对值会把大信号压得比小信号还狠。
     const double ridge = kRidgeScale * trace / static_cast<double>(kLagCount);
-    LagMatrix matrix = xtx_;
+    LagMatrix matrix = sums.xtx;
     for (int i = 0; i < kLagCount; ++i) {
         matrix[i][i] += ridge;
     }
     RhsSet rhs {};
-    rhs[0] = xty_;
+    rhs[0] = sums.xty;
     rhs[1].fill(1.0);
     RhsSet solved {};
     if (!SolveNormalEquations(matrix, rhs, solved)) {
@@ -229,27 +239,36 @@ std::optional<Estimate> Detector::Solve() const
         ones_weight += solved[1][p];
         double xtx_row = 0.0;
         for (int q = 0; q < kLagCount; ++q) {
-            xtx_row += xtx_[p][q] * gains[q];
+            xtx_row += sums.xtx[p][q] * gains[q];
         }
-        fit_energy += gains[p] * (xtx_row - 2.0 * xty_[p]);
+        fit_energy += gains[p] * (xtx_row - 2.0 * sums.xty[p]);
     }
-    const double residual_ss = std::max(0.0, yty_ + fit_energy);
-    const double variance = residual_ss / static_cast<double>(sample_count_ - kLagCount);
+    const double residual_ss = std::max(0.0, sums.yty + fit_energy);
+    const double variance = residual_ss / static_cast<double>(sums.sample_count - kLagCount);
 
     Estimate estimate;
     estimate.ratio = ratio;
     estimate.se = std::sqrt(std::max(0.0, variance * ones_weight));
-    estimate.sample_count = sample_count_;
-    estimate.cmd_deg = cmd_deg_;
+    estimate.sample_count = sums.sample_count;
+    estimate.cmd_deg = sums.cmd_deg;
     return estimate;
+}
+
+bool Detector::RunReadsNormal() const
+{
+    if (run_.sample_count < config_.min_run_samples) {
+        return false;
+    }
+    const std::optional<Estimate> estimate = Solve(run_);
+    return estimate && estimate->ratio > config_.undershoot_ratio;
 }
 
 std::optional<Verdict> Detector::Evaluate()
 {
-    if (sample_count_ < config_.min_samples) {
+    if (total_.sample_count < config_.min_samples) {
         return std::nullopt;
     }
-    const std::optional<Estimate> estimate = Solve();
+    const std::optional<Estimate> estimate = Solve(total_);
     if (!estimate) {
         return std::nullopt;
     }
@@ -257,16 +276,19 @@ std::optional<Verdict> Detector::Evaluate()
     if (fired_) {
         return std::nullopt;
     }
-    // 下界过线才算证据；估计值高得离谱说明观测本身出了问题，同样不改。
-    const double lower_bound = estimate->ratio - config_.sigma_margin * estimate->se;
-    if (lower_bound <= config_.overshoot_ratio || estimate->ratio > config_.max_ratio) {
+    // 置信区间整个落在判决线外才算证据；估计值离谱说明观测本身出了问题，同样不改。
+    const double margin = config_.sigma_margin * estimate->se;
+    const bool too_fast = estimate->ratio - margin > config_.overshoot_ratio && estimate->ratio <= config_.max_ratio;
+    const bool too_slow = estimate->ratio + margin < config_.undershoot_ratio && estimate->ratio >= config_.min_ratio && !normal_run_seen_
+                          && !RunReadsNormal();
+    if (!too_fast && !too_slow) {
         return std::nullopt;
     }
 
     Verdict verdict;
     verdict.ratio = estimate->ratio;
     verdict.ratio_percent = static_cast<int>(std::lround(estimate->ratio * 100.0));
-    verdict.sample_count = sample_count_;
+    verdict.sample_count = total_.sample_count;
     fired_ = true;
     // 系数落地后从头再估一遍，日志里能看到校正后的倍率是不是回到 1。
     ResetAccumulators();
