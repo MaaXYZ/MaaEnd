@@ -5,6 +5,7 @@ import (
 	"github.com/MaaXYZ/MaaEnd/agent/go-service/aerosalvage"
 	"github.com/MaaXYZ/MaaEnd/agent/go-service/autodelivery"
 	"github.com/MaaXYZ/MaaEnd/agent/go-service/autoecofarm"
+	"github.com/MaaXYZ/MaaEnd/agent/go-service/autoessence"
 	"github.com/MaaXYZ/MaaEnd/agent/go-service/autofight"
 	"github.com/MaaXYZ/MaaEnd/agent/go-service/autosell"
 	"github.com/MaaXYZ/MaaEnd/agent/go-service/autostockpile"
@@ -91,6 +92,7 @@ func registerAll() {
 	puzzle.Register()
 	bettersliding.Register()
 	essencefilter.Register()
+	autoessence.Register()
 	dijiangrewards.Register()
 	batchaddfriends.Register()
 	autoecofarm.Register()
