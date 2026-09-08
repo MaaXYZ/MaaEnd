@@ -486,7 +486,6 @@
                         }
                     },
                     "option": [
-                        "EssenceFilterAfterBattleSelectInputLanguage",
                         "EssenceFilterAfterBattleSelectWeaponRarity",
                         "EssenceFilterAfterBattleSelectEssence",
                         "EssenceFilterAfterBattleSelectExtraRules",
@@ -517,7 +516,6 @@
                         }
                     },
                     "option": [
-                        "EssenceFilterAfterBattleSelectInputLanguage",
                         "EssenceFilterAfterBattleSelectWeaponRarity",
                         "EssenceFilterAfterBattleSelectEssence",
                         "EssenceFilterAfterBattleSelectExtraRules",
