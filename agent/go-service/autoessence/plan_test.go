@@ -162,6 +162,49 @@ func TestBuildEngraveOverride(t *testing.T) {
 	}
 }
 
+func TestEngraveOCRExpectedUsesUltimateGainNotULT(t *testing.T) {
+	skillExpectedCache = nil
+	if err := loadSkillExpected(testDataDir(t)); err != nil {
+		t.Fatal(err)
+	}
+	got, err := expectedForSkill(2, 11)
+	if err != nil {
+		t.Fatal(err)
+	}
+	hasUltimateGain := false
+	for _, s := range got {
+		if s == "ULT" {
+			t.Fatalf("OCR expected must not use skill_pools abbreviation ULT, got %v", got)
+		}
+		if s == "Ultimate Gain" {
+			hasUltimateGain = true
+		}
+	}
+	if !hasUltimateGain {
+		t.Fatalf("OCR expected must include Ultimate Gain, got %v", got)
+	}
+
+	plan := &FarmPlan{
+		LocationKey: "VFTheHub",
+		Slot1IDs:    [3]int{1, 2, 3},
+		FixedSlot:   2,
+		FixedID:     11,
+		FixedName:   "终结技充能",
+	}
+	patch, err := buildEngravePipelineOverride(plan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bonus := patch["AutoEssenceSelectEngraveBonusCondition"].(map[string]any)
+	param := bonus["recognition"].(map[string]any)["param"].(map[string]any)
+	expected := param["expected"].([]string)
+	for _, s := range expected {
+		if s == "ULT" {
+			t.Fatalf("bonus OCR override must not use ULT, got %v", expected)
+		}
+	}
+}
+
 func TestSetAnchorOverrideEnablesNode(t *testing.T) {
 	patch := map[string]any{}
 	anchor := SetAnchorNode("WLYinglungPass")

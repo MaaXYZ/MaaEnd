@@ -22,7 +22,13 @@ type skillPoolsFile struct {
 	Slot3 []skillPoolEntryJSON `json:"slot3"`
 }
 
-var skillExpectedCache map[string][]string // "slot:id" -> multilang expected
+var skillExpectedCache map[string][]string // "slot:id" -> multilang expected for UI OCR
+
+// ocrENDisplayOverrides replaces skill_pools EN abbreviations that differ from in-game OCR text.
+// Match engine / locations.json keep short forms (e.g. "ULT"); only AutoEssence engrave OCR uses these.
+var ocrENDisplayOverrides = map[string]string{
+	"2:11": "Ultimate Gain",
+}
 
 func skillCacheKey(slot, id int) string {
 	return fmt.Sprintf("%d:%d", slot, id)
@@ -39,7 +45,7 @@ func loadSkillExpected(dataDir string) error {
 	cache := make(map[string][]string)
 	add := func(slot int, entries []skillPoolEntryJSON) {
 		for _, e := range entries {
-			expected := uniqueNonEmpty(e.CN, e.TC, e.EN, e.JP, e.KR)
+			expected := ocrExpectedNames(slot, e)
 			if len(expected) == 0 {
 				continue
 			}
@@ -51,6 +57,15 @@ func loadSkillExpected(dataDir string) error {
 	add(3, raw.Slot3)
 	skillExpectedCache = cache
 	return nil
+}
+
+// ocrExpectedNames builds multilang OCR expected from skill_pools, applying UI display overrides.
+func ocrExpectedNames(slot int, e skillPoolEntryJSON) []string {
+	en := e.EN
+	if override, ok := ocrENDisplayOverrides[skillCacheKey(slot, e.ID)]; ok {
+		en = override
+	}
+	return uniqueNonEmpty(e.CN, e.TC, en, e.JP, e.KR)
 }
 
 func uniqueNonEmpty(vals ...string) []string {
