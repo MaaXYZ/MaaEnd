@@ -11,8 +11,9 @@ import (
 )
 
 var (
-	errNoTasker     = errors.New("essencefilter: tasker is nil")
-	errNoController = errors.New("essencefilter: controller is nil")
+	errNoTasker        = errors.New("essencefilter: tasker is nil")
+	errNoController    = errors.New("essencefilter: controller is nil")
+	errScreencapFailed = errors.New("essencefilter: screencap failed")
 )
 
 // Language detect OCR nodes in pipeline EssenceFilter/DetectLanguage.json (CN→TC→EN→JP→KR).
@@ -55,7 +56,10 @@ func resolveInitImage(ctx *maa.Context) (image.Image, error) {
 	if ctrl == nil {
 		return nil, errNoController
 	}
-	ctrl.PostScreencap().Wait()
+	job := ctrl.PostScreencap().Wait()
+	if job == nil || !job.Success() {
+		return nil, errScreencapFailed
+	}
 	return ctrl.CacheImage()
 }
 
