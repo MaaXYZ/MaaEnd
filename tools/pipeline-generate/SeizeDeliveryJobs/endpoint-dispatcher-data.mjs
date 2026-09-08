@@ -1,1 +1,1 @@
-export {dispatcherRows as default} from "./endpoint-filter-data.mjs";
+export {candidatesRows as default} from "./endpoint-filter-data.mjs";

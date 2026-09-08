@@ -2,13 +2,6 @@
     "SeizeDeliveryJobsEndpointFilter${EndpointId}": {
         "desc": "${Desc}",
         "enabled": false,
-        "recognition": "Custom",
-        "custom_recognition": "MapFind",
-        "custom_recognition_param": {
-            "zone": "${MapZone}",
-            "icon": "${Icon}",
-            "at": "${DestinationMapAt}"
-        },
         "next": [
             "SeizeDeliveryJobsEndpointMatched"
         ],

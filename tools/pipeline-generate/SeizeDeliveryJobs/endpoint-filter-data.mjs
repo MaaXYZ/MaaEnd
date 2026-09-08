@@ -16,7 +16,7 @@ const ENDPOINT_ICON = "DeliveryPoint";
 //   deliver_target_map02_lv005_02（裴令容）             → 无 description，按排除法 + 几何（u 最小、v 最小 = 左上）对应 "一号丙型辅桩区（左上）"
 //   deliver_target_map02_lv005_03（阿禾）               → "三号丙型辅桩区（右上）"
 // 也与 assets/tasks/SeizeDeliveryJobs.json 的区域分组一致：武陵城 = lv002 四个，试验园区 = lv005 三个。
-// 数组顺序与调度节点 SeizeDeliveryJobsEndpointFilter 的 next 列表保持一致。
+// 数组顺序即 candidates 的书写顺序：首个确认到图标的候选胜出，排在其后的不再看。
 const ENDPOINT_DESTINATIONS = [
     {
         endpoint: "Owl",
@@ -62,30 +62,48 @@ const destinationById = new Map(
     ]),
 );
 
-export const endpointFilterRows = ENDPOINT_DESTINATIONS.map(({endpoint, landmark, destinationId}) => {
+// 每个终点解析出节点后缀、说明、地图区域、底图坐标，驱动两处产物：
+// candidates 节点的候选数组，以及每个终点的「开关 + 命中落点」叶子节点。
+const endpointEntries = ENDPOINT_DESTINATIONS.map(({endpoint, landmark, destinationId}) => {
     const destination = destinationById.get(destinationId);
     if (!destination) {
         throw new Error(`[SeizeDeliveryJobs] 终点 ${endpoint} 引用了未知送货终点 ${destinationId}`);
     }
     return {
         EndpointId: endpoint,
-        Desc: `在${destination.area.zh_cn}大地图确认「${landmark}」送货终点（${destinationId}）`,
+        Desc: `「${landmark}」送货终点（${destinationId}）：candidates 候选开关，命中后前往接取`,
         MapZone: destination.mapZone,
-        Icon: ENDPOINT_ICON,
         DestinationMapAt: destination.mapAt,
     };
 });
 
-// 调度节点 SeizeDeliveryJobsEndpointFilter 的 next：全部终点识别节点 + 未匹配兜底节点。
-// 新增终点时只改上面的 ENDPOINT_DESTINATIONS，这里会自动带上，无需手动维护 next 列表。
-export const endpointNodeNames = endpointFilterRows.map((row) => `SeizeDeliveryJobsEndpointFilter${row.EndpointId}`);
+// 叶子节点：candidates 每个候选的开关兼命中落点。enabled 默认关，由 task 选项逐个打开；
+// 关着的候选在 MapFind 里连认都不认、直接跳过。节点本身不再做识别，命中后直接前往接取。
+export const endpointFilterRows = endpointEntries.map(({EndpointId, Desc}) => ({
+    EndpointId,
+    Desc,
+}));
 
-export const dispatcherRows = [
+export const endpointNodeNames = endpointEntries.map((row) => `SeizeDeliveryJobsEndpointFilter${row.EndpointId}`);
+
+// candidates 整组必须同 zone（一个 MapFind 节点只有一个 zone）。若将来新增了别的地图区域的终点，
+// 需要为不同 zone 各起一个 candidates 节点，这里直接报错提示，避免默默生成一个跨区认不对的节点。
+const zones = [
+    ...new Set(endpointEntries.map((entry) => entry.MapZone)),
+];
+if (zones.length !== 1) {
+    throw new Error(`[SeizeDeliveryJobs] candidates 需所有终点同 zone，当前有 ${zones.join(", ")}；请为不同 zone 各起一个 candidates 节点`);
+}
+
+// candidates 节点数据（单行）：候选按 ENDPOINT_DESTINATIONS 顺序书写，共享一次缩放与视口求解。
+export const candidatesRows = [
     {
-        EndpointNodes: [
-            ...endpointNodeNames,
-            "SeizeDeliveryJobsEndpointNotMatched",
-        ],
+        Zone: zones[0],
+        Icon: ENDPOINT_ICON,
+        Candidates: endpointEntries.map((entry) => ({
+            at: entry.DestinationMapAt,
+            next: `SeizeDeliveryJobsEndpointFilter${entry.EndpointId}`,
+        })),
     },
 ];
 

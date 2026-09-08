@@ -24,7 +24,8 @@
             "SeizeDeliveryJobsEndpointFilter"
         ]
     },
-    // 终点筛选调度节点 SeizeDeliveryJobsEndpointFilter，以及它 next 里的 7 个 MapFind 终点识别节点，
+    // 终点筛选守卫节点 SeizeDeliveryJobsEndpointFilter、一次判全部终点的 MapFind candidates 节点
+    // SeizeDeliveryJobsEndpointCandidates，以及每个终点的「开关+落点」叶子节点 SeizeDeliveryJobsEndpointFilter<终点>，
     // 均由 tools/pipeline-generate/SeizeDeliveryJobs 生成（分别输出到同目录的
     // SeizeDeliveryJobsEndpointDispatcher.json 与 SeizeDeliveryJobsDestinations.json），此处不再手写。
     // ===== 下面是结果处理的流程节点 =====
