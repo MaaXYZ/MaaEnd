@@ -15,8 +15,8 @@
             ],
             "option": [
                 "AutoCollectSchedule",
-                "AutoCollectRoutes",
-                "AutoCollectCommonRoutes",
+                "AutoCollectValleyIV",
+                "AutoCollectWuling",
                 "AutoCollectStashBackpackSubTask"
             ],
             "group": [
@@ -143,24 +143,139 @@
                 }
             ]
         },
-        "AutoCollectRoutes": {
+        "AutoCollectValleyIV": {
+            "type": "switch",
+            "label": "$option.AutoCollectValleyIV.label",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoCollectValleyIVRareRoutes",
+                        "AutoCollectValleyIVCommonRoutes"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
+        },
+        "AutoCollectValleyIVRareRoutes": {
             "type": "checkbox",
-            "label": "$option.AutoCollectRoutes.label",
+            "label": "$option.AutoCollectValleyIVRareRoutes.label",
+            "default_case": [
+                "Route4",
+                "Route5",
+                "Route6",
+                "Route13",
+                "Route14"
+            ],
+            "cases": [
+                {
+                    "name": "Route4",
+                    "label": "$option.AutoCollectRoute4.label",
+                    "pipeline_override": {
+                        "AutoCollectRoute4Start": {
+                            "enabled": true
+                        }
+                    }
+                },
+                {
+                    "name": "Route5",
+                    "label": "$option.AutoCollectRoute5.label",
+                    "pipeline_override": {
+                        "AutoCollectRoute5Start": {
+                            "enabled": true
+                        }
+                    }
+                },
+                {
+                    "name": "Route6",
+                    "label": "$option.AutoCollectRoute6.label",
+                    "pipeline_override": {
+                        "AutoCollectRoute6Start": {
+                            "enabled": true
+                        }
+                    }
+                },
+                {
+                    "name": "Route13",
+                    "label": "$option.AutoCollectRoute13.label",
+                    "pipeline_override": {
+                        "AutoCollectRoute13Start": {
+                            "enabled": true
+                        }
+                    }
+                },
+                {
+                    "name": "Route14",
+                    "label": "$option.AutoCollectRoute14.label",
+                    "pipeline_override": {
+                        "AutoCollectRoute14Start": {
+                            "enabled": true
+                        }
+                    }
+                }
+            ]
+        },
+        "AutoCollectValleyIVCommonRoutes": {
+            "type": "checkbox",
+            "label": "$option.AutoCollectValleyIVCommonRoutes.label",
+            "default_case": [
+                "CommonRoute1",
+                "CommonRoute2"
+            ],
+            "cases": [
+                {
+                    "name": "CommonRoute1",
+                    "label": "$option.AutoCollectCommonRoute1.label",
+                    "pipeline_override": {
+                        "AutoCollectCommonRoute1Start": {
+                            "enabled": true
+                        }
+                    }
+                },
+                {
+                    "name": "CommonRoute2",
+                    "label": "$option.AutoCollectCommonRoute2.label",
+                    "pipeline_override": {
+                        "AutoCollectCommonRoute2Start": {
+                            "enabled": true
+                        }
+                    }
+                }
+            ]
+        },
+        "AutoCollectWuling": {
+            "type": "switch",
+            "label": "$option.AutoCollectWuling.label",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoCollectWulingRareRoutes",
+                        "AutoCollectWulingCommonRoutes"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
+        },
+        "AutoCollectWulingRareRoutes": {
+            "type": "checkbox",
+            "label": "$option.AutoCollectWulingRareRoutes.label",
             "default_case": [
                 "Route1",
                 "Route2",
                 "Route3",
-                "Route4",
-                "Route5",
-                "Route6",
                 "Route7",
                 "Route8",
                 "Route9",
                 "Route10",
                 "Route11",
                 "Route12",
-                "Route13",
-                "Route14",
                 "Route15",
                 "Route16",
                 "Route17"
@@ -189,33 +304,6 @@
                     "label": "$option.AutoCollectRoute3.label",
                     "pipeline_override": {
                         "AutoCollectRoute3Start": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
-                    "name": "Route4",
-                    "label": "$option.AutoCollectRoute4.label",
-                    "pipeline_override": {
-                        "AutoCollectRoute4Start": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
-                    "name": "Route5",
-                    "label": "$option.AutoCollectRoute5.label",
-                    "pipeline_override": {
-                        "AutoCollectRoute5Start": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
-                    "name": "Route6",
-                    "label": "$option.AutoCollectRoute6.label",
-                    "pipeline_override": {
-                        "AutoCollectRoute6Start": {
                             "enabled": true
                         }
                     }
@@ -275,24 +363,6 @@
                     }
                 },
                 {
-                    "name": "Route13",
-                    "label": "$option.AutoCollectRoute13.label",
-                    "pipeline_override": {
-                        "AutoCollectRoute13Start": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
-                    "name": "Route14",
-                    "label": "$option.AutoCollectRoute14.label",
-                    "pipeline_override": {
-                        "AutoCollectRoute14Start": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
                     "name": "Route15",
                     "label": "$option.AutoCollectRoute15.label",
                     "pipeline_override": {
@@ -321,12 +391,10 @@
                 }
             ]
         },
-        "AutoCollectCommonRoutes": {
+        "AutoCollectWulingCommonRoutes": {
             "type": "checkbox",
-            "label": "$option.AutoCollectCommonRoutes.label",
+            "label": "$option.AutoCollectWulingCommonRoutes.label",
             "default_case": [
-                "CommonRoute1",
-                "CommonRoute2",
                 "CommonRoute3",
                 "CommonRoute4",
                 "CommonRoute5",
@@ -335,24 +403,6 @@
                 "CommonRoute8"
             ],
             "cases": [
-                {
-                    "name": "CommonRoute1",
-                    "label": "$option.AutoCollectCommonRoute1.label",
-                    "pipeline_override": {
-                        "AutoCollectCommonRoute1Start": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
-                    "name": "CommonRoute2",
-                    "label": "$option.AutoCollectCommonRoute2.label",
-                    "pipeline_override": {
-                        "AutoCollectCommonRoute2Start": {
-                            "enabled": true
-                        }
-                    }
-                },
                 {
                     "name": "CommonRoute3",
                     "label": "$option.AutoCollectCommonRoute3.label",
