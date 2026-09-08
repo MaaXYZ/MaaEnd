@@ -14,9 +14,7 @@
             ],
             "option": [
                 "AutoEssenceSchedule",
-                "AutoEssenceChooseLocation",
-                "AutoEssenceObtainMode",
-                "AutoEssenceRepeatCount",
+                "AutoEssenceMenu",
                 // "AutoEssenceChooseLocationMode",
                 // ⚠️TODO: 由于 Dispatcher 在每轮之间会立即识别交互按钮，
                 // 这样就跳过了 Anchor 传送步骤，所以实际上暂时做不到每轮之间改换地区，
@@ -250,6 +248,75 @@
                 }
             ]
         },
+        "AutoEssenceMenu": {
+            "type": "select",
+            "label": "$option.AutoEssenceMenu.label",
+            "description": "$option.AutoEssenceMenu.description",
+            "default_case": "Random",
+            "cases": [
+                {
+                    "name": "Random",
+                    "label": "$option.AutoEssenceMenu.cases.Random.label",
+                    "description": "$option.AutoEssenceMenu.cases.Random.description",
+                    "option": [
+                        "AutoEssenceChooseLocation",
+                        "AutoEssenceObtainMode",
+                        "AutoEssenceRepeatCount"
+                    ]
+                },
+                {
+                    "name": "Location",
+                    "label": "$option.AutoEssenceMenu.cases.Location.label",
+                    "description": "$option.AutoEssenceMenu.cases.Location.description",
+                    "option": [
+                        "AutoEssenceSelectLocation",
+                        "AutoEssenceObtainModeClaimOnly",
+                        "AutoEssenceRepeatCount"
+                    ]
+                },
+                {
+                    "name": "Target",
+                    "label": "$option.AutoEssenceMenu.cases.Target.label",
+                    "description": "$option.AutoEssenceMenu.cases.Target.description",
+                    "pipeline_override": {
+                        "AutoEssenceMain": {
+                            "max_hit": 999999,
+                            "next": [
+                                "AutoEssenceTargetPrepare",
+                                "AutoEssenceTargetPlan"
+                            ]
+                        },
+                        "AutoEssenceOnSuccess": {
+                            "next": [
+                                "AutoEssenceMain",
+                                "[JumpBack]AutoEssenceAfterBattleRunEndLootReport",
+                                "AutoEssenceOnComplete"
+                            ]
+                        },
+                        "AutoEssenceOnComplete": {
+                            "focus": {
+                                "Node.Action.Starting": "🎉**目标模式：基质目标已满足或任务结束**"
+                            }
+                        },
+                        // 目标模式依赖战后精确匹配 Add 更新内存库存，强制开启战后基质筛选
+                        "EssenceFilterAfterBattleStart": {
+                            "enabled": true
+                        },
+                        "AutoEssenceAfterBattleRunEndLootReport": {
+                            "enabled": true
+                        }
+                    },
+                    "option": [
+                        "AutoEssenceWeaponTypeSword",
+                        "AutoEssenceWeaponTypeClaymore",
+                        "AutoEssenceWeaponTypePistol",
+                        "AutoEssenceWeaponTypeWand",
+                        "AutoEssenceWeaponTypeLance",
+                        "AutoEssenceObtainModeClaimOnlyForcedFilter"
+                    ]
+                }
+            ]
+        },
         "AutoEssenceObtainMode": {
             "type": "select",
             "label": "$option.AutoEssenceObtainMode.label",
@@ -320,6 +387,138 @@
                     "option": [
                         "AutoEssenceDoOverride",
                         "EssenceFilterAfterBattle",
+                        "AutoUseSpMedication"
+                    ]
+                }
+            ]
+        },
+        "AutoEssenceObtainModeClaimOnly": {
+            "type": "select",
+            "label": "$option.AutoEssenceObtainMode.label",
+            "description": "$option.AutoEssenceObtainMode.description",
+            "default_case": "ObtainScaling2",
+            "cases": [
+                {
+                    "name": "ObtainScaling1",
+                    "label": "$option.AutoEssenceObtainMode.cases.ObtainScaling1.label",
+                    "pipeline_override": {
+                        "AutoEssenceClickObtainButton": {
+                            "enabled": true
+                        },
+                        "AutoEssenceClickDiscardButton": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseScaling2": {
+                            "enabled": false
+                        },
+                        "AutoEssenceDismissWarningSanityLowContinue": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOff": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOn": {
+                            "enabled": true
+                        }
+                    },
+                    "option": [
+                        "EssenceFilterAfterBattle",
+                        "AutoUseSpMedication"
+                    ]
+                },
+                {
+                    "name": "ObtainScaling2",
+                    "label": "$option.AutoEssenceObtainMode.cases.ObtainScaling2.label",
+                    "pipeline_override": {
+                        "AutoEssenceClickObtainButton": {
+                            "enabled": true
+                        },
+                        "AutoEssenceClickDiscardButton": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseScaling2": {
+                            "enabled": true
+                        },
+                        "AutoEssenceDismissWarningSanityLowContinue": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOff": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOn": {
+                            "enabled": true
+                        }
+                    },
+                    "option": [
+                        "EssenceFilterAfterBattle",
+                        "AutoUseSpMedication"
+                    ]
+                }
+            ]
+        },
+        "AutoEssenceObtainModeClaimOnlyForcedFilter": {
+            "type": "select",
+            "label": "$option.AutoEssenceObtainMode.label",
+            "description": "$option.AutoEssenceObtainMode.description",
+            "default_case": "ObtainScaling2",
+            "cases": [
+                {
+                    "name": "ObtainScaling1",
+                    "label": "$option.AutoEssenceObtainMode.cases.ObtainScaling1.label",
+                    "pipeline_override": {
+                        "AutoEssenceClickObtainButton": {
+                            "enabled": true
+                        },
+                        "AutoEssenceClickDiscardButton": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseScaling2": {
+                            "enabled": false
+                        },
+                        "AutoEssenceDismissWarningSanityLowContinue": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOff": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOn": {
+                            "enabled": true
+                        }
+                    },
+                    "option": [
+                        "EssenceFilterAfterBattleSelectWeaponRarity",
+                        "EssenceFilterAfterBattleSelectEssence",
+                        "EssenceFilterAfterBattleSelectExtraRules",
+                        "AutoUseSpMedication"
+                    ]
+                },
+                {
+                    "name": "ObtainScaling2",
+                    "label": "$option.AutoEssenceObtainMode.cases.ObtainScaling2.label",
+                    "pipeline_override": {
+                        "AutoEssenceClickObtainButton": {
+                            "enabled": true
+                        },
+                        "AutoEssenceClickDiscardButton": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseScaling2": {
+                            "enabled": true
+                        },
+                        "AutoEssenceDismissWarningSanityLowContinue": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOff": {
+                            "enabled": false
+                        },
+                        "AutoEssenceChooseOverrideOn": {
+                            "enabled": true
+                        }
+                    },
+                    "option": [
+                        "EssenceFilterAfterBattleSelectWeaponRarity",
+                        "EssenceFilterAfterBattleSelectEssence",
+                        "EssenceFilterAfterBattleSelectExtraRules",
                         "AutoUseSpMedication"
                     ]
                 }
