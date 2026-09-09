@@ -362,6 +362,28 @@ void TestForegroundTextureUsesContentInsets()
         "texture inside the content inset must be retained");
 }
 
+void TestLaplacianVarianceUsesSourceContext()
+{
+    cv::Mat image(80, 80, CV_8UC3, cv::Scalar(140, 140, 140));
+    const cv::Rect region(12, 12, 56, 56);
+    // 目标区域顶边存在平滑亮度过渡；脱离原图单独求导时，镜像补点会把它放大成整行强边缘。
+    image.row(region.y - 1).setTo(cv::Scalar(110, 110, 110));
+    image.row(region.y).setTo(cv::Scalar(120, 120, 120));
+    image.row(region.y + 1).setTo(cv::Scalar(132, 132, 132));
+
+    const cv::Mat isolated = image(region).clone();
+    const double isolated_score = iconrecognition::detail::LaplacianVariance(
+        isolated,
+        cv::Rect(0, 0, isolated.cols, isolated.rows),
+        iconrecognition::detail::TextureBoundaryMode::IsolatedRegion);
+    const double contextual_score = iconrecognition::detail::LaplacianVariance(
+        image,
+        region,
+        iconrecognition::detail::TextureBoundaryMode::SourceContext);
+    Check(isolated_score > 10.0, "isolated crop must reproduce the Laplacian boundary artifact");
+    Check(contextual_score < 10.0, "source context must keep a smooth empty region below the texture threshold");
+}
+
 void TestForegroundTextureUsesNativeLargerCell()
 {
     cv::Mat image = cv::Mat::zeros(80, 80, CV_8UC3);
@@ -2234,6 +2256,7 @@ int main()
         TestMaskDiagnosticsDescribeComposedPolicies();
         TestValuablesPortraitDetectionDoesNotDependOnTemplateMask();
         TestForegroundTextureUsesContentInsets();
+        TestLaplacianVarianceUsesSourceContext();
         TestForegroundTextureUsesNativeLargerCell();
         TestForegroundTextureInsetsStayGridSpecific();
         TestTransferPanelIntersections();

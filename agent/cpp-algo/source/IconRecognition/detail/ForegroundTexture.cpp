@@ -18,9 +18,25 @@ constexpr int kContentInsetTop = 6;
 constexpr int kContentInsetRight = 6;
 // 纹理检测区域排除 cell 底部色带的像素数；调大可避开 rarity 色带，但可能裁掉图标下沿。
 constexpr int kContentInsetBottom = 8;
+// 拉普拉斯核需要目标区域外 1px 邻域；缺少上下文时 OpenCV 的镜像补边会把平滑渐变制造成伪边缘。
+constexpr int kLaplacianContext = 1;
+
+cv::Rect texture_measurement_region(const cv::Rect& region, TextureBoundaryMode boundary_mode)
+{
+    if (boundary_mode != TextureBoundaryMode::SourceContext || region.width <= kLaplacianContext * 2
+        || region.height <= kLaplacianContext * 2) {
+        return region;
+    }
+    // 上下文必须取自既定内容区，不能跨回 cell 边框；因此先留出一圈再执行带邻域的拉普拉斯。
+    return cv::Rect(
+        region.x + kLaplacianContext,
+        region.y + kLaplacianContext,
+        region.width - kLaplacianContext * 2,
+        region.height - kLaplacianContext * 2);
+}
 } // namespace
 
-double LaplacianVariance(const cv::Mat& image, const cv::Rect& region)
+double LaplacianVariance(const cv::Mat& image, const cv::Rect& region, TextureBoundaryMode boundary_mode)
 {
     if (image.empty()) {
         return 0.0;
@@ -29,21 +45,31 @@ double LaplacianVariance(const cv::Mat& image, const cv::Rect& region)
     if (clipped.width < 3 || clipped.height < 3) {
         return 0.0;
     }
+    const cv::Rect image_bounds(0, 0, image.cols, image.rows);
+    const cv::Rect context = boundary_mode == TextureBoundaryMode::SourceContext
+                                 ? cv::Rect(
+                                       clipped.x - kLaplacianContext,
+                                       clipped.y - kLaplacianContext,
+                                       clipped.width + kLaplacianContext * 2,
+                                       clipped.height + kLaplacianContext * 2)
+                                       & image_bounds
+                                 : clipped;
     cv::Mat gray;
     if (image.channels() == 4) {
-        cv::cvtColor(image(clipped), gray, cv::COLOR_BGRA2GRAY);
+        cv::cvtColor(image(context), gray, cv::COLOR_BGRA2GRAY);
     }
     else if (image.channels() == 3) {
-        cv::cvtColor(image(clipped), gray, cv::COLOR_BGR2GRAY);
+        cv::cvtColor(image(context), gray, cv::COLOR_BGR2GRAY);
     }
     else {
-        gray = image(clipped);
+        gray = image(context);
     }
     cv::Mat laplacian;
     gray.convertTo(gray, CV_32F);
     cv::Laplacian(gray, laplacian, CV_32F);
+    const cv::Rect measured(clipped.x - context.x, clipped.y - context.y, clipped.width, clipped.height);
     cv::Scalar mean, stddev;
-    cv::meanStdDev(laplacian, mean, stddev);
+    cv::meanStdDev(laplacian(measured), mean, stddev);
     return stddev[0] * stddev[0];
 }
 
@@ -59,7 +85,12 @@ bool IsLowTexture(
 }
 
 std::optional<double>
-    ForegroundTextureScore(const cv::Mat& image, const cv::Rect& region, GridType grid_type, const std::optional<cv::Rect>& texture_roi)
+    ForegroundTextureScore(
+        const cv::Mat& image,
+        const cv::Rect& region,
+        GridType grid_type,
+        const std::optional<cv::Rect>& texture_roi,
+        TextureBoundaryMode boundary_mode)
 {
     if (grid_type != GridType::Transfer && grid_type != GridType::PortStorager) {
         return std::nullopt;
@@ -76,9 +107,9 @@ std::optional<double>
             || visible.area() < content.area() * kTransferMinimumTextureCoverage) {
             return std::nullopt;
         }
-        return LaplacianVariance(image, visible);
+        return LaplacianVariance(image, texture_measurement_region(visible, boundary_mode), boundary_mode);
     }
-    return LaplacianVariance(image, content);
+    return LaplacianVariance(image, texture_measurement_region(content, boundary_mode), boundary_mode);
 }
 
 } // namespace iconrecognition::detail
