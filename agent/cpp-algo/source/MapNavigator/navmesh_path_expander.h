@@ -100,6 +100,22 @@ std::optional<NavmeshSnap> NavmeshSnapAt(
     const navmesh::WorldPoint& point,
     double radius,
     std::optional<double> floor_y = std::nullopt);
+
+// A straight line hanging in the air, each end carrying its own height (same frame as BaseNavRouteRequest::floor_y).
+struct NavmeshAirLine
+{
+    navmesh::WorldPoint a;
+    double a_height = 0.0;
+    navmesh::WorldPoint b;
+    double b_height = 0.0;
+};
+
+// How far terrain pushes up into each air line; see BaseNavPlanner::lineRise for the measure. An empty optional means
+// "no answer" (zone unresolved, or the two ends project into different geometry zones), never "rises by zero", so the
+// caller has to read it as a pass. One zone resolution is shared by the whole batch.
+std::vector<std::optional<double>>
+    NavmeshLineRises(const NaviParam& param, const std::string& locator_zone, const std::vector<NavmeshAirLine>& lines);
+
 // The bake-time connectivity classes each point sits in. A route is searched inside one class only, so
 // two points whose sets are disjoint cannot be connected by any plan — a cheap way to drop legs that are
 // bound to fail. An empty set means "no answer" (no baked grid, unknown zone, no voxel nearby), never
