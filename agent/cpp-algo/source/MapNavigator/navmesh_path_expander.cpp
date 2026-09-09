@@ -1568,6 +1568,35 @@ std::optional<NavmeshSnap> NavmeshSnapAt(
     return NavmeshSnap { .distance = entry->distance, .height = navmesh->planner.triangleHeight(entry->triangle) };
 }
 
+std::vector<std::optional<double>>
+    NavmeshLineRises(const NaviParam& param, const std::string& locator_zone, const std::vector<NavmeshAirLine>& lines)
+{
+    std::vector<std::optional<double>> rises(lines.size());
+    const std::string navmesh_zone = InferBaseNavZone(locator_zone, param.map_name);
+    if (navmesh_zone.empty()) {
+        return rises;
+    }
+    const auto navmesh = LoadCachedNavmesh(ResolveNavmeshFile(param.navmesh_file), navmesh_zone);
+    if (!navmesh) {
+        return rises;
+    }
+    for (size_t index = 0; index < lines.size(); ++index) {
+        const NavmeshAirLine& line = lines[index];
+        const auto from = navmesh->pack.projectToBase(navmesh_zone, line.a.x, line.a.y);
+        const auto to = navmesh->pack.projectToBase(navmesh_zone, line.b.x, line.b.y);
+        if (!from || !to || from->geometry_zone == nullptr || from->geometry_zone != to->geometry_zone) {
+            continue;
+        }
+        rises[index] = navmesh->planner.lineRise(
+            from->geometry_zone->zone_id,
+            { .x = from->x, .y = from->y },
+            line.a_height,
+            { .x = to->x, .y = to->y },
+            line.b_height);
+    }
+    return rises;
+}
+
 std::vector<std::vector<uint32_t>>
     NavmeshRegionsNear(const NaviParam& param, const std::string& locator_zone, const std::vector<navmesh::WorldPoint>& points)
 {

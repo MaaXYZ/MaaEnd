@@ -81,7 +81,7 @@ std::optional<std::string> load_or_create_salt()
 
 #ifdef _WIN32
     constexpr size_t kSaltBytes = 16;
-    std::array<unsigned char, kSaltBytes> bytes { };
+    std::array<unsigned char, kSaltBytes> bytes {};
     if (BCryptGenRandom(nullptr, bytes.data(), static_cast<ULONG>(bytes.size()), BCRYPT_USE_SYSTEM_PREFERRED_RNG) < 0) {
         LogError << "ZiplineAccount: failed to generate random salt";
         return std::nullopt;
@@ -120,7 +120,7 @@ std::optional<std::array<unsigned char, kSha256Bytes>> sha256(std::string_view i
         return std::nullopt;
     }
 
-    std::array<unsigned char, kSha256Bytes> digest { };
+    std::array<unsigned char, kSha256Bytes> digest {};
     const auto* data = reinterpret_cast<const unsigned char*>(input.data());
     const NTSTATUS status = BCryptHash(
         algorithm,

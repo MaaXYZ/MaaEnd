@@ -52,7 +52,7 @@ bool ReadPreference(MaaContext* context, bool requested)
     if (!obj.contains("attach") || !obj.at("attach").is_object()) {
         return requested;
     }
-    const std::string value = obj.at("attach").as_object().get("zipline", std::string { });
+    const std::string value = obj.at("attach").as_object().get("zipline", std::string {});
 
     if (value == "always") {
         return true;
@@ -67,34 +67,34 @@ bool ReadPreference(MaaContext* context, bool requested)
 std::string ReadAccountIdentity(MaaContext* context)
 {
     if (context == nullptr) {
-        return { };
+        return {};
     }
 
     ScopedStringBuffer buffer;
     if (buffer.Get() == nullptr || !MaaContextGetNodeData(context, kAccountIdentityNode, buffer.Get())) {
         LogWarn << "ZiplineAccount: identity node unavailable" << VAR(kAccountIdentityNode);
-        return { };
+        return {};
     }
     const char* raw = MaaStringBufferGet(buffer.Get());
     if (raw == nullptr || std::strlen(raw) == 0) {
-        return { };
+        return {};
     }
 
     const auto parsed = json::parse(raw);
     if (!parsed || !parsed->is_object()) {
         LogWarn << "ZiplineAccount: identity node data is not a json object" << VAR(kAccountIdentityNode);
-        return { };
+        return {};
     }
     const auto& obj = parsed->as_object();
     if (!obj.contains("attach") || !obj.at("attach").is_object()) {
-        return { };
+        return {};
     }
-    const std::string account_id = obj.at("attach").as_object().get("account_id", std::string { });
+    const std::string account_id = obj.at("attach").as_object().get("account_id", std::string {});
     const bool valid = account_id.size() == kAccountIdLength
                        && std::all_of(account_id.begin(), account_id.end(), [](unsigned char ch) { return std::isxdigit(ch) != 0; });
     if (!account_id.empty() && !valid) {
         LogWarn << "ZiplineAccount: identity has invalid format" << VAR(account_id.size());
-        return { };
+        return {};
     }
     return account_id;
 }

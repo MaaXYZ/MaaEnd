@@ -24,14 +24,14 @@ constexpr const char* kRecordFileName = "Ziplines.json";
 std::string CurrentTimestamp()
 {
     const std::time_t now = std::time(nullptr);
-    std::tm tm { };
+    std::tm tm {};
 #ifdef _WIN32
     gmtime_s(&tm, &now);
 #else
     gmtime_r(&now, &tm);
 #endif
 
-    char buf[32] = { };
+    char buf[32] = {};
     std::strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%SZ", &tm);
     return buf;
 }
@@ -82,9 +82,9 @@ bool ZiplineStore::load(const std::filesystem::path& path)
         const auto& obj = entry.as_object();
 
         ZiplineMapRecord record;
-        record.account_id = obj.get("account_id", std::string { });
-        record.map_id = obj.get("map_id", std::string { });
-        record.fetched_at = obj.get("fetched_at", std::string { });
+        record.account_id = obj.get("account_id", std::string {});
+        record.map_id = obj.get("map_id", std::string {});
+        record.fetched_at = obj.get("fetched_at", std::string {});
         if (record.map_id.empty()) {
             continue;
         }
@@ -96,8 +96,8 @@ bool ZiplineStore::load(const std::filesystem::path& path)
                 }
                 const auto& mark_obj = mark_value.as_object();
                 ZiplineMark mark;
-                mark.template_id = mark_obj.get("template_id", std::string { });
-                mark.level_id = mark_obj.get("level_id", std::string { });
+                mark.template_id = mark_obj.get("template_id", std::string {});
+                mark.level_id = mark_obj.get("level_id", std::string {});
                 mark.x = mark_obj.get("x", 0.0);
                 mark.y = mark_obj.get("y", 0.0);
                 mark.z = mark_obj.get("z", 0.0);
@@ -196,7 +196,7 @@ std::string ZiplineStore::latestAccountId() const
             latest = &record;
         }
     }
-    return latest == nullptr ? std::string { } : latest->account_id;
+    return latest == nullptr ? std::string {} : latest->account_id;
 }
 
 } // namespace zipline

@@ -10,6 +10,9 @@
                 "ZiplineImportClearLogin"
             ],
             "controller": [
+                "Linux-Gamescope",
+                "Linux-ScreenCast",
+                "Linux-Wlroots",
                 "Win32-Front"
             ],
             "group": [
@@ -58,6 +61,9 @@
         },
         "ZiplineImportClearLogin": {
             "type": "switch",
+            "controller": [
+                "Win32-Front"
+            ],
             "label": "$option.ZiplineImportClearLogin.label",
             "description": "$option.ZiplineImportClearLogin.description",
             "default_case": "No",
