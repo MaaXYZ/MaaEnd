@@ -376,10 +376,8 @@ void TestLaplacianVarianceUsesSourceContext()
         isolated,
         cv::Rect(0, 0, isolated.cols, isolated.rows),
         iconrecognition::detail::TextureBoundaryMode::IsolatedRegion);
-    const double contextual_score = iconrecognition::detail::LaplacianVariance(
-        image,
-        region,
-        iconrecognition::detail::TextureBoundaryMode::SourceContext);
+    const double contextual_score =
+        iconrecognition::detail::LaplacianVariance(image, region, iconrecognition::detail::TextureBoundaryMode::SourceContext);
     Check(isolated_score > 10.0, "isolated crop must reproduce the Laplacian boundary artifact");
     Check(contextual_score < 10.0, "source context must keep a smooth empty region below the texture threshold");
 }

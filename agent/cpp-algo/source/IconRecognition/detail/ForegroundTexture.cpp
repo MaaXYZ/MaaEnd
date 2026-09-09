@@ -46,14 +46,13 @@ double LaplacianVariance(const cv::Mat& image, const cv::Rect& region, TextureBo
         return 0.0;
     }
     const cv::Rect image_bounds(0, 0, image.cols, image.rows);
-    const cv::Rect context = boundary_mode == TextureBoundaryMode::SourceContext
-                                 ? cv::Rect(
-                                       clipped.x - kLaplacianContext,
-                                       clipped.y - kLaplacianContext,
-                                       clipped.width + kLaplacianContext * 2,
-                                       clipped.height + kLaplacianContext * 2)
-                                       & image_bounds
-                                 : clipped;
+    const cv::Rect context = boundary_mode == TextureBoundaryMode::SourceContext ? cv::Rect(
+                                                                                       clipped.x - kLaplacianContext,
+                                                                                       clipped.y - kLaplacianContext,
+                                                                                       clipped.width + kLaplacianContext * 2,
+                                                                                       clipped.height + kLaplacianContext * 2)
+                                                                                       & image_bounds
+                                                                                 : clipped;
     cv::Mat gray;
     if (image.channels() == 4) {
         cv::cvtColor(image(context), gray, cv::COLOR_BGRA2GRAY);
@@ -84,13 +83,12 @@ bool IsLowTexture(
     return score && threshold > 0.0 && *score < threshold;
 }
 
-std::optional<double>
-    ForegroundTextureScore(
-        const cv::Mat& image,
-        const cv::Rect& region,
-        GridType grid_type,
-        const std::optional<cv::Rect>& texture_roi,
-        TextureBoundaryMode boundary_mode)
+std::optional<double> ForegroundTextureScore(
+    const cv::Mat& image,
+    const cv::Rect& region,
+    GridType grid_type,
+    const std::optional<cv::Rect>& texture_roi,
+    TextureBoundaryMode boundary_mode)
 {
     if (grid_type != GridType::Transfer && grid_type != GridType::PortStorager) {
         return std::nullopt;
