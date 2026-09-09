@@ -1,0 +1,309 @@
+{
+    "AutoCollectRouteWulingYinglungPass4GradeStart": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-置器阁大世界（10200030255）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass4GradeGoto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass4GradeGoto": {
+        "desc": "采集应龙关-置器阁大世界附近的 int_doodad_grade，共 11 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1211.82,
+                        767.85
+                    ]
+                },
+                [
+                    1211.82,
+                    767.85,
+                    "COLLECT"
+                ],
+                [
+                    1211.77,
+                    765.16,
+                    "COLLECT"
+                ],
+                [
+                    1212.87,
+                    764.65,
+                    "COLLECT"
+                ],
+                [
+                    1218.93,
+                    767.21,
+                    "COLLECT"
+                ],
+                [
+                    1219.97,
+                    766.93,
+                    "COLLECT"
+                ],
+                [
+                    1241.25,
+                    801.83,
+                    "COLLECT"
+                ],
+                [
+                    1241.92,
+                    802.8,
+                    "COLLECT"
+                ],
+                [
+                    1242.08,
+                    805.13,
+                    "COLLECT"
+                ],
+                [
+                    1243.13,
+                    807.15,
+                    "COLLECT"
+                ],
+                [
+                    1240.87,
+                    807.11,
+                    "COLLECT"
+                ],
+                [
+                    1239.89,
+                    806.32,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass4GradeEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass4GradeEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingYinglungPass4Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-置器阁大世界（10200030255）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass4Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass4Grass1Goto": {
+        "desc": "采集应龙关-置器阁大世界附近的 int_doodad_grass_1，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1200.28,
+                        783.35
+                    ]
+                },
+                [
+                    1200.28,
+                    783.35,
+                    "COLLECT"
+                ],
+                [
+                    1199.33,
+                    783.85,
+                    "COLLECT"
+                ],
+                [
+                    1244.13,
+                    821.92,
+                    "COLLECT"
+                ],
+                [
+                    1243.39,
+                    823.2,
+                    "COLLECT"
+                ],
+                [
+                    1139.63,
+                    810.98,
+                    "COLLECT"
+                ],
+                [
+                    1139.09,
+                    811.9,
+                    "COLLECT"
+                ],
+                [
+                    1129.21,
+                    809.2,
+                    "COLLECT"
+                ],
+                [
+                    1129.72,
+                    808.35,
+                    "COLLECT"
+                ],
+                [
+                    1127.47,
+                    806.7,
+                    "COLLECT"
+                ],
+                [
+                    1132.61,
+                    786,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass4Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass4Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingYinglungPass4Mushroom23Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-置器阁大世界（10200030255）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass4Mushroom23Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass4Mushroom23Goto": {
+        "desc": "采集应龙关-置器阁大世界附近的 int_doodad_mushroom_2_3，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1241.76,
+                        817.41
+                    ]
+                },
+                [
+                    1241.76,
+                    817.41,
+                    "COLLECT"
+                ],
+                [
+                    1241.73,
+                    818.7,
+                    "COLLECT"
+                ],
+                [
+                    1242.27,
+                    819.38,
+                    "COLLECT"
+                ],
+                [
+                    1243.71,
+                    818.46,
+                    "COLLECT"
+                ],
+                [
+                    1243.68,
+                    821.06,
+                    "COLLECT"
+                ],
+                [
+                    1242.98,
+                    821.75,
+                    "COLLECT"
+                ],
+                [
+                    1240.66,
+                    823.11,
+                    "COLLECT"
+                ],
+                [
+                    1240.53,
+                    818.53,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass4Mushroom23End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass4Mushroom23End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

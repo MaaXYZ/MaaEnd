@@ -1,0 +1,413 @@
+{
+    "AutoCollectRouteWulingSnowyForest2Flower3Start": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-雪祀木屋左侧大世界（36100010007）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2Flower3Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest2Flower3Goto": {
+        "desc": "采集雪松林-雪祀木屋左侧大世界附近的 int_doodad_flower_3，共 15 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1511.38,
+                        1008.68
+                    ]
+                },
+                [
+                    1511.38,
+                    1008.68,
+                    "COLLECT"
+                ],
+                [
+                    1515.44,
+                    1009.07,
+                    "COLLECT"
+                ],
+                [
+                    1528.68,
+                    1017.1,
+                    "COLLECT"
+                ],
+                [
+                    1528.69,
+                    1018.26,
+                    "COLLECT"
+                ],
+                [
+                    1548.17,
+                    1023.9,
+                    "COLLECT"
+                ],
+                [
+                    1549.57,
+                    1022.58,
+                    "COLLECT"
+                ],
+                [
+                    1552.79,
+                    1025.93,
+                    "COLLECT"
+                ],
+                [
+                    1558.69,
+                    1015.6,
+                    "COLLECT"
+                ],
+                [
+                    1561.49,
+                    1012.24,
+                    "COLLECT"
+                ],
+                [
+                    1551.1,
+                    1006.91,
+                    "COLLECT"
+                ],
+                [
+                    1551.48,
+                    1004.34,
+                    "COLLECT"
+                ],
+                [
+                    1551.13,
+                    1002.25,
+                    "COLLECT"
+                ],
+                [
+                    1518.31,
+                    972.79,
+                    "COLLECT"
+                ],
+                [
+                    1517.73,
+                    973.37,
+                    "COLLECT"
+                ],
+                [
+                    1516.38,
+                    973.53,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2Flower3End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest2Flower3End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingSnowyForest2GradeStart": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-雪祀木屋左侧大世界（36100010007）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2GradeGoto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest2GradeGoto": {
+        "desc": "采集雪松林-雪祀木屋左侧大世界附近的 int_doodad_grade，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1542.64,
+                        999.96
+                    ]
+                },
+                [
+                    1542.64,
+                    999.96,
+                    "COLLECT"
+                ],
+                [
+                    1544.04,
+                    1000.13,
+                    "COLLECT"
+                ],
+                [
+                    1551.95,
+                    1038.64,
+                    "COLLECT"
+                ],
+                [
+                    1550.99,
+                    1039.36,
+                    "COLLECT"
+                ],
+                [
+                    1551.84,
+                    1040.18,
+                    "COLLECT"
+                ],
+                [
+                    1594.25,
+                    966.62,
+                    "COLLECT"
+                ],
+                [
+                    1594.26,
+                    965.21,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2GradeEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest2GradeEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingSnowyForest2Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-雪祀木屋左侧大世界（36100010007）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest2Grass2Goto": {
+        "desc": "采集雪松林-雪祀木屋左侧大世界附近的 int_doodad_grass_2，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1468.38,
+                        968.08
+                    ]
+                },
+                [
+                    1468.38,
+                    968.08,
+                    "COLLECT"
+                ],
+                [
+                    1467.06,
+                    967.03,
+                    "COLLECT"
+                ],
+                [
+                    1450.74,
+                    932.57,
+                    "COLLECT"
+                ],
+                [
+                    1453.96,
+                    931.1,
+                    "COLLECT"
+                ],
+                [
+                    1453.46,
+                    928.22,
+                    "COLLECT"
+                ],
+                [
+                    1481.93,
+                    923.99,
+                    "COLLECT"
+                ],
+                [
+                    1483.57,
+                    919.11,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest2Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingSnowyForest2Mushroom11Start": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-雪祀木屋左侧大世界（36100010007）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2Mushroom11Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest2Mushroom11Goto": {
+        "desc": "采集雪松林-雪祀木屋左侧大世界附近的 int_doodad_mushroom_1_1，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1481.89,
+                        957.33
+                    ]
+                },
+                [
+                    1481.89,
+                    957.33,
+                    "COLLECT"
+                ],
+                [
+                    1480.25,
+                    958.53,
+                    "COLLECT"
+                ],
+                [
+                    1476.53,
+                    958.53,
+                    "COLLECT"
+                ],
+                [
+                    1475.63,
+                    956.62,
+                    "COLLECT"
+                ],
+                [
+                    1474.73,
+                    954.59,
+                    "COLLECT"
+                ],
+                [
+                    1475.37,
+                    952.18,
+                    "COLLECT"
+                ],
+                [
+                    1476.05,
+                    950.28,
+                    "COLLECT"
+                ],
+                [
+                    1479.36,
+                    950.89,
+                    "COLLECT"
+                ],
+                [
+                    1481.51,
+                    951.86,
+                    "COLLECT"
+                ],
+                [
+                    1482.59,
+                    954.78,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest2Mushroom11End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest2Mushroom11End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

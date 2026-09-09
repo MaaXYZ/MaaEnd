@@ -1,0 +1,111 @@
+{
+    "AutoCollectRouteWulingJingyuValley1Mushroom13Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-踩道大世界（10100030018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley1Mushroom13Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley1Mushroom13Goto": {
+        "desc": "采集景玉谷-踩道大世界附近的 int_doodad_mushroom_1_3，共 11 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        946.86,
+                        2230.38
+                    ]
+                },
+                [
+                    946.86,
+                    2230.38,
+                    "COLLECT"
+                ],
+                [
+                    949.38,
+                    2234.78,
+                    "COLLECT"
+                ],
+                [
+                    947.31,
+                    2234.27,
+                    "COLLECT"
+                ],
+                [
+                    942.21,
+                    2237.96,
+                    "COLLECT"
+                ],
+                [
+                    938.12,
+                    2236.41,
+                    "COLLECT"
+                ],
+                [
+                    936.91,
+                    2229.98,
+                    "COLLECT"
+                ],
+                [
+                    941.77,
+                    2229.9,
+                    "COLLECT"
+                ],
+                [
+                    943.47,
+                    2227.9,
+                    "COLLECT"
+                ],
+                [
+                    942.33,
+                    2226.37,
+                    "COLLECT"
+                ],
+                [
+                    939.93,
+                    2225.97,
+                    "COLLECT"
+                ],
+                [
+                    889.12,
+                    2227.53,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley1Mushroom13End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley1Mushroom13End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

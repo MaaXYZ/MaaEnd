@@ -1,0 +1,359 @@
+{
+    "AutoCollectRouteWulingYinglungPass1Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-奇松岭东侧大世界（10200030168）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass1Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass1Grass2Goto": {
+        "desc": "采集应龙关-奇松岭东侧大世界附近的 int_doodad_grass_2，共 18 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1104.77,
+                        980.67
+                    ]
+                },
+                [
+                    1104.77,
+                    980.67,
+                    "COLLECT"
+                ],
+                [
+                    1104.35,
+                    979.6,
+                    "COLLECT"
+                ],
+                [
+                    1071.98,
+                    993.6,
+                    "COLLECT"
+                ],
+                [
+                    1071.45,
+                    994.8,
+                    "COLLECT"
+                ],
+                [
+                    1036.49,
+                    991.86,
+                    "COLLECT"
+                ],
+                [
+                    1035.79,
+                    992.32,
+                    "COLLECT"
+                ],
+                [
+                    1032.93,
+                    968.33,
+                    "COLLECT"
+                ],
+                [
+                    1034.94,
+                    966.87,
+                    "COLLECT"
+                ],
+                [
+                    1035.67,
+                    966.43,
+                    "COLLECT"
+                ],
+                [
+                    1028.73,
+                    955.56,
+                    "COLLECT"
+                ],
+                [
+                    1027.45,
+                    954.85,
+                    "COLLECT"
+                ],
+                [
+                    1160.61,
+                    926.6,
+                    "COLLECT"
+                ],
+                [
+                    1160.84,
+                    927.61,
+                    "COLLECT"
+                ],
+                [
+                    1159.79,
+                    935.11,
+                    "COLLECT"
+                ],
+                [
+                    1163.83,
+                    962.29,
+                    "COLLECT"
+                ],
+                [
+                    1161.02,
+                    968.8,
+                    "COLLECT"
+                ],
+                [
+                    1166.44,
+                    969.46,
+                    "COLLECT"
+                ],
+                [
+                    1166.59,
+                    970.62,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass1Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass1Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingYinglungPass1Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-奇松岭东侧大世界（10200030168）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass1Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass1Insect1Goto": {
+        "desc": "采集应龙关-奇松岭东侧大世界附近的 int_doodad_insect_1，共 11 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1148,
+                        993.01
+                    ]
+                },
+                [
+                    1148,
+                    993.01,
+                    "COLLECT"
+                ],
+                [
+                    1149.14,
+                    993.51,
+                    "COLLECT"
+                ],
+                [
+                    1168.27,
+                    978.13,
+                    "COLLECT"
+                ],
+                [
+                    1162.61,
+                    996.43,
+                    "COLLECT"
+                ],
+                [
+                    1162.09,
+                    997.39,
+                    "COLLECT"
+                ],
+                [
+                    1177.61,
+                    1016.36,
+                    "COLLECT"
+                ],
+                [
+                    1181.15,
+                    1018.8,
+                    "COLLECT"
+                ],
+                [
+                    1167.41,
+                    1015.8,
+                    "COLLECT"
+                ],
+                [
+                    1099.69,
+                    1029.11,
+                    "COLLECT"
+                ],
+                [
+                    1098.63,
+                    1027.99,
+                    "COLLECT"
+                ],
+                [
+                    1089.95,
+                    1035.23,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass1Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass1Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingYinglungPass1Spcstone12Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-奇松岭东侧大世界（10200030168）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass1Spcstone12Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass1Spcstone12Goto": {
+        "desc": "采集应龙关-奇松岭东侧大世界附近的 int_doodad_spcstone_1_2，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1095.58,
+                        1039.73
+                    ]
+                },
+                [
+                    1095.58,
+                    1039.73,
+                    "COLLECT"
+                ],
+                [
+                    1095.05,
+                    1040.52,
+                    "COLLECT"
+                ],
+                [
+                    1095.54,
+                    1041.92,
+                    "COLLECT"
+                ],
+                [
+                    1097.04,
+                    1041.65,
+                    "COLLECT"
+                ],
+                [
+                    1096.85,
+                    1040.31,
+                    "COLLECT"
+                ],
+                [
+                    1098.6,
+                    1041.38,
+                    "COLLECT"
+                ],
+                [
+                    1099.01,
+                    1042.21,
+                    "COLLECT"
+                ],
+                [
+                    1100.02,
+                    1043.15,
+                    "COLLECT"
+                ],
+                [
+                    1098.25,
+                    1042.78,
+                    "COLLECT"
+                ],
+                [
+                    1096.59,
+                    1043.58,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass1Spcstone12End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass1Spcstone12End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

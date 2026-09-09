@@ -1,0 +1,185 @@
+{
+    "AutoCollectRouteWulingWulingCity6Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-储备站左上大世界（22800060090）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity6"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity6Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity6Grass2Goto": {
+        "desc": "采集武陵城-储备站左上大世界附近的 int_doodad_grass_2，共 9 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        803.83,
+                        1897.5
+                    ]
+                },
+                [
+                    803.83,
+                    1897.5,
+                    "COLLECT"
+                ],
+                [
+                    804.48,
+                    1899.22,
+                    "COLLECT"
+                ],
+                [
+                    787.07,
+                    1846.3,
+                    "COLLECT"
+                ],
+                [
+                    787.99,
+                    1846.44,
+                    "COLLECT"
+                ],
+                [
+                    788.93,
+                    1845.14,
+                    "COLLECT"
+                ],
+                [
+                    828.45,
+                    1789.85,
+                    "COLLECT"
+                ],
+                [
+                    829.12,
+                    1787.64,
+                    "COLLECT"
+                ],
+                [
+                    834.39,
+                    1788.15,
+                    "COLLECT"
+                ],
+                [
+                    836.24,
+                    1785.93,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity6Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity6Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingWulingCity6Spcstone21Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-储备站左上大世界（22800060090）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity6"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity6Spcstone21Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity6Spcstone21Goto": {
+        "desc": "采集武陵城-储备站左上大世界附近的 int_doodad_spcstone_2_1，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        842.49,
+                        1953.17
+                    ]
+                },
+                [
+                    842.49,
+                    1953.17,
+                    "COLLECT"
+                ],
+                [
+                    841.55,
+                    1955.16,
+                    "COLLECT"
+                ],
+                [
+                    838.74,
+                    1954.45,
+                    "COLLECT"
+                ],
+                [
+                    835.55,
+                    1952.37,
+                    "COLLECT"
+                ],
+                [
+                    833.1,
+                    1950.04,
+                    "COLLECT"
+                ],
+                [
+                    831.81,
+                    1951.8,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity6Spcstone21End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity6Spcstone21End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

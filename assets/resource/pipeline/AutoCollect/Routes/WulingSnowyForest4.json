@@ -1,0 +1,414 @@
+{
+    "AutoCollectRouteWulingSnowyForest4Flower3Start": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-雾凇山谷左上角大世界（36100010458）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest4Flower3Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest4Flower3Goto": {
+        "desc": "采集雪松林-雾凇山谷左上角大世界附近的 int_doodad_flower_3，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1552.79,
+                        1025.93
+                    ]
+                },
+                [
+                    1552.79,
+                    1025.93,
+                    "COLLECT"
+                ],
+                [
+                    1548.17,
+                    1023.9,
+                    "COLLECT"
+                ],
+                [
+                    1549.57,
+                    1022.58,
+                    "COLLECT"
+                ],
+                [
+                    1558.69,
+                    1015.6,
+                    "COLLECT"
+                ],
+                [
+                    1561.49,
+                    1012.24,
+                    "COLLECT"
+                ],
+                [
+                    1551.1,
+                    1006.91,
+                    "COLLECT"
+                ],
+                [
+                    1551.48,
+                    1004.34,
+                    "COLLECT"
+                ],
+                [
+                    1551.13,
+                    1002.25,
+                    "COLLECT"
+                ],
+                [
+                    1528.68,
+                    1017.1,
+                    "COLLECT"
+                ],
+                [
+                    1528.69,
+                    1018.26,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest4Flower3End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest4Flower3End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingSnowyForest4Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-雾凇山谷左上角大世界（36100010458）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest4Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest4Grass2Goto": {
+        "desc": "采集雪松林-雾凇山谷左上角大世界附近的 int_doodad_grass_2，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1590.52,
+                        1060.23
+                    ]
+                },
+                [
+                    1590.52,
+                    1060.23,
+                    "COLLECT"
+                ],
+                [
+                    1586.57,
+                    1060.69,
+                    "COLLECT"
+                ],
+                [
+                    1670.31,
+                    1096.96,
+                    "COLLECT"
+                ],
+                [
+                    1671.1,
+                    1099.02,
+                    "COLLECT"
+                ],
+                [
+                    1674.63,
+                    1104.4,
+                    "COLLECT"
+                ],
+                [
+                    1679.42,
+                    1108.96,
+                    "COLLECT"
+                ],
+                [
+                    1681.83,
+                    1098.66,
+                    "COLLECT"
+                ],
+                [
+                    1681.76,
+                    1097.36,
+                    "COLLECT"
+                ],
+                [
+                    1677.1,
+                    1092.09,
+                    "COLLECT"
+                ],
+                [
+                    1676.03,
+                    1092.32,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest4Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest4Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingSnowyForest4OreClusterCopperStart": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-雾凇山谷左上角大世界（36100010458）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest4OreClusterCopperGoto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest4OreClusterCopperGoto": {
+        "desc": "采集雪松林-雾凇山谷左上角大世界附近的 int_doodad_ore_cluster_copper，共 30 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1578.07,
+                        1054.98
+                    ]
+                },
+                [
+                    1578.07,
+                    1054.98,
+                    "COLLECT"
+                ],
+                [
+                    1577.97,
+                    1053.35,
+                    "COLLECT"
+                ],
+                [
+                    1580.32,
+                    1048.98,
+                    "COLLECT"
+                ],
+                [
+                    1580.22,
+                    1047.35,
+                    "COLLECT"
+                ],
+                [
+                    1579.04,
+                    1046.79,
+                    "COLLECT"
+                ],
+                [
+                    1577.67,
+                    1047.66,
+                    "COLLECT"
+                ],
+                [
+                    1577.57,
+                    1048.49,
+                    "COLLECT"
+                ],
+                [
+                    1578.55,
+                    1049.32,
+                    "COLLECT"
+                ],
+                [
+                    1576.79,
+                    1052.79,
+                    "COLLECT"
+                ],
+                [
+                    1575.42,
+                    1053.66,
+                    "COLLECT"
+                ],
+                [
+                    1575.32,
+                    1054.49,
+                    "COLLECT"
+                ],
+                [
+                    1576.3,
+                    1055.32,
+                    "COLLECT"
+                ],
+                [
+                    1544.25,
+                    1091.42,
+                    "COLLECT"
+                ],
+                [
+                    1542.64,
+                    1091.13,
+                    "COLLECT"
+                ],
+                [
+                    1541.81,
+                    1092.13,
+                    "COLLECT"
+                ],
+                [
+                    1542.32,
+                    1093.67,
+                    "COLLECT"
+                ],
+                [
+                    1543.1,
+                    1093.98,
+                    "COLLECT"
+                ],
+                [
+                    1544.14,
+                    1093.23,
+                    "COLLECT"
+                ],
+                [
+                    1542.29,
+                    1098.54,
+                    "COLLECT"
+                ],
+                [
+                    1543.47,
+                    1099.1,
+                    "COLLECT"
+                ],
+                [
+                    1543.57,
+                    1100.73,
+                    "COLLECT"
+                ],
+                [
+                    1541.8,
+                    1101.07,
+                    "COLLECT"
+                ],
+                [
+                    1540.82,
+                    1100.24,
+                    "COLLECT"
+                ],
+                [
+                    1540.92,
+                    1099.41,
+                    "COLLECT"
+                ],
+                [
+                    1538.38,
+                    1095.09,
+                    "COLLECT"
+                ],
+                [
+                    1538.18,
+                    1093.81,
+                    "COLLECT"
+                ],
+                [
+                    1536.69,
+                    1093.16,
+                    "COLLECT"
+                ],
+                [
+                    1535.95,
+                    1093.54,
+                    "COLLECT"
+                ],
+                [
+                    1535.81,
+                    1094.82,
+                    "COLLECT"
+                ],
+                [
+                    1537.09,
+                    1096.1,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest4OreClusterCopperEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest4OreClusterCopperEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

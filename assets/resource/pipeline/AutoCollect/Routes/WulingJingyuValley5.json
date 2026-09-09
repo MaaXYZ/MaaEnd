@@ -1,0 +1,116 @@
+{
+    "AutoCollectRouteWulingJingyuValley5OreClusterOriginiumStart": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-天王坪大世界（10100030146）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley5"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley5OreClusterOriginiumGoto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley5OreClusterOriginiumGoto": {
+        "desc": "采集景玉谷-天王坪大世界附近的 int_doodad_ore_cluster_originium，共 12 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        943.16,
+                        2433.25
+                    ]
+                },
+                [
+                    943.16,
+                    2433.25,
+                    "COLLECT"
+                ],
+                [
+                    943.56,
+                    2434.98,
+                    "COLLECT"
+                ],
+                [
+                    941.63,
+                    2435.44,
+                    "COLLECT"
+                ],
+                [
+                    941.07,
+                    2434.62,
+                    "COLLECT"
+                ],
+                [
+                    940.98,
+                    2433.47,
+                    "COLLECT"
+                ],
+                [
+                    942.22,
+                    2432.95,
+                    "COLLECT"
+                ],
+                [
+                    939.81,
+                    2431.23,
+                    "COLLECT"
+                ],
+                [
+                    939.41,
+                    2429.5,
+                    "COLLECT"
+                ],
+                [
+                    938.47,
+                    2429.2,
+                    "COLLECT"
+                ],
+                [
+                    937.23,
+                    2429.72,
+                    "COLLECT"
+                ],
+                [
+                    937.32,
+                    2430.87,
+                    "COLLECT"
+                ],
+                [
+                    937.88,
+                    2431.69,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley5OreClusterOriginiumEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley5OreClusterOriginiumEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

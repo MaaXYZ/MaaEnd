@@ -1,0 +1,355 @@
+{
+    "AutoCollectRouteWulingWulingCity2Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-待修缮区大世界（22800030009）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity2Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity2Grass1Goto": {
+        "desc": "采集武陵城-待修缮区大世界附近的 int_doodad_grass_1，共 19 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        920.34,
+                        1578.02
+                    ]
+                },
+                [
+                    920.34,
+                    1578.02,
+                    "COLLECT"
+                ],
+                [
+                    920.86,
+                    1575.31,
+                    "COLLECT"
+                ],
+                [
+                    920.69,
+                    1572.71,
+                    "COLLECT"
+                ],
+                [
+                    917.58,
+                    1574.9,
+                    "COLLECT"
+                ],
+                [
+                    871.13,
+                    1573.86,
+                    "COLLECT"
+                ],
+                [
+                    870.07,
+                    1576.86,
+                    "COLLECT"
+                ],
+                [
+                    880.52,
+                    1659.38,
+                    "COLLECT"
+                ],
+                [
+                    880.06,
+                    1660.59,
+                    "COLLECT"
+                ],
+                [
+                    881.71,
+                    1661.76,
+                    "COLLECT"
+                ],
+                [
+                    886.58,
+                    1658.92,
+                    "COLLECT"
+                ],
+                [
+                    913.49,
+                    1664.83,
+                    "COLLECT"
+                ],
+                [
+                    914.63,
+                    1662.13,
+                    "COLLECT"
+                ],
+                [
+                    916.68,
+                    1662.15,
+                    "COLLECT"
+                ],
+                [
+                    964.32,
+                    1644.34,
+                    "COLLECT"
+                ],
+                [
+                    968.22,
+                    1646.36,
+                    "COLLECT"
+                ],
+                [
+                    971.12,
+                    1643.44,
+                    "COLLECT"
+                ],
+                [
+                    970.69,
+                    1605.01,
+                    "COLLECT"
+                ],
+                [
+                    970.57,
+                    1602.99,
+                    "COLLECT"
+                ],
+                [
+                    973.56,
+                    1602.71,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity2Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity2Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingWulingCity2OreClusterOriginiumStart": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-待修缮区大世界（22800030009）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity2OreClusterOriginiumGoto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity2OreClusterOriginiumGoto": {
+        "desc": "采集武陵城-待修缮区大世界附近的 int_doodad_ore_cluster_originium，共 30 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        964.32,
+                        1572.12
+                    ]
+                },
+                [
+                    964.32,
+                    1572.12,
+                    "COLLECT"
+                ],
+                [
+                    964.24,
+                    1570.96,
+                    "COLLECT"
+                ],
+                [
+                    965.47,
+                    1570.46,
+                    "COLLECT"
+                ],
+                [
+                    966.4,
+                    1570.75,
+                    "COLLECT"
+                ],
+                [
+                    966.81,
+                    1572.49,
+                    "COLLECT"
+                ],
+                [
+                    964.88,
+                    1572.94,
+                    "COLLECT"
+                ],
+                [
+                    966.5,
+                    1576.21,
+                    "COLLECT"
+                ],
+                [
+                    966.57,
+                    1577.37,
+                    "COLLECT"
+                ],
+                [
+                    967.12,
+                    1578.17,
+                    "COLLECT"
+                ],
+                [
+                    969.06,
+                    1577.73,
+                    "COLLECT"
+                ],
+                [
+                    968.66,
+                    1576,
+                    "COLLECT"
+                ],
+                [
+                    967.72,
+                    1575.7,
+                    "COLLECT"
+                ],
+                [
+                    972.5,
+                    1570.96,
+                    "COLLECT"
+                ],
+                [
+                    973.72,
+                    1570.49,
+                    "COLLECT"
+                ],
+                [
+                    974.64,
+                    1570.75,
+                    "COLLECT"
+                ],
+                [
+                    972.57,
+                    1572.12,
+                    "COLLECT"
+                ],
+                [
+                    973.13,
+                    1572.94,
+                    "COLLECT"
+                ],
+                [
+                    975.06,
+                    1572.48,
+                    "COLLECT"
+                ],
+                [
+                    974.73,
+                    1578.47,
+                    "COLLECT"
+                ],
+                [
+                    974.82,
+                    1579.62,
+                    "COLLECT"
+                ],
+                [
+                    975.38,
+                    1580.44,
+                    "COLLECT"
+                ],
+                [
+                    975.97,
+                    1577.95,
+                    "COLLECT"
+                ],
+                [
+                    976.91,
+                    1578.25,
+                    "COLLECT"
+                ],
+                [
+                    977.31,
+                    1579.99,
+                    "COLLECT"
+                ],
+                [
+                    979.99,
+                    1581.46,
+                    "COLLECT"
+                ],
+                [
+                    980.07,
+                    1582.62,
+                    "COLLECT"
+                ],
+                [
+                    980.63,
+                    1583.44,
+                    "COLLECT"
+                ],
+                [
+                    982.56,
+                    1582.98,
+                    "COLLECT"
+                ],
+                [
+                    982.16,
+                    1581.25,
+                    "COLLECT"
+                ],
+                [
+                    981.22,
+                    1580.95,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity2OreClusterOriginiumEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity2OreClusterOriginiumEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

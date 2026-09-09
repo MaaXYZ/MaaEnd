@@ -1,0 +1,91 @@
+{
+    "AutoCollectRouteWulingWulingCity0Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-观测站大世界（22800060089）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity0"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity0Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity0Grass2Goto": {
+        "desc": "采集武陵城-观测站大世界附近的 int_doodad_grass_2，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        957.53,
+                        1315.03
+                    ]
+                },
+                [
+                    957.53,
+                    1315.03,
+                    "COLLECT"
+                ],
+                [
+                    962.11,
+                    1315.4,
+                    "COLLECT"
+                ],
+                [
+                    963.59,
+                    1310.97,
+                    "COLLECT"
+                ],
+                [
+                    998.57,
+                    1325.75,
+                    "COLLECT"
+                ],
+                [
+                    1001.41,
+                    1328.04,
+                    "COLLECT"
+                ],
+                [
+                    999.3,
+                    1329.82,
+                    "COLLECT"
+                ],
+                [
+                    995.51,
+                    1333.72,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity0Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity0Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

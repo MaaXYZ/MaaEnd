@@ -1,0 +1,206 @@
+{
+    "AutoCollectRouteWulingNorthWulingExclusionZone2OreClusterCopperStart": {
+        "desc": "AutoCollect 采集路线：传送到北部禁区-城建区西北侧大世界（23100010220）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingNorthWulingExclusionZone2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone2OreClusterCopperGoto"
+        ]
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone2OreClusterCopperGoto": {
+        "desc": "采集北部禁区-城建区西北侧大世界附近的 int_doodad_ore_cluster_copper，共 30 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1184.97,
+                        460.1
+                    ]
+                },
+                [
+                    1184.97,
+                    460.1,
+                    "COLLECT"
+                ],
+                [
+                    1183.79,
+                    459.54,
+                    "COLLECT"
+                ],
+                [
+                    1182.42,
+                    460.41,
+                    "COLLECT"
+                ],
+                [
+                    1182.32,
+                    461.24,
+                    "COLLECT"
+                ],
+                [
+                    1185.07,
+                    461.73,
+                    "COLLECT"
+                ],
+                [
+                    1183.3,
+                    462.07,
+                    "COLLECT"
+                ],
+                [
+                    1180.47,
+                    465.35,
+                    "COLLECT"
+                ],
+                [
+                    1180.57,
+                    466.98,
+                    "COLLECT"
+                ],
+                [
+                    1178.8,
+                    467.32,
+                    "COLLECT"
+                ],
+                [
+                    1177.82,
+                    466.49,
+                    "COLLECT"
+                ],
+                [
+                    1177.92,
+                    465.66,
+                    "COLLECT"
+                ],
+                [
+                    1179.29,
+                    464.79,
+                    "COLLECT"
+                ],
+                [
+                    1174.57,
+                    460.98,
+                    "COLLECT"
+                ],
+                [
+                    1177.3,
+                    458.32,
+                    "COLLECT"
+                ],
+                [
+                    1179.07,
+                    457.98,
+                    "COLLECT"
+                ],
+                [
+                    1178.97,
+                    456.35,
+                    "COLLECT"
+                ],
+                [
+                    1177.79,
+                    455.79,
+                    "COLLECT"
+                ],
+                [
+                    1176.42,
+                    456.66,
+                    "COLLECT"
+                ],
+                [
+                    1176.32,
+                    457.49,
+                    "COLLECT"
+                ],
+                [
+                    1174.47,
+                    459.35,
+                    "COLLECT"
+                ],
+                [
+                    1173.29,
+                    458.79,
+                    "COLLECT"
+                ],
+                [
+                    1172.8,
+                    461.32,
+                    "COLLECT"
+                ],
+                [
+                    1171.82,
+                    460.49,
+                    "COLLECT"
+                ],
+                [
+                    1171.92,
+                    459.66,
+                    "COLLECT"
+                ],
+                [
+                    1169.32,
+                    457.98,
+                    "COLLECT"
+                ],
+                [
+                    1169.22,
+                    456.35,
+                    "COLLECT"
+                ],
+                [
+                    1168.04,
+                    455.79,
+                    "COLLECT"
+                ],
+                [
+                    1166.67,
+                    456.66,
+                    "COLLECT"
+                ],
+                [
+                    1166.57,
+                    457.49,
+                    "COLLECT"
+                ],
+                [
+                    1167.55,
+                    458.32,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone2OreClusterCopperEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone2OreClusterCopperEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

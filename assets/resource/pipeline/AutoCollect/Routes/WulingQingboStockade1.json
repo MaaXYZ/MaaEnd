@@ -1,0 +1,86 @@
+{
+    "AutoCollectRouteWulingQingboStockade1Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到清波寨-栈桥道大世界（23300000097）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingQingboStockade1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingQingboStockade1Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingQingboStockade1Insect1Goto": {
+        "desc": "采集清波寨-栈桥道大世界附近的 int_doodad_insect_1，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1127.23,
+                        2300.26
+                    ]
+                },
+                [
+                    1127.23,
+                    2300.26,
+                    "COLLECT"
+                ],
+                [
+                    1123.18,
+                    2285.47,
+                    "COLLECT"
+                ],
+                [
+                    1120.62,
+                    2272.9,
+                    "COLLECT"
+                ],
+                [
+                    1117.03,
+                    2273.78,
+                    "COLLECT"
+                ],
+                [
+                    1115.09,
+                    2270.09,
+                    "COLLECT"
+                ],
+                [
+                    1153.73,
+                    2207.09,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingQingboStockade1Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingQingboStockade1Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

@@ -1,0 +1,304 @@
+{
+    "AutoCollectRouteWulingJingyuValley6Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-驮鼻山大世界（10100020646）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley6"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley6Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley6Grass1Goto": {
+        "desc": "采集景玉谷-驮鼻山大世界附近的 int_doodad_grass_1，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        976.16,
+                        2541.88
+                    ]
+                },
+                [
+                    976.16,
+                    2541.88,
+                    "COLLECT"
+                ],
+                [
+                    976.54,
+                    2542.77,
+                    "COLLECT"
+                ],
+                [
+                    988.23,
+                    2549.55,
+                    "COLLECT"
+                ],
+                [
+                    964.92,
+                    2546.65,
+                    "COLLECT"
+                ],
+                [
+                    967.3,
+                    2570.55,
+                    "COLLECT"
+                ],
+                [
+                    963.68,
+                    2571.35,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley6Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley6Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley6Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-驮鼻山大世界（10100020646）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley6"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley6Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley6Insect1Goto": {
+        "desc": "采集景玉谷-驮鼻山大世界附近的 int_doodad_insect_1，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        963.15,
+                        2526.87
+                    ]
+                },
+                [
+                    963.15,
+                    2526.87,
+                    "COLLECT"
+                ],
+                [
+                    960.56,
+                    2532.1,
+                    "COLLECT"
+                ],
+                [
+                    962.36,
+                    2543.8,
+                    "COLLECT"
+                ],
+                [
+                    957.79,
+                    2540.1,
+                    "COLLECT"
+                ],
+                [
+                    953.36,
+                    2540.97,
+                    "COLLECT"
+                ],
+                [
+                    951.58,
+                    2535.26,
+                    "COLLECT"
+                ],
+                [
+                    955.9,
+                    2427.97,
+                    "COLLECT"
+                ],
+                [
+                    957.77,
+                    2427.49,
+                    "COLLECT"
+                ],
+                [
+                    953.36,
+                    2418.29,
+                    "COLLECT"
+                ],
+                [
+                    954.76,
+                    2416.77,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley6Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley6Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley6OreClusterOriginiumStart": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-驮鼻山大世界（10100020646）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley6"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley6OreClusterOriginiumGoto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley6OreClusterOriginiumGoto": {
+        "desc": "采集景玉谷-驮鼻山大世界附近的 int_doodad_ore_cluster_originium，共 12 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        943.56,
+                        2434.98
+                    ]
+                },
+                [
+                    943.56,
+                    2434.98,
+                    "COLLECT"
+                ],
+                [
+                    941.63,
+                    2435.44,
+                    "COLLECT"
+                ],
+                [
+                    941.07,
+                    2434.62,
+                    "COLLECT"
+                ],
+                [
+                    943.16,
+                    2433.25,
+                    "COLLECT"
+                ],
+                [
+                    942.22,
+                    2432.95,
+                    "COLLECT"
+                ],
+                [
+                    940.98,
+                    2433.47,
+                    "COLLECT"
+                ],
+                [
+                    939.81,
+                    2431.23,
+                    "COLLECT"
+                ],
+                [
+                    939.41,
+                    2429.5,
+                    "COLLECT"
+                ],
+                [
+                    938.47,
+                    2429.2,
+                    "COLLECT"
+                ],
+                [
+                    937.23,
+                    2429.72,
+                    "COLLECT"
+                ],
+                [
+                    937.32,
+                    2430.87,
+                    "COLLECT"
+                ],
+                [
+                    937.88,
+                    2431.69,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley6OreClusterOriginiumEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley6OreClusterOriginiumEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

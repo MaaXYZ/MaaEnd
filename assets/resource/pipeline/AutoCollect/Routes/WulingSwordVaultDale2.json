@@ -1,0 +1,86 @@
+{
+    "AutoCollectRouteWulingSwordVaultDale2Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到藏剑谷-悬谷台大世界（25000000462）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSwordVaultDale2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSwordVaultDale2Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSwordVaultDale2Grass2Goto": {
+        "desc": "采集藏剑谷-悬谷台大世界附近的 int_doodad_grass_2，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1774.08,
+                        2844.68
+                    ]
+                },
+                [
+                    1774.08,
+                    2844.68,
+                    "COLLECT"
+                ],
+                [
+                    1768.87,
+                    2844.33,
+                    "COLLECT"
+                ],
+                [
+                    1765.53,
+                    2856.29,
+                    "COLLECT"
+                ],
+                [
+                    1760.69,
+                    2865.26,
+                    "COLLECT"
+                ],
+                [
+                    1761.78,
+                    2832.72,
+                    "COLLECT"
+                ],
+                [
+                    1849.34,
+                    2784.13,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSwordVaultDale2Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSwordVaultDale2Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

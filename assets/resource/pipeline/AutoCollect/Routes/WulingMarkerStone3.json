@@ -1,0 +1,626 @@
+{
+    "AutoCollectRouteWulingMarkerStone3Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-控制区大世界（23400083106）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone3Grass1Goto": {
+        "desc": "采集首墩-控制区大世界附近的 int_doodad_grass_1，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        564.5,
+                        2214.72
+                    ]
+                },
+                [
+                    564.5,
+                    2214.72,
+                    "COLLECT"
+                ],
+                [
+                    563.58,
+                    2208.97,
+                    "COLLECT"
+                ],
+                [
+                    567.88,
+                    2200.67,
+                    "COLLECT"
+                ],
+                [
+                    568.45,
+                    2198.68,
+                    "COLLECT"
+                ],
+                [
+                    570.62,
+                    2197.45,
+                    "COLLECT"
+                ],
+                [
+                    568.99,
+                    2194.47,
+                    "COLLECT"
+                ],
+                [
+                    567.4,
+                    2194.09,
+                    "COLLECT"
+                ],
+                [
+                    564.53,
+                    2192.78,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone3Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone3Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-控制区大世界（23400083106）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone3Grass2Goto": {
+        "desc": "采集首墩-控制区大世界附近的 int_doodad_grass_2，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        564.85,
+                        2214.51
+                    ]
+                },
+                [
+                    564.85,
+                    2214.51,
+                    "COLLECT"
+                ],
+                [
+                    563.76,
+                    2213.95,
+                    "COLLECT"
+                ],
+                [
+                    561,
+                    2212.98,
+                    "COLLECT"
+                ],
+                [
+                    559.83,
+                    2212.01,
+                    "COLLECT"
+                ],
+                [
+                    561.54,
+                    2211.8,
+                    "COLLECT"
+                ],
+                [
+                    564.25,
+                    2209.56,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone3Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone3Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-控制区大世界（23400083106）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone3Insect1Goto": {
+        "desc": "采集首墩-控制区大世界附近的 int_doodad_insect_1，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        621.02,
+                        2251.3
+                    ]
+                },
+                [
+                    621.02,
+                    2251.3,
+                    "COLLECT"
+                ],
+                [
+                    622.54,
+                    2250.54,
+                    "COLLECT"
+                ],
+                [
+                    622.08,
+                    2252.78,
+                    "COLLECT"
+                ],
+                [
+                    623.8,
+                    2267.9,
+                    "COLLECT"
+                ],
+                [
+                    622.77,
+                    2270.47,
+                    "COLLECT"
+                ],
+                [
+                    556.85,
+                    2253.72,
+                    "COLLECT"
+                ],
+                [
+                    559.08,
+                    2235.29,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone3Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone3Insect2Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-控制区大世界（23400083106）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Insect2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone3Insect2Goto": {
+        "desc": "采集首墩-控制区大世界附近的 int_doodad_insect_2，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        608.01,
+                        2251.11
+                    ]
+                },
+                [
+                    608.01,
+                    2251.11,
+                    "COLLECT"
+                ],
+                [
+                    607.56,
+                    2253.57,
+                    "COLLECT"
+                ],
+                [
+                    608.45,
+                    2255.89,
+                    "COLLECT"
+                ],
+                [
+                    617.06,
+                    2263.61,
+                    "COLLECT"
+                ],
+                [
+                    614.57,
+                    2263.83,
+                    "COLLECT"
+                ],
+                [
+                    551.97,
+                    2230.83,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Insect2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone3Insect2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone3Mushroom12Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-控制区大世界（23400083106）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Mushroom12Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone3Mushroom12Goto": {
+        "desc": "采集首墩-控制区大世界附近的 int_doodad_mushroom_1_2，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        612.97,
+                        2268.19
+                    ]
+                },
+                [
+                    612.97,
+                    2268.19,
+                    "COLLECT"
+                ],
+                [
+                    614.21,
+                    2269.47,
+                    "COLLECT"
+                ],
+                [
+                    615.67,
+                    2269.39,
+                    "COLLECT"
+                ],
+                [
+                    615.73,
+                    2270.71,
+                    "COLLECT"
+                ],
+                [
+                    617.73,
+                    2270.89,
+                    "COLLECT"
+                ],
+                [
+                    617.03,
+                    2272.45,
+                    "COLLECT"
+                ],
+                [
+                    618.16,
+                    2272.17,
+                    "COLLECT"
+                ],
+                [
+                    619.46,
+                    2271.81,
+                    "COLLECT"
+                ],
+                [
+                    621.25,
+                    2270.34,
+                    "COLLECT"
+                ],
+                [
+                    622.65,
+                    2269.17,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3Mushroom12End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone3Mushroom12End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone3OreClusterCopperStart": {
+        "desc": "AutoCollect 采集路线：传送到首墩-控制区大世界（23400083106）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3OreClusterCopperGoto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone3OreClusterCopperGoto": {
+        "desc": "采集首墩-控制区大世界附近的 int_doodad_ore_cluster_copper，共 23 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        612.16,
+                        2235.24
+                    ]
+                },
+                [
+                    612.16,
+                    2235.24,
+                    "COLLECT"
+                ],
+                [
+                    612.58,
+                    2233.35,
+                    "COLLECT"
+                ],
+                [
+                    611.48,
+                    2232.11,
+                    "COLLECT"
+                ],
+                [
+                    613.75,
+                    2232.26,
+                    "COLLECT"
+                ],
+                [
+                    613.49,
+                    2228.81,
+                    "COLLECT"
+                ],
+                [
+                    615.09,
+                    2229.13,
+                    "COLLECT"
+                ],
+                [
+                    615.93,
+                    2228.14,
+                    "COLLECT"
+                ],
+                [
+                    615.45,
+                    2226.59,
+                    "COLLECT"
+                ],
+                [
+                    613.62,
+                    2227.01,
+                    "COLLECT"
+                ],
+                [
+                    614.68,
+                    2226.27,
+                    "COLLECT"
+                ],
+                [
+                    620.57,
+                    2224.49,
+                    "COLLECT"
+                ],
+                [
+                    620.67,
+                    2223.66,
+                    "COLLECT"
+                ],
+                [
+                    622.04,
+                    2222.79,
+                    "COLLECT"
+                ],
+                [
+                    623.22,
+                    2223.35,
+                    "COLLECT"
+                ],
+                [
+                    623.32,
+                    2224.98,
+                    "COLLECT"
+                ],
+                [
+                    621.55,
+                    2225.32,
+                    "COLLECT"
+                ],
+                [
+                    614.92,
+                    2233.53,
+                    "COLLECT"
+                ],
+                [
+                    613.68,
+                    2234.4,
+                    "COLLECT"
+                ],
+                [
+                    613.62,
+                    2236.5,
+                    "COLLECT"
+                ],
+                [
+                    627.29,
+                    2269.39,
+                    "COLLECT"
+                ],
+                [
+                    628.21,
+                    2268.68,
+                    "COLLECT"
+                ],
+                [
+                    637.6,
+                    2266.76,
+                    "COLLECT"
+                ],
+                [
+                    637.91,
+                    2267.79,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone3OreClusterCopperEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone3OreClusterCopperEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

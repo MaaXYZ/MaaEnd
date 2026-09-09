@@ -1,0 +1,106 @@
+{
+    "AutoCollectRouteWulingNorthWulingExclusionZone8Crylplant12Start": {
+        "desc": "AutoCollect 采集路线：传送到北部禁区-幽台试验场大世界（23100010733）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingNorthWulingExclusionZone8"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone8Crylplant12Goto"
+        ]
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone8Crylplant12Goto": {
+        "desc": "采集北部禁区-幽台试验场大世界附近的 int_doodad_crylplant_1_2，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1550.98,
+                        327.34
+                    ]
+                },
+                [
+                    1550.98,
+                    327.34,
+                    "COLLECT"
+                ],
+                [
+                    1550.15,
+                    329.3,
+                    "COLLECT"
+                ],
+                [
+                    1552.34,
+                    330.59,
+                    "COLLECT"
+                ],
+                [
+                    1555.15,
+                    332.08,
+                    "COLLECT"
+                ],
+                [
+                    1557.39,
+                    330.86,
+                    "COLLECT"
+                ],
+                [
+                    1560.77,
+                    329.79,
+                    "COLLECT"
+                ],
+                [
+                    1559.15,
+                    327.06,
+                    "COLLECT"
+                ],
+                [
+                    1557.82,
+                    324.96,
+                    "COLLECT"
+                ],
+                [
+                    1555.48,
+                    324.48,
+                    "COLLECT"
+                ],
+                [
+                    1553.59,
+                    323.72,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone8Crylplant12End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone8Crylplant12End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

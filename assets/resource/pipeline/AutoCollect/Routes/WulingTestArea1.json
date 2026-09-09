@@ -1,0 +1,642 @@
+{
+    "AutoCollectRouteWulingTestArea1Corp4Start": {
+        "desc": "AutoCollect 采集路线：传送到试验园区-综合科研区下大世界（23200013265）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingTestArea1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Corp4Goto"
+        ]
+    },
+    "AutoCollectRouteWulingTestArea1Corp4Goto": {
+        "desc": "采集试验园区-综合科研区下大世界附近的 int_doodad_corp_4，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1333.42,
+                        1764.76
+                    ]
+                },
+                [
+                    1333.42,
+                    1764.76,
+                    "COLLECT"
+                ],
+                [
+                    1335.12,
+                    1763.49,
+                    "COLLECT"
+                ],
+                [
+                    1337.51,
+                    1764.52,
+                    "COLLECT"
+                ],
+                [
+                    1337.51,
+                    1764.52,
+                    "COLLECT"
+                ],
+                [
+                    1337.36,
+                    1761.35,
+                    "COLLECT"
+                ],
+                [
+                    1338.37,
+                    1761.02,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Corp4End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingTestArea1Corp4End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingTestArea1Crylplant12Start": {
+        "desc": "AutoCollect 采集路线：传送到试验园区-综合科研区下大世界（23200013265）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingTestArea1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Crylplant12Goto"
+        ]
+    },
+    "AutoCollectRouteWulingTestArea1Crylplant12Goto": {
+        "desc": "采集试验园区-综合科研区下大世界附近的 int_doodad_crylplant_1_2，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1358.73,
+                        1745.62
+                    ]
+                },
+                [
+                    1358.73,
+                    1745.62,
+                    "COLLECT"
+                ],
+                [
+                    1359.98,
+                    1746.41,
+                    "COLLECT"
+                ],
+                [
+                    1361.15,
+                    1746.23,
+                    "COLLECT"
+                ],
+                [
+                    1361.24,
+                    1744.76,
+                    "COLLECT"
+                ],
+                [
+                    1361.24,
+                    1743.35,
+                    "COLLECT"
+                ],
+                [
+                    1362.19,
+                    1746.33,
+                    "COLLECT"
+                ],
+                [
+                    1364.11,
+                    1746.45,
+                    "COLLECT"
+                ],
+                [
+                    1362.93,
+                    1748.52,
+                    "COLLECT"
+                ],
+                [
+                    1361.17,
+                    1748.28,
+                    "COLLECT"
+                ],
+                [
+                    1361.23,
+                    1750.84,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Crylplant12End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingTestArea1Crylplant12End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingTestArea1GradeStart": {
+        "desc": "AutoCollect 采集路线：传送到试验园区-综合科研区下大世界（23200013265）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingTestArea1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1GradeGoto"
+        ]
+    },
+    "AutoCollectRouteWulingTestArea1GradeGoto": {
+        "desc": "采集试验园区-综合科研区下大世界附近的 int_doodad_grade，共 28 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1283.49,
+                        1746.17
+                    ]
+                },
+                [
+                    1283.49,
+                    1746.17,
+                    "COLLECT"
+                ],
+                [
+                    1262,
+                    1755.76,
+                    "COLLECT"
+                ],
+                [
+                    1230.41,
+                    1765.49,
+                    "COLLECT"
+                ],
+                [
+                    1226.71,
+                    1762.61,
+                    "COLLECT"
+                ],
+                [
+                    1212.84,
+                    1760.8,
+                    "COLLECT"
+                ],
+                [
+                    1209.05,
+                    1765.55,
+                    "COLLECT"
+                ],
+                [
+                    1208.08,
+                    1765.54,
+                    "COLLECT"
+                ],
+                [
+                    1206.36,
+                    1734.01,
+                    "COLLECT"
+                ],
+                [
+                    1243.46,
+                    1733.83,
+                    "COLLECT"
+                ],
+                [
+                    1243.99,
+                    1734.71,
+                    "COLLECT"
+                ],
+                [
+                    1253.03,
+                    1728.66,
+                    "COLLECT"
+                ],
+                [
+                    1277.68,
+                    1721.8,
+                    "COLLECT"
+                ],
+                [
+                    1277.82,
+                    1720.8,
+                    "COLLECT"
+                ],
+                [
+                    1268.89,
+                    1707.42,
+                    "COLLECT"
+                ],
+                [
+                    1270.54,
+                    1694.03,
+                    "COLLECT"
+                ],
+                [
+                    1265.7,
+                    1694,
+                    "COLLECT"
+                ],
+                [
+                    1259.23,
+                    1686.66,
+                    "COLLECT"
+                ],
+                [
+                    1290.11,
+                    1670.27,
+                    "COLLECT"
+                ],
+                [
+                    1296.26,
+                    1671.27,
+                    "COLLECT"
+                ],
+                [
+                    1305.54,
+                    1671.38,
+                    "COLLECT"
+                ],
+                [
+                    1305.57,
+                    1672.38,
+                    "COLLECT"
+                ],
+                [
+                    1315.05,
+                    1679.45,
+                    "COLLECT"
+                ],
+                [
+                    1311.29,
+                    1713.27,
+                    "COLLECT"
+                ],
+                [
+                    1322.03,
+                    1738.15,
+                    "COLLECT"
+                ],
+                [
+                    1364.61,
+                    1735.08,
+                    "COLLECT"
+                ],
+                [
+                    1359.07,
+                    1724,
+                    "COLLECT"
+                ],
+                [
+                    1354.98,
+                    1720.13,
+                    "COLLECT"
+                ],
+                [
+                    1352.34,
+                    1697.49,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1GradeEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingTestArea1GradeEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingTestArea1Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到试验园区-综合科研区下大世界（23200013265）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingTestArea1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingTestArea1Grass2Goto": {
+        "desc": "采集试验园区-综合科研区下大世界附近的 int_doodad_grass_2，共 23 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1323.67,
+                        1743.91
+                    ]
+                },
+                [
+                    1323.67,
+                    1743.91,
+                    "COLLECT"
+                ],
+                [
+                    1344.38,
+                    1762.92,
+                    "COLLECT"
+                ],
+                [
+                    1355.07,
+                    1727.77,
+                    "COLLECT"
+                ],
+                [
+                    1344.07,
+                    1726.09,
+                    "COLLECT"
+                ],
+                [
+                    1314.93,
+                    1700.48,
+                    "COLLECT"
+                ],
+                [
+                    1337.65,
+                    1681.36,
+                    "COLLECT"
+                ],
+                [
+                    1313.09,
+                    1673.37,
+                    "COLLECT"
+                ],
+                [
+                    1312.57,
+                    1671.55,
+                    "COLLECT"
+                ],
+                [
+                    1276.35,
+                    1677.98,
+                    "COLLECT"
+                ],
+                [
+                    1273.39,
+                    1706.53,
+                    "COLLECT"
+                ],
+                [
+                    1268.74,
+                    1714.37,
+                    "COLLECT"
+                ],
+                [
+                    1269.47,
+                    1720.2,
+                    "COLLECT"
+                ],
+                [
+                    1252.54,
+                    1740.14,
+                    "COLLECT"
+                ],
+                [
+                    1249.09,
+                    1737.8,
+                    "COLLECT"
+                ],
+                [
+                    1244.73,
+                    1743.22,
+                    "COLLECT"
+                ],
+                [
+                    1248.96,
+                    1747.03,
+                    "COLLECT"
+                ],
+                [
+                    1255.64,
+                    1746.38,
+                    "COLLECT"
+                ],
+                [
+                    1242.19,
+                    1756.28,
+                    "COLLECT"
+                ],
+                [
+                    1240.28,
+                    1760.94,
+                    "COLLECT"
+                ],
+                [
+                    1233.03,
+                    1745.46,
+                    "COLLECT"
+                ],
+                [
+                    1241.28,
+                    1737.23,
+                    "COLLECT"
+                ],
+                [
+                    1240.37,
+                    1733.06,
+                    "COLLECT"
+                ],
+                [
+                    1207.21,
+                    1734.26,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingTestArea1Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingTestArea1Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到试验园区-综合科研区下大世界（23200013265）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingTestArea1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingTestArea1Insect1Goto": {
+        "desc": "采集试验园区-综合科研区下大世界附近的 int_doodad_insect_1，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1261.25,
+                        1741.13
+                    ]
+                },
+                [
+                    1261.25,
+                    1741.13,
+                    "COLLECT"
+                ],
+                [
+                    1228.82,
+                    1752.61,
+                    "COLLECT"
+                ],
+                [
+                    1229.74,
+                    1728.46,
+                    "COLLECT"
+                ],
+                [
+                    1229.48,
+                    1711,
+                    "COLLECT"
+                ],
+                [
+                    1344.83,
+                    1739.56,
+                    "COLLECT"
+                ],
+                [
+                    1354.89,
+                    1742.2,
+                    "COLLECT"
+                ],
+                [
+                    1349.71,
+                    1748.76,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingTestArea1Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingTestArea1Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

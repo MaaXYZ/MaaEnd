@@ -1,0 +1,106 @@
+{
+    "AutoCollectRouteWulingQingboStockade2Crylplant21Start": {
+        "desc": "AutoCollect 采集路线：传送到清波寨-主寨西南大世界（23300000096）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingQingboStockade2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingQingboStockade2Crylplant21Goto"
+        ]
+    },
+    "AutoCollectRouteWulingQingboStockade2Crylplant21Goto": {
+        "desc": "采集清波寨-主寨西南大世界附近的 int_doodad_crylplant_2_1，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1320.98,
+                        2338.88
+                    ]
+                },
+                [
+                    1320.98,
+                    2338.88,
+                    "COLLECT"
+                ],
+                [
+                    1322.89,
+                    2337.92,
+                    "COLLECT"
+                ],
+                [
+                    1321.82,
+                    2341.28,
+                    "COLLECT"
+                ],
+                [
+                    1323.02,
+                    2344.23,
+                    "COLLECT"
+                ],
+                [
+                    1325.52,
+                    2344.74,
+                    "COLLECT"
+                ],
+                [
+                    1328.8,
+                    2346.09,
+                    "COLLECT"
+                ],
+                [
+                    1329.32,
+                    2342.96,
+                    "COLLECT"
+                ],
+                [
+                    1329.65,
+                    2340.49,
+                    "COLLECT"
+                ],
+                [
+                    1328.17,
+                    2338.63,
+                    "COLLECT"
+                ],
+                [
+                    1327.2,
+                    2336.82,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingQingboStockade2Crylplant21End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingQingboStockade2Crylplant21End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

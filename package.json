@@ -14,6 +14,7 @@
         "test": "maa-tools test",
         "fetch:zmdmap": "node tools/pipeline-generate/fetch-data.mjs",
         "generate:MacOS": "node tools/pipeline-generate/macos-keymap.mjs",
+        "generate:AutoCollect": "pnpm fetch:zmdmap && node tools/pipeline-generate/AutoCollect/sync-routes.mjs && node tools/pipeline-generate/run-all.mjs AutoCollect",
         "generate:BatchUseDetector": "node tools/pipeline-generate/run-all.mjs BatchUseDetector",
         "generate:AutoDelivery": "pnpm fetch:zmdmap && node tools/pipeline-generate/AutoDelivery/sync-routes.mjs && node tools/pipeline-generate/AutoDelivery/sync-catalog.mjs && node tools/pipeline-generate/run-all.mjs AutoDelivery",
         "generate:DeliveryJobs": "pnpm generate:AutoDelivery && node tools/pipeline-generate/DeliveryJobs/sync-locales.mjs && node tools/pipeline-generate/DeliveryJobs/prepare.mjs && node tools/pipeline-generate/run-all.mjs DeliveryJobs",

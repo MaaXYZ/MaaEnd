@@ -1,0 +1,91 @@
+{
+    "AutoCollectRouteWulingWulingCity4Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-天师府学院大世界（22800030007）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity4Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity4Grass1Goto": {
+        "desc": "采集武陵城-天师府学院大世界附近的 int_doodad_grass_1，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        541.38,
+                        1732.05
+                    ]
+                },
+                [
+                    541.38,
+                    1732.05,
+                    "COLLECT"
+                ],
+                [
+                    545.88,
+                    1735.11,
+                    "COLLECT"
+                ],
+                [
+                    522.2,
+                    1725.35,
+                    "COLLECT"
+                ],
+                [
+                    512.35,
+                    1727.37,
+                    "COLLECT"
+                ],
+                [
+                    512.43,
+                    1715.06,
+                    "COLLECT"
+                ],
+                [
+                    517.8,
+                    1709.44,
+                    "COLLECT"
+                ],
+                [
+                    523.47,
+                    1711.58,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity4Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity4Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

@@ -1,0 +1,642 @@
+{
+    "AutoCollectRouteWulingWulingCity7Crylplant13Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-三窟岗大世界（22800030008）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Crylplant13Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity7Crylplant13Goto": {
+        "desc": "采集武陵城-三窟岗大世界附近的 int_doodad_crylplant_1_3，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        741.17,
+                        1857.71
+                    ]
+                },
+                [
+                    741.17,
+                    1857.71,
+                    "COLLECT"
+                ],
+                [
+                    743.8,
+                    1856.52,
+                    "COLLECT"
+                ],
+                [
+                    743.19,
+                    1854.55,
+                    "COLLECT"
+                ],
+                [
+                    744.73,
+                    1851.68,
+                    "COLLECT"
+                ],
+                [
+                    746.22,
+                    1852.98,
+                    "COLLECT"
+                ],
+                [
+                    746.61,
+                    1851.3,
+                    "COLLECT"
+                ],
+                [
+                    747.57,
+                    1849.83,
+                    "COLLECT"
+                ],
+                [
+                    744.29,
+                    1846.93,
+                    "COLLECT"
+                ],
+                [
+                    739.28,
+                    1848.04,
+                    "COLLECT"
+                ],
+                [
+                    736.85,
+                    1849.6,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Crylplant13End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity7Crylplant13End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingWulingCity7Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-三窟岗大世界（22800030008）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity7Grass1Goto": {
+        "desc": "采集武陵城-三窟岗大世界附近的 int_doodad_grass_1，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        691.22,
+                        1884.06
+                    ]
+                },
+                [
+                    691.22,
+                    1884.06,
+                    "COLLECT"
+                ],
+                [
+                    651.4,
+                    1841.2,
+                    "COLLECT"
+                ],
+                [
+                    647.34,
+                    1840.45,
+                    "COLLECT"
+                ],
+                [
+                    648.32,
+                    1841.75,
+                    "COLLECT"
+                ],
+                [
+                    637.48,
+                    1887.07,
+                    "COLLECT"
+                ],
+                [
+                    633.91,
+                    1895.16,
+                    "COLLECT"
+                ],
+                [
+                    636.81,
+                    1893.96,
+                    "COLLECT"
+                ],
+                [
+                    688.4,
+                    1890.77,
+                    "COLLECT"
+                ],
+                [
+                    770.38,
+                    1950.61,
+                    "COLLECT"
+                ],
+                [
+                    772.52,
+                    1949.98,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity7Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingWulingCity7Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-三窟岗大世界（22800030008）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity7Grass2Goto": {
+        "desc": "采集武陵城-三窟岗大世界附近的 int_doodad_grass_2，共 14 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        728.27,
+                        1922.13
+                    ]
+                },
+                [
+                    728.27,
+                    1922.13,
+                    "COLLECT"
+                ],
+                [
+                    758.01,
+                    1934.4,
+                    "COLLECT"
+                ],
+                [
+                    760.16,
+                    1934.72,
+                    "COLLECT"
+                ],
+                [
+                    759.8,
+                    1932.75,
+                    "COLLECT"
+                ],
+                [
+                    741.54,
+                    1911.13,
+                    "COLLECT"
+                ],
+                [
+                    740.32,
+                    1910.86,
+                    "COLLECT"
+                ],
+                [
+                    740.13,
+                    1908.21,
+                    "COLLECT"
+                ],
+                [
+                    748.41,
+                    1897.93,
+                    "COLLECT"
+                ],
+                [
+                    751.54,
+                    1901.19,
+                    "COLLECT"
+                ],
+                [
+                    759.78,
+                    1890.87,
+                    "COLLECT"
+                ],
+                [
+                    755.18,
+                    1890.56,
+                    "COLLECT"
+                ],
+                [
+                    689.17,
+                    1837.17,
+                    "COLLECT"
+                ],
+                [
+                    687.68,
+                    1837.44,
+                    "COLLECT"
+                ],
+                [
+                    688.71,
+                    1834.94,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity7Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingWulingCity7Mushroom22Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-三窟岗大世界（22800030008）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Mushroom22Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity7Mushroom22Goto": {
+        "desc": "采集武陵城-三窟岗大世界附近的 int_doodad_mushroom_2_2，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        670.81,
+                        1848.23
+                    ]
+                },
+                [
+                    670.81,
+                    1848.23,
+                    "COLLECT"
+                ],
+                [
+                    668.57,
+                    1849.45,
+                    "COLLECT"
+                ],
+                [
+                    665.75,
+                    1847.96,
+                    "COLLECT"
+                ],
+                [
+                    663.57,
+                    1846.67,
+                    "COLLECT"
+                ],
+                [
+                    664.4,
+                    1844.71,
+                    "COLLECT"
+                ],
+                [
+                    667,
+                    1841.09,
+                    "COLLECT"
+                ],
+                [
+                    668.9,
+                    1841.85,
+                    "COLLECT"
+                ],
+                [
+                    669.63,
+                    1839.14,
+                    "COLLECT"
+                ],
+                [
+                    671.24,
+                    1842.33,
+                    "COLLECT"
+                ],
+                [
+                    672.57,
+                    1844.43,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7Mushroom22End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity7Mushroom22End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingWulingCity7OreClusterOriginiumStart": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-三窟岗大世界（22800030008）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7OreClusterOriginiumGoto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity7OreClusterOriginiumGoto": {
+        "desc": "采集武陵城-三窟岗大世界附近的 int_doodad_ore_cluster_originium，共 30 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        710.38,
+                        1936.17
+                    ]
+                },
+                [
+                    710.38,
+                    1936.17,
+                    "COLLECT"
+                ],
+                [
+                    711.03,
+                    1937.36,
+                    "COLLECT"
+                ],
+                [
+                    710.83,
+                    1938.32,
+                    "COLLECT"
+                ],
+                [
+                    709.25,
+                    1936.38,
+                    "COLLECT"
+                ],
+                [
+                    708.49,
+                    1937.01,
+                    "COLLECT"
+                ],
+                [
+                    706.59,
+                    1938.41,
+                    "COLLECT"
+                ],
+                [
+                    705.46,
+                    1938.65,
+                    "COLLECT"
+                ],
+                [
+                    704.72,
+                    1939.31,
+                    "COLLECT"
+                ],
+                [
+                    705.43,
+                    1941.17,
+                    "COLLECT"
+                ],
+                [
+                    707.1,
+                    1940.54,
+                    "COLLECT"
+                ],
+                [
+                    707.27,
+                    1939.57,
+                    "COLLECT"
+                ],
+                [
+                    709.14,
+                    1938.89,
+                    "COLLECT"
+                ],
+                [
+                    712.98,
+                    1942.22,
+                    "COLLECT"
+                ],
+                [
+                    714.22,
+                    1941.7,
+                    "COLLECT"
+                ],
+                [
+                    715.16,
+                    1942,
+                    "COLLECT"
+                ],
+                [
+                    715.56,
+                    1943.73,
+                    "COLLECT"
+                ],
+                [
+                    713.07,
+                    1943.37,
+                    "COLLECT"
+                ],
+                [
+                    713.63,
+                    1944.19,
+                    "COLLECT"
+                ],
+                [
+                    714.87,
+                    1947.8,
+                    "COLLECT"
+                ],
+                [
+                    715.51,
+                    1948.55,
+                    "COLLECT"
+                ],
+                [
+                    714.92,
+                    1950.23,
+                    "COLLECT"
+                ],
+                [
+                    713.55,
+                    1947.58,
+                    "COLLECT"
+                ],
+                [
+                    713.01,
+                    1948.6,
+                    "COLLECT"
+                ],
+                [
+                    713.04,
+                    1949.59,
+                    "COLLECT"
+                ],
+                [
+                    710.49,
+                    1950.86,
+                    "COLLECT"
+                ],
+                [
+                    711.04,
+                    1951.68,
+                    "COLLECT"
+                ],
+                [
+                    710.27,
+                    1953.29,
+                    "COLLECT"
+                ],
+                [
+                    708.47,
+                    1952.43,
+                    "COLLECT"
+                ],
+                [
+                    708.55,
+                    1951.45,
+                    "COLLECT"
+                ],
+                [
+                    709.2,
+                    1950.5,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity7OreClusterOriginiumEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity7OreClusterOriginiumEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

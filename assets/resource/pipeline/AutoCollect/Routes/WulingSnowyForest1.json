@@ -1,0 +1,106 @@
+{
+    "AutoCollectRouteWulingSnowyForest1Mushroom11Start": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-寒雾松林大世界（36100010460）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest1Mushroom11Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest1Mushroom11Goto": {
+        "desc": "采集雪松林-寒雾松林大世界附近的 int_doodad_mushroom_1_1，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1476.53,
+                        958.53
+                    ]
+                },
+                [
+                    1476.53,
+                    958.53,
+                    "COLLECT"
+                ],
+                [
+                    1475.63,
+                    956.62,
+                    "COLLECT"
+                ],
+                [
+                    1474.73,
+                    954.59,
+                    "COLLECT"
+                ],
+                [
+                    1475.37,
+                    952.18,
+                    "COLLECT"
+                ],
+                [
+                    1476.05,
+                    950.28,
+                    "COLLECT"
+                ],
+                [
+                    1479.36,
+                    950.89,
+                    "COLLECT"
+                ],
+                [
+                    1481.51,
+                    951.86,
+                    "COLLECT"
+                ],
+                [
+                    1482.59,
+                    954.78,
+                    "COLLECT"
+                ],
+                [
+                    1481.89,
+                    957.33,
+                    "COLLECT"
+                ],
+                [
+                    1480.25,
+                    958.53,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest1Mushroom11End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest1Mushroom11End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

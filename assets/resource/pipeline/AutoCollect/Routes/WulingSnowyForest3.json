@@ -1,0 +1,180 @@
+{
+    "AutoCollectRouteWulingSnowyForest3Flower3Start": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-仪式祭坛大世界（36100010365）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest3Flower3Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest3Flower3Goto": {
+        "desc": "采集雪松林-仪式祭坛大世界附近的 int_doodad_flower_3，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1551.13,
+                        1002.25
+                    ]
+                },
+                [
+                    1551.13,
+                    1002.25,
+                    "COLLECT"
+                ],
+                [
+                    1561.49,
+                    1012.24,
+                    "COLLECT"
+                ],
+                [
+                    1558.69,
+                    1015.6,
+                    "COLLECT"
+                ],
+                [
+                    1551.1,
+                    1006.91,
+                    "COLLECT"
+                ],
+                [
+                    1551.48,
+                    1004.34,
+                    "COLLECT"
+                ],
+                [
+                    1518.31,
+                    972.79,
+                    "COLLECT"
+                ],
+                [
+                    1517.73,
+                    973.37,
+                    "COLLECT"
+                ],
+                [
+                    1516.38,
+                    973.53,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest3Flower3End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest3Flower3End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingSnowyForest3GradeStart": {
+        "desc": "AutoCollect 采集路线：传送到雪松林-仪式祭坛大世界（36100010365）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSnowyForest3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest3GradeGoto"
+        ]
+    },
+    "AutoCollectRouteWulingSnowyForest3GradeGoto": {
+        "desc": "采集雪松林-仪式祭坛大世界附近的 int_doodad_grade，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1596.37,
+                        964.34
+                    ]
+                },
+                [
+                    1596.37,
+                    964.34,
+                    "COLLECT"
+                ],
+                [
+                    1597.68,
+                    964.24,
+                    "COLLECT"
+                ],
+                [
+                    1594.26,
+                    965.21,
+                    "COLLECT"
+                ],
+                [
+                    1594.25,
+                    966.62,
+                    "COLLECT"
+                ],
+                [
+                    1544.04,
+                    1000.13,
+                    "COLLECT"
+                ],
+                [
+                    1542.64,
+                    999.96,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSnowyForest3GradeEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSnowyForest3GradeEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

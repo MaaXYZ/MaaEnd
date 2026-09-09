@@ -1,0 +1,86 @@
+{
+    "AutoCollectRouteWulingNorthWulingExclusionZone3GradeOnce1Start": {
+        "desc": "AutoCollect 采集路线：传送到北部禁区-谈剑堂大世界（23100010640）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingNorthWulingExclusionZone3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone3GradeOnce1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone3GradeOnce1Goto": {
+        "desc": "采集北部禁区-谈剑堂大世界附近的 int_doodad_grade_once_1，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1288.08,
+                        305.05
+                    ]
+                },
+                [
+                    1288.08,
+                    305.05,
+                    "COLLECT"
+                ],
+                [
+                    1285.9,
+                    303.98,
+                    "COLLECT"
+                ],
+                [
+                    1286.99,
+                    303.52,
+                    "COLLECT"
+                ],
+                [
+                    1328.19,
+                    280.65,
+                    "COLLECT"
+                ],
+                [
+                    1331.16,
+                    282.19,
+                    "COLLECT"
+                ],
+                [
+                    1333.59,
+                    282.15,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone3GradeOnce1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone3GradeOnce1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

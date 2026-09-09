@@ -1,0 +1,455 @@
+{
+    "campfires": [
+        {
+            "source_id": "10100020314",
+            "name": "景玉谷-摘菱屿大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley8"
+        },
+        {
+            "source_id": "10100020315",
+            "name": "景玉谷-水泽涧大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley10"
+        },
+        {
+            "source_id": "10100020319",
+            "name": "景玉谷-南山大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley9"
+        },
+        {
+            "source_id": "10100020350",
+            "name": "景玉谷-迷踪林大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley7"
+        },
+        {
+            "source_id": "10100020646",
+            "name": "景玉谷-驮鼻山大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley6"
+        },
+        {
+            "source_id": "10100030017",
+            "name": "景玉谷-聚宝窟外大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley2"
+        },
+        {
+            "source_id": "10100030018",
+            "name": "景玉谷-踩道大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley1"
+        },
+        {
+            "source_id": "10100030027",
+            "name": "景玉谷-生态实验站",
+            "enter_node": "SceneEnterWorldWulingJingyuValley0"
+        },
+        {
+            "source_id": "10100030048",
+            "name": "景玉谷-清波寨外寨大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley3"
+        },
+        {
+            "source_id": "10100030146",
+            "name": "景玉谷-天王坪大世界",
+            "enter_node": "SceneEnterWorldWulingJingyuValley5"
+        },
+        {
+            "source_id": "10200030151",
+            "name": "应龙关-应龙档案室大世界",
+            "enter_node": "SceneEnterWorldWulingYinglungPass5"
+        },
+        {
+            "source_id": "10200030153",
+            "name": "应龙关-石涧崖南侧大世界",
+            "enter_node": "SceneEnterWorldWulingYinglungPass3"
+        },
+        {
+            "source_id": "10200030160",
+            "name": "应龙关-临关渠北侧大世界",
+            "enter_node": "SceneEnterWorldWulingYinglungPass0"
+        },
+        {
+            "source_id": "10200030168",
+            "name": "应龙关-奇松岭东侧大世界",
+            "enter_node": "SceneEnterWorldWulingYinglungPass1"
+        },
+        {
+            "source_id": "10200030169",
+            "name": "应龙关-应龙主营大世界",
+            "enter_node": "SceneEnterWorldWulingYinglungPass2"
+        },
+        {
+            "source_id": "10200030255",
+            "name": "应龙关-置器阁大世界",
+            "enter_node": "SceneEnterWorldWulingYinglungPass4"
+        },
+        {
+            "source_id": "22800030004",
+            "name": "武陵城-界石坪大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity1"
+        },
+        {
+            "source_id": "22800030005",
+            "name": "武陵城-方兴衢大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity3"
+        },
+        {
+            "source_id": "22800030007",
+            "name": "武陵城-天师府学院大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity4"
+        },
+        {
+            "source_id": "22800030008",
+            "name": "武陵城-三窟岗大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity7"
+        },
+        {
+            "source_id": "22800030009",
+            "name": "武陵城-待修缮区大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity2"
+        },
+        {
+            "source_id": "22800030016",
+            "name": "武陵城-天井院大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity5"
+        },
+        {
+            "source_id": "22800031002",
+            "name": "武陵城-储备站右下大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity8"
+        },
+        {
+            "source_id": "22800060089",
+            "name": "武陵城-观测站大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity0"
+        },
+        {
+            "source_id": "22800060090",
+            "name": "武陵城-储备站左上大世界",
+            "enter_node": "SceneEnterWorldWulingWulingCity6"
+        },
+        {
+            "source_id": "23100010219",
+            "name": "北部禁区-前哨基地大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone0"
+        },
+        {
+            "source_id": "23100010220",
+            "name": "北部禁区-城建区西北侧大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone2"
+        },
+        {
+            "source_id": "23100010221",
+            "name": "北部禁区-息壤研究所大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone6"
+        },
+        {
+            "source_id": "23100010222",
+            "name": "北部禁区-天柱大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone10"
+        },
+        {
+            "source_id": "23100010223",
+            "name": "北部禁区-天师桩研发中心大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone7"
+        },
+        {
+            "source_id": "23100010640",
+            "name": "北部禁区-谈剑堂大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone3"
+        },
+        {
+            "source_id": "23100010670",
+            "name": "北部禁区-水利枢纽大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone1"
+        },
+        {
+            "source_id": "23100010671",
+            "name": "北部禁区-甚大裂隙地下层大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone9"
+        },
+        {
+            "source_id": "23100010733",
+            "name": "北部禁区-幽台试验场大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone8"
+        },
+        {
+            "source_id": "23100010740",
+            "name": "北部禁区-甚大裂隙地表层大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone11"
+        },
+        {
+            "source_id": "23100031242",
+            "name": "北部禁区-平波堤大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone5"
+        },
+        {
+            "source_id": "23100031243",
+            "name": "北部禁区-城建区东南侧大世界",
+            "enter_node": "SceneEnterWorldWulingNorthWulingExclusionZone4"
+        },
+        {
+            "source_id": "23200013265",
+            "name": "试验园区-综合科研区下大世界",
+            "enter_node": "SceneEnterWorldWulingTestArea1"
+        },
+        {
+            "source_id": "23200013375",
+            "name": "试验园区-测试区大世界",
+            "enter_node": "SceneEnterWorldWulingTestArea2"
+        },
+        {
+            "source_id": "23300000095",
+            "name": "清波寨-主寨东南大世界",
+            "enter_node": "SceneEnterWorldWulingQingboStockade4"
+        },
+        {
+            "source_id": "23300000096",
+            "name": "清波寨-主寨西南大世界",
+            "enter_node": "SceneEnterWorldWulingQingboStockade2"
+        },
+        {
+            "source_id": "23300000097",
+            "name": "清波寨-栈桥道大世界",
+            "enter_node": "SceneEnterWorldWulingQingboStockade1"
+        },
+        {
+            "source_id": "23300000098",
+            "name": "清波寨-顶天梁大世界",
+            "enter_node": "SceneEnterWorldWulingQingboStockade0"
+        },
+        {
+            "source_id": "23300000102",
+            "name": "清波寨-祖泉大世界",
+            "enter_node": "SceneEnterWorldWulingQingboStockade3"
+        },
+        {
+            "source_id": "23400083018",
+            "name": "首墩-望楼蓄水站大世界",
+            "enter_node": "SceneEnterWorldWulingMarkerStone1"
+        },
+        {
+            "source_id": "23400083106",
+            "name": "首墩-控制区大世界",
+            "enter_node": "SceneEnterWorldWulingMarkerStone3"
+        },
+        {
+            "source_id": "23400083248",
+            "name": "首墩-湖心岛大世界",
+            "enter_node": "SceneEnterWorldWulingMarkerStone2"
+        },
+        {
+            "source_id": "25000000345",
+            "name": "藏剑谷-东谷遗迹大世界",
+            "enter_node": "SceneEnterWorldWulingSwordVaultDale1"
+        },
+        {
+            "source_id": "25000000461",
+            "name": "藏剑谷-谷底秘库大世界",
+            "enter_node": "SceneEnterWorldWulingSwordVaultDale3"
+        },
+        {
+            "source_id": "25000000462",
+            "name": "藏剑谷-悬谷台大世界",
+            "enter_node": "SceneEnterWorldWulingSwordVaultDale2"
+        },
+        {
+            "source_id": "36100010006",
+            "name": "雪松林-落雪山道大世界",
+            "enter_node": "SceneEnterWorldWulingSnowyForest0"
+        },
+        {
+            "source_id": "36100010007",
+            "name": "雪松林-雪祀木屋左侧大世界",
+            "enter_node": "SceneEnterWorldWulingSnowyForest2"
+        },
+        {
+            "source_id": "36100010365",
+            "name": "雪松林-仪式祭坛大世界",
+            "enter_node": "SceneEnterWorldWulingSnowyForest3"
+        },
+        {
+            "source_id": "36100010458",
+            "name": "雪松林-雾凇山谷左上角大世界",
+            "enter_node": "SceneEnterWorldWulingSnowyForest4"
+        },
+        {
+            "source_id": "36100010460",
+            "name": "雪松林-寒雾松林大世界",
+            "enter_node": "SceneEnterWorldWulingSnowyForest1"
+        },
+        {
+            "source_id": "36100010467",
+            "name": "雪松林-雾凇山谷右上角大世界",
+            "enter_node": "SceneEnterWorldWulingSnowyForest6"
+        },
+        {
+            "source_id": "36100010474",
+            "name": "雪松林-雪祀木屋右侧大世界",
+            "enter_node": "SceneEnterWorldWulingSnowyForest5"
+        }
+    ],
+    "collectibles": [
+        {
+            "source_id": "int_doodad_bbflower_1",
+            "count": 66
+        },
+        {
+            "source_id": "int_doodad_core_mine_copper",
+            "count": 26
+        },
+        {
+            "source_id": "int_doodad_core_mine_originium",
+            "count": 28
+        },
+        {
+            "source_id": "int_doodad_core_plant_rabbithole",
+            "count": 13
+        },
+        {
+            "source_id": "int_doodad_core_plant_rabbithole_2",
+            "count": 2
+        },
+        {
+            "source_id": "int_doodad_core_plant_rabbithole_3",
+            "count": 2
+        },
+        {
+            "source_id": "int_doodad_core_recycle",
+            "count": 5
+        },
+        {
+            "source_id": "int_doodad_core_spcstone",
+            "count": 6
+        },
+        {
+            "source_id": "int_doodad_core_spcstone_2",
+            "count": 2
+        },
+        {
+            "source_id": "int_doodad_corp_3",
+            "count": 26
+        },
+        {
+            "source_id": "int_doodad_corp_4",
+            "count": 19
+        },
+        {
+            "source_id": "int_doodad_crylplant_1_2",
+            "count": 20
+        },
+        {
+            "source_id": "int_doodad_crylplant_1_3",
+            "count": 14
+        },
+        {
+            "source_id": "int_doodad_crylplant_2_1",
+            "count": 20
+        },
+        {
+            "source_id": "int_doodad_crylplant_2_2",
+            "count": 5
+        },
+        {
+            "source_id": "int_doodad_crylplant_2_3",
+            "count": 10
+        },
+        {
+            "source_id": "int_doodad_flower_3",
+            "count": 51
+        },
+        {
+            "source_id": "int_doodad_grade",
+            "count": 196
+        },
+        {
+            "source_id": "int_doodad_grade_once_1",
+            "count": 49
+        },
+        {
+            "source_id": "int_doodad_grass_1",
+            "count": 237
+        },
+        {
+            "source_id": "int_doodad_grass_2",
+            "count": 411
+        },
+        {
+            "source_id": "int_doodad_grass_spc_1",
+            "count": 125
+        },
+        {
+            "source_id": "int_doodad_grass_spc_2",
+            "count": 72
+        },
+        {
+            "source_id": "int_doodad_grass_spc_once_1",
+            "count": 16
+        },
+        {
+            "source_id": "int_doodad_grass_spc_once_2",
+            "count": 15
+        },
+        {
+            "source_id": "int_doodad_insect_1",
+            "count": 170
+        },
+        {
+            "source_id": "int_doodad_insect_2",
+            "count": 91
+        },
+        {
+            "source_id": "int_doodad_mushroom_1_1",
+            "count": 10
+        },
+        {
+            "source_id": "int_doodad_mushroom_1_2",
+            "count": 20
+        },
+        {
+            "source_id": "int_doodad_mushroom_1_3",
+            "count": 20
+        },
+        {
+            "source_id": "int_doodad_mushroom_2_1",
+            "count": 10
+        },
+        {
+            "source_id": "int_doodad_mushroom_2_2",
+            "count": 18
+        },
+        {
+            "source_id": "int_doodad_mushroom_2_3",
+            "count": 8
+        },
+        {
+            "source_id": "int_doodad_mushroom_2_3_1",
+            "count": 8
+        },
+        {
+            "source_id": "int_doodad_ore_cluster_copper",
+            "count": 172
+        },
+        {
+            "source_id": "int_doodad_ore_cluster_originium",
+            "count": 168
+        },
+        {
+            "source_id": "int_doodad_spcstone_1_2",
+            "count": 40
+        },
+        {
+            "source_id": "int_doodad_spcstone_1_3",
+            "count": 20
+        },
+        {
+            "source_id": "int_doodad_spcstone_2_1",
+            "count": 10
+        },
+        {
+            "source_id": "int_doodad_spcstone_2_2",
+            "count": 1
+        },
+        {
+            "source_id": "int_doodad_spcstone_2_3",
+            "count": 8
+        }
+    ]
+}

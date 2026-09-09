@@ -1,0 +1,101 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/MaaEnd/MaaEnd/blob/v2/tools/schema/auto_collect_routes.schema.json",
+    "title": "AutoCollect routes.json",
+    "description": "AutoCollect 篝火与采集物的检索元数据及人工分簇覆盖。",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "campfires",
+        "collectibles"
+    ],
+    "properties": {
+        "campfires": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "source_id",
+                    "name",
+                    "enter_node"
+                ],
+                "properties": {
+                    "source_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "篝火实体在 collect_points.json 中的稳定 ID。"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "从传送入口 desc 同步的落点名称，仅供检索。"
+                    },
+                    "enter_node": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "从 Interface 同步的传送入口节点名，仅供检索。"
+                    },
+                    "description": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "可选的人工维护说明，仅供阅读，不参与路线生成。"
+                    },
+                    "skip": {
+                        "type": "boolean",
+                        "description": "是否不为该篝火生成采集路线。"
+                    },
+                    "radius": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "description": "覆盖该篝火的分簇半径，单位为底图像素。"
+                    },
+                    "min_points": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "description": "覆盖该篝火单条路线所需的最少采集物数量。"
+                    }
+                }
+            }
+        },
+        "collectibles": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "source_id",
+                    "count"
+                ],
+                "properties": {
+                    "source_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "采集物在 collect_points.json 中的 detail_id。"
+                    },
+                    "count": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "从 collect_points.json 同步的全图数量，仅供检索。"
+                    },
+                    "description": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "可选的人工维护说明，仅供阅读，不参与路线生成。"
+                    },
+                    "skip": {
+                        "type": "boolean",
+                        "description": "是否不为该采集物生成采集路线。"
+                    },
+                    "action": {
+                        "enum": [
+                            "COLLECT",
+                            "DIG"
+                        ],
+                        "description": "该采集物的交互动作，默认 COLLECT。"
+                    }
+                }
+            }
+        }
+    }
+}

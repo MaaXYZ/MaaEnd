@@ -1,0 +1,1025 @@
+{
+    "AutoCollectRouteWulingMarkerStone1GradeStart": {
+        "desc": "AutoCollect 采集路线：传送到首墩-望楼蓄水站大世界（23400083018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1GradeGoto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone1GradeGoto": {
+        "desc": "采集首墩-望楼蓄水站大世界附近的 int_doodad_grade，共 17 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        533.9,
+                        2111.95
+                    ]
+                },
+                [
+                    533.9,
+                    2111.95,
+                    "COLLECT"
+                ],
+                [
+                    533.84,
+                    2110.87,
+                    "COLLECT"
+                ],
+                [
+                    535.34,
+                    2110.07,
+                    "COLLECT"
+                ],
+                [
+                    536.64,
+                    2110.16,
+                    "COLLECT"
+                ],
+                [
+                    538.08,
+                    2112.64,
+                    "COLLECT"
+                ],
+                [
+                    543.16,
+                    2112.26,
+                    "COLLECT"
+                ],
+                [
+                    543.67,
+                    2113.09,
+                    "COLLECT"
+                ],
+                [
+                    544.87,
+                    2113.13,
+                    "COLLECT"
+                ],
+                [
+                    543.27,
+                    2111.23,
+                    "COLLECT"
+                ],
+                [
+                    547.13,
+                    2110,
+                    "COLLECT"
+                ],
+                [
+                    551.72,
+                    2110.91,
+                    "COLLECT"
+                ],
+                [
+                    551.45,
+                    2111.91,
+                    "COLLECT"
+                ],
+                [
+                    509.16,
+                    2165.66,
+                    "COLLECT"
+                ],
+                [
+                    508.06,
+                    2165.82,
+                    "COLLECT"
+                ],
+                [
+                    507.46,
+                    2164.73,
+                    "COLLECT"
+                ],
+                [
+                    434.17,
+                    2110.99,
+                    "COLLECT"
+                ],
+                [
+                    433.04,
+                    2110.99,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1GradeEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone1GradeEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone1Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-望楼蓄水站大世界（23400083018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone1Grass1Goto": {
+        "desc": "采集首墩-望楼蓄水站大世界附近的 int_doodad_grass_1，共 22 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        509.21,
+                        2138.61
+                    ]
+                },
+                [
+                    509.21,
+                    2138.61,
+                    "COLLECT"
+                ],
+                [
+                    509.32,
+                    2140.66,
+                    "COLLECT"
+                ],
+                [
+                    509.31,
+                    2146.58,
+                    "COLLECT"
+                ],
+                [
+                    509.24,
+                    2147.16,
+                    "COLLECT"
+                ],
+                [
+                    509.22,
+                    2150.79,
+                    "COLLECT"
+                ],
+                [
+                    570.2,
+                    2114.31,
+                    "COLLECT"
+                ],
+                [
+                    569.75,
+                    2109.57,
+                    "COLLECT"
+                ],
+                [
+                    566.95,
+                    2091.49,
+                    "COLLECT"
+                ],
+                [
+                    561.95,
+                    2090.8,
+                    "COLLECT"
+                ],
+                [
+                    528.12,
+                    2100.98,
+                    "COLLECT"
+                ],
+                [
+                    527.99,
+                    2106.23,
+                    "COLLECT"
+                ],
+                [
+                    528.05,
+                    2107.91,
+                    "COLLECT"
+                ],
+                [
+                    532.85,
+                    2115.08,
+                    "COLLECT"
+                ],
+                [
+                    525.73,
+                    2115.56,
+                    "COLLECT"
+                ],
+                [
+                    445.97,
+                    2057.13,
+                    "COLLECT"
+                ],
+                [
+                    445.46,
+                    2056.83,
+                    "COLLECT"
+                ],
+                [
+                    439.68,
+                    2061.33,
+                    "COLLECT"
+                ],
+                [
+                    439.72,
+                    2061.48,
+                    "COLLECT"
+                ],
+                [
+                    437.81,
+                    2062.91,
+                    "COLLECT"
+                ],
+                [
+                    440.43,
+                    2063.97,
+                    "COLLECT"
+                ],
+                [
+                    440.94,
+                    2064.48,
+                    "COLLECT"
+                ],
+                [
+                    440.09,
+                    2065.2,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone1Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone1Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-望楼蓄水站大世界（23400083018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone1Grass2Goto": {
+        "desc": "采集首墩-望楼蓄水站大世界附近的 int_doodad_grass_2，共 28 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        457.3,
+                        2080.11
+                    ]
+                },
+                [
+                    457.3,
+                    2080.11,
+                    "COLLECT"
+                ],
+                [
+                    455.2,
+                    2081.51,
+                    "COLLECT"
+                ],
+                [
+                    454.99,
+                    2079.98,
+                    "COLLECT"
+                ],
+                [
+                    458.02,
+                    2078.18,
+                    "COLLECT"
+                ],
+                [
+                    458.03,
+                    2066.19,
+                    "COLLECT"
+                ],
+                [
+                    457.24,
+                    2064.19,
+                    "COLLECT"
+                ],
+                [
+                    459.15,
+                    2061.79,
+                    "COLLECT"
+                ],
+                [
+                    570.42,
+                    2100.28,
+                    "COLLECT"
+                ],
+                [
+                    571.77,
+                    2101.74,
+                    "COLLECT"
+                ],
+                [
+                    576.82,
+                    2100.07,
+                    "COLLECT"
+                ],
+                [
+                    576.86,
+                    2101.9,
+                    "COLLECT"
+                ],
+                [
+                    575.78,
+                    2102.73,
+                    "COLLECT"
+                ],
+                [
+                    575.89,
+                    2104.66,
+                    "COLLECT"
+                ],
+                [
+                    576.79,
+                    2105.54,
+                    "COLLECT"
+                ],
+                [
+                    576.76,
+                    2107.09,
+                    "COLLECT"
+                ],
+                [
+                    571.53,
+                    2104.92,
+                    "COLLECT"
+                ],
+                [
+                    570.38,
+                    2104.37,
+                    "COLLECT"
+                ],
+                [
+                    570.27,
+                    2107.49,
+                    "COLLECT"
+                ],
+                [
+                    542.3,
+                    2165.06,
+                    "COLLECT"
+                ],
+                [
+                    541.65,
+                    2163.78,
+                    "COLLECT"
+                ],
+                [
+                    540.65,
+                    2163.77,
+                    "COLLECT"
+                ],
+                [
+                    539.71,
+                    2164.89,
+                    "COLLECT"
+                ],
+                [
+                    529.99,
+                    2164.37,
+                    "COLLECT"
+                ],
+                [
+                    529.67,
+                    2163.35,
+                    "COLLECT"
+                ],
+                [
+                    524.47,
+                    2162.53,
+                    "COLLECT"
+                ],
+                [
+                    523.9,
+                    2166.3,
+                    "COLLECT"
+                ],
+                [
+                    524.11,
+                    2174.96,
+                    "COLLECT"
+                ],
+                [
+                    529.94,
+                    2175.2,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone1Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone1GrassSpc1Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-望楼蓄水站大世界（23400083018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1GrassSpc1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone1GrassSpc1Goto": {
+        "desc": "采集首墩-望楼蓄水站大世界附近的 int_doodad_grass_spc_1，共 22 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        483.83,
+                        2098.91
+                    ]
+                },
+                [
+                    483.83,
+                    2098.91,
+                    "COLLECT"
+                ],
+                [
+                    482.67,
+                    2096.72,
+                    "COLLECT"
+                ],
+                [
+                    484.35,
+                    2096.79,
+                    "COLLECT"
+                ],
+                [
+                    490.46,
+                    2092.76,
+                    "COLLECT"
+                ],
+                [
+                    489.11,
+                    2092.13,
+                    "COLLECT"
+                ],
+                [
+                    489.3,
+                    2091.65,
+                    "COLLECT"
+                ],
+                [
+                    441.51,
+                    2059.95,
+                    "COLLECT"
+                ],
+                [
+                    437.76,
+                    2062.5,
+                    "COLLECT"
+                ],
+                [
+                    406.76,
+                    2127.02,
+                    "COLLECT"
+                ],
+                [
+                    407.98,
+                    2129.19,
+                    "COLLECT"
+                ],
+                [
+                    408.02,
+                    2130.12,
+                    "COLLECT"
+                ],
+                [
+                    411.37,
+                    2132.77,
+                    "COLLECT"
+                ],
+                [
+                    523.58,
+                    2161.97,
+                    "COLLECT"
+                ],
+                [
+                    530.75,
+                    2162.8,
+                    "COLLECT"
+                ],
+                [
+                    530.77,
+                    2161.73,
+                    "COLLECT"
+                ],
+                [
+                    569.31,
+                    2106.01,
+                    "COLLECT"
+                ],
+                [
+                    569.32,
+                    2103.14,
+                    "COLLECT"
+                ],
+                [
+                    569.29,
+                    2100.16,
+                    "COLLECT"
+                ],
+                [
+                    577.65,
+                    2100.17,
+                    "COLLECT"
+                ],
+                [
+                    577.67,
+                    2100.79,
+                    "COLLECT"
+                ],
+                [
+                    577.66,
+                    2105.92,
+                    "COLLECT"
+                ],
+                [
+                    577.68,
+                    2107.72,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1GrassSpc1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone1GrassSpc1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone1GrassSpc2Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-望楼蓄水站大世界（23400083018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1GrassSpc2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone1GrassSpc2Goto": {
+        "desc": "采集首墩-望楼蓄水站大世界附近的 int_doodad_grass_spc_2，共 14 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        489.11,
+                        2089.99
+                    ]
+                },
+                [
+                    489.11,
+                    2089.99,
+                    "COLLECT"
+                ],
+                [
+                    487.32,
+                    2087.19,
+                    "COLLECT"
+                ],
+                [
+                    487.84,
+                    2085.46,
+                    "COLLECT"
+                ],
+                [
+                    486.69,
+                    2084.56,
+                    "COLLECT"
+                ],
+                [
+                    484.9,
+                    2089.9,
+                    "COLLECT"
+                ],
+                [
+                    460.24,
+                    2085.06,
+                    "COLLECT"
+                ],
+                [
+                    459.28,
+                    2083.36,
+                    "COLLECT"
+                ],
+                [
+                    456,
+                    2080.66,
+                    "COLLECT"
+                ],
+                [
+                    408.76,
+                    2122.02,
+                    "COLLECT"
+                ],
+                [
+                    410.31,
+                    2125.01,
+                    "COLLECT"
+                ],
+                [
+                    406.38,
+                    2126.09,
+                    "COLLECT"
+                ],
+                [
+                    407.31,
+                    2127.74,
+                    "COLLECT"
+                ],
+                [
+                    412.14,
+                    2130.89,
+                    "COLLECT"
+                ],
+                [
+                    413.13,
+                    2134.11,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1GrassSpc2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone1GrassSpc2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone1Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-望楼蓄水站大世界（23400083018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone1Insect1Goto": {
+        "desc": "采集首墩-望楼蓄水站大世界附近的 int_doodad_insect_1，共 13 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        532.38,
+                        2105.14
+                    ]
+                },
+                [
+                    532.38,
+                    2105.14,
+                    "COLLECT"
+                ],
+                [
+                    551.35,
+                    2100.74,
+                    "COLLECT"
+                ],
+                [
+                    553.94,
+                    2101.83,
+                    "COLLECT"
+                ],
+                [
+                    537.08,
+                    2044.55,
+                    "COLLECT"
+                ],
+                [
+                    536.03,
+                    2042.85,
+                    "COLLECT"
+                ],
+                [
+                    532.76,
+                    2041.14,
+                    "COLLECT"
+                ],
+                [
+                    527.51,
+                    2045.86,
+                    "COLLECT"
+                ],
+                [
+                    457.49,
+                    2064.54,
+                    "COLLECT"
+                ],
+                [
+                    456.98,
+                    2061.83,
+                    "COLLECT"
+                ],
+                [
+                    443.05,
+                    2058.12,
+                    "COLLECT"
+                ],
+                [
+                    440.34,
+                    2062.85,
+                    "COLLECT"
+                ],
+                [
+                    408.48,
+                    2123.09,
+                    "COLLECT"
+                ],
+                [
+                    409.29,
+                    2124.36,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone1Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingMarkerStone1Insect2Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-望楼蓄水站大世界（23400083018）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Insect2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone1Insect2Goto": {
+        "desc": "采集首墩-望楼蓄水站大世界附近的 int_doodad_insect_2，共 13 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        488.59,
+                        2081.08
+                    ]
+                },
+                [
+                    488.59,
+                    2081.08,
+                    "COLLECT"
+                ],
+                [
+                    489.52,
+                    2078.43,
+                    "COLLECT"
+                ],
+                [
+                    457.71,
+                    2083.88,
+                    "COLLECT"
+                ],
+                [
+                    456.22,
+                    2079.83,
+                    "COLLECT"
+                ],
+                [
+                    433.29,
+                    2091.98,
+                    "COLLECT"
+                ],
+                [
+                    427.84,
+                    2092.05,
+                    "COLLECT"
+                ],
+                [
+                    427.19,
+                    2090.82,
+                    "COLLECT"
+                ],
+                [
+                    405.39,
+                    2126.03,
+                    "COLLECT"
+                ],
+                [
+                    407.03,
+                    2133.35,
+                    "COLLECT"
+                ],
+                [
+                    533.21,
+                    2106.79,
+                    "COLLECT"
+                ],
+                [
+                    539.74,
+                    2099.18,
+                    "COLLECT"
+                ],
+                [
+                    536.01,
+                    2043.99,
+                    "COLLECT"
+                ],
+                [
+                    517.05,
+                    2045.97,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone1Insect2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone1Insect2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

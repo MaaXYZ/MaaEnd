@@ -1,0 +1,38 @@
+{
+    "${StartNode}": {
+        "desc": "${StartDescription}",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": "${TeleportParam}",
+        "post_delay": 0,
+        "next": [
+            "${GotoNode}"
+        ]
+    },
+    "${GotoNode}": {
+        "desc": "${GotoDescription}",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": "${ActionParam}",
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "${EndNode}"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "${EndNode}": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

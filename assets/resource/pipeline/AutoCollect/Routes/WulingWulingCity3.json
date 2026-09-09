@@ -1,0 +1,101 @@
+{
+    "AutoCollectRouteWulingWulingCity3GradeStart": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-方兴衢大世界（22800030005）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity3"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity3GradeGoto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity3GradeGoto": {
+        "desc": "采集武陵城-方兴衢大世界附近的 int_doodad_grade，共 9 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        680.92,
+                        1616.38
+                    ]
+                },
+                [
+                    680.92,
+                    1616.38,
+                    "COLLECT"
+                ],
+                [
+                    673.54,
+                    1557.7,
+                    "COLLECT"
+                ],
+                [
+                    673.72,
+                    1556.63,
+                    "COLLECT"
+                ],
+                [
+                    672.64,
+                    1556.99,
+                    "COLLECT"
+                ],
+                [
+                    626.69,
+                    1616.67,
+                    "COLLECT"
+                ],
+                [
+                    642.82,
+                    1619.03,
+                    "COLLECT"
+                ],
+                [
+                    647.18,
+                    1625.72,
+                    "COLLECT"
+                ],
+                [
+                    641.39,
+                    1635.26,
+                    "COLLECT"
+                ],
+                [
+                    679.98,
+                    1682.8,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity3GradeEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity3GradeEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

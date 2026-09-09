@@ -1,0 +1,86 @@
+{
+    "AutoCollectRouteWulingJingyuValley9Bbflower1Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-南山大世界（10100020319）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley9"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley9Bbflower1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley9Bbflower1Goto": {
+        "desc": "采集景玉谷-南山大世界附近的 int_doodad_bbflower_1，共 6 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        808.22,
+                        2768.59
+                    ]
+                },
+                [
+                    808.22,
+                    2768.59,
+                    "COLLECT"
+                ],
+                [
+                    817.65,
+                    2754.35,
+                    "COLLECT"
+                ],
+                [
+                    826.08,
+                    2761.28,
+                    "COLLECT"
+                ],
+                [
+                    839.56,
+                    2757.12,
+                    "COLLECT"
+                ],
+                [
+                    811.1,
+                    2708.57,
+                    "COLLECT"
+                ],
+                [
+                    811.39,
+                    2707.95,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley9Bbflower1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley9Bbflower1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

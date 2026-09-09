@@ -1,0 +1,91 @@
+{
+    "AutoCollectRouteWulingMarkerStone2Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到首墩-湖心岛大世界（23400083248）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingMarkerStone2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone2Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingMarkerStone2Grass1Goto": {
+        "desc": "采集首墩-湖心岛大世界附近的 int_doodad_grass_1，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        384.97,
+                        2178.03
+                    ]
+                },
+                [
+                    384.97,
+                    2178.03,
+                    "COLLECT"
+                ],
+                [
+                    384.29,
+                    2177.67,
+                    "COLLECT"
+                ],
+                [
+                    383.73,
+                    2177.93,
+                    "COLLECT"
+                ],
+                [
+                    371.99,
+                    2184.17,
+                    "COLLECT"
+                ],
+                [
+                    371.97,
+                    2182.51,
+                    "COLLECT"
+                ],
+                [
+                    372,
+                    2165.58,
+                    "COLLECT"
+                ],
+                [
+                    372.01,
+                    2164.77,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingMarkerStone2Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingMarkerStone2Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

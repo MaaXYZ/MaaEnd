@@ -53,6 +53,12 @@
                 "/tools/pipeline-generate/AutoDelivery/routes.json"
             ],
             "url": "/tools/schema/auto_delivery_routes.schema.json"
+        },
+        {
+            "fileMatch": [
+                "/tools/pipeline-generate/AutoCollect/routes.json"
+            ],
+            "url": "/tools/schema/auto_collect_routes.schema.json"
         }
     ],
     "files.associations": {

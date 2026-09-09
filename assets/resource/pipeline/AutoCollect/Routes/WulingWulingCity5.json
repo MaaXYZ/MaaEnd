@@ -1,0 +1,200 @@
+{
+    "AutoCollectRouteWulingWulingCity5Crylplant21Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-天井院大世界（22800030016）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity5"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity5Crylplant21Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity5Crylplant21Goto": {
+        "desc": "采集武陵城-天井院大世界附近的 int_doodad_crylplant_2_1，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        930.65,
+                        1708.25
+                    ]
+                },
+                [
+                    930.65,
+                    1708.25,
+                    "COLLECT"
+                ],
+                [
+                    932.75,
+                    1705.87,
+                    "COLLECT"
+                ],
+                [
+                    934.34,
+                    1703.95,
+                    "COLLECT"
+                ],
+                [
+                    934.07,
+                    1701.58,
+                    "COLLECT"
+                ],
+                [
+                    934.21,
+                    1699.55,
+                    "COLLECT"
+                ],
+                [
+                    929.97,
+                    1698.18,
+                    "COLLECT"
+                ],
+                [
+                    927.84,
+                    1698,
+                    "COLLECT"
+                ],
+                [
+                    927.29,
+                    1700.47,
+                    "COLLECT"
+                ],
+                [
+                    926.74,
+                    1703.61,
+                    "COLLECT"
+                ],
+                [
+                    928.59,
+                    1705.36,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity5Crylplant21End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity5Crylplant21End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingWulingCity5Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到武陵城-天井院大世界（22800030016）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingWulingCity5"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity5Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingWulingCity5Grass1Goto": {
+        "desc": "采集武陵城-天井院大世界附近的 int_doodad_grass_1，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        880.1,
+                        1759.72
+                    ]
+                },
+                [
+                    880.1,
+                    1759.72,
+                    "COLLECT"
+                ],
+                [
+                    880.7,
+                    1758.01,
+                    "COLLECT"
+                ],
+                [
+                    879.53,
+                    1756.58,
+                    "COLLECT"
+                ],
+                [
+                    878.77,
+                    1759,
+                    "COLLECT"
+                ],
+                [
+                    898.53,
+                    1839.19,
+                    "COLLECT"
+                ],
+                [
+                    896.73,
+                    1839.97,
+                    "COLLECT"
+                ],
+                [
+                    894.1,
+                    1838.77,
+                    "COLLECT"
+                ],
+                [
+                    889.18,
+                    1842.61,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingWulingCity5Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingWulingCity5Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

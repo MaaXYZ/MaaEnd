@@ -1,0 +1,96 @@
+{
+    "AutoCollectRouteWulingNorthWulingExclusionZone7Spcstone23Start": {
+        "desc": "AutoCollect 采集路线：传送到北部禁区-天师桩研发中心大世界（23100010223）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingNorthWulingExclusionZone7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone7Spcstone23Goto"
+        ]
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone7Spcstone23Goto": {
+        "desc": "采集北部禁区-天师桩研发中心大世界附近的 int_doodad_spcstone_2_3，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1493.9,
+                        531.32
+                    ]
+                },
+                [
+                    1493.9,
+                    531.32,
+                    "COLLECT"
+                ],
+                [
+                    1495.47,
+                    531.06,
+                    "COLLECT"
+                ],
+                [
+                    1497.14,
+                    531.79,
+                    "COLLECT"
+                ],
+                [
+                    1498.86,
+                    532.12,
+                    "COLLECT"
+                ],
+                [
+                    1499.17,
+                    533.46,
+                    "COLLECT"
+                ],
+                [
+                    1498.96,
+                    534.47,
+                    "COLLECT"
+                ],
+                [
+                    1499.17,
+                    536.24,
+                    "COLLECT"
+                ],
+                [
+                    1498.73,
+                    538.31,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone7Spcstone23End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone7Spcstone23End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

@@ -1,0 +1,151 @@
+{
+    "AutoCollectRouteWulingNorthWulingExclusionZone4GradeOnce1Start": {
+        "desc": "AutoCollect 采集路线：传送到北部禁区-城建区东南侧大世界（23100031243）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingNorthWulingExclusionZone4"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone4GradeOnce1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone4GradeOnce1Goto": {
+        "desc": "采集北部禁区-城建区东南侧大世界附近的 int_doodad_grade_once_1，共 19 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1246.48,
+                        629.63
+                    ]
+                },
+                [
+                    1246.48,
+                    629.63,
+                    "COLLECT"
+                ],
+                [
+                    1242.29,
+                    637.24,
+                    "COLLECT"
+                ],
+                [
+                    1241.31,
+                    639.54,
+                    "COLLECT"
+                ],
+                [
+                    1298.81,
+                    547.19,
+                    "COLLECT"
+                ],
+                [
+                    1298.12,
+                    545.92,
+                    "COLLECT"
+                ],
+                [
+                    1299.62,
+                    543.5,
+                    "COLLECT"
+                ],
+                [
+                    1297.53,
+                    541.87,
+                    "COLLECT"
+                ],
+                [
+                    1301.63,
+                    541.1,
+                    "COLLECT"
+                ],
+                [
+                    1307.76,
+                    551.33,
+                    "COLLECT"
+                ],
+                [
+                    1312.49,
+                    550.04,
+                    "COLLECT"
+                ],
+                [
+                    1339.43,
+                    535.51,
+                    "COLLECT"
+                ],
+                [
+                    1340.63,
+                    535.88,
+                    "COLLECT"
+                ],
+                [
+                    1363.16,
+                    564.44,
+                    "COLLECT"
+                ],
+                [
+                    1364.46,
+                    566.32,
+                    "COLLECT"
+                ],
+                [
+                    1367.58,
+                    567.27,
+                    "COLLECT"
+                ],
+                [
+                    1370.68,
+                    566.78,
+                    "COLLECT"
+                ],
+                [
+                    1366.52,
+                    571.05,
+                    "COLLECT"
+                ],
+                [
+                    1354.1,
+                    614.98,
+                    "COLLECT"
+                ],
+                [
+                    1353.83,
+                    617.24,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingNorthWulingExclusionZone4GradeOnce1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingNorthWulingExclusionZone4GradeOnce1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

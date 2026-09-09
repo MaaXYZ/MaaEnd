@@ -1,0 +1,642 @@
+{
+    "AutoCollectRouteWulingJingyuValley2CoreMineOriginiumStart": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-聚宝窟外大世界（10100030017）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2CoreMineOriginiumGoto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley2CoreMineOriginiumGoto": {
+        "desc": "采集景玉谷-聚宝窟外大世界附近的 int_doodad_core_mine_originium，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        751.13,
+                        2262.38
+                    ]
+                },
+                [
+                    751.13,
+                    2262.38,
+                    "COLLECT"
+                ],
+                [
+                    739.88,
+                    2262.38,
+                    "COLLECT"
+                ],
+                [
+                    739.13,
+                    2255.63,
+                    "COLLECT"
+                ],
+                [
+                    746.63,
+                    2254.88,
+                    "COLLECT"
+                ],
+                [
+                    753.38,
+                    2255.63,
+                    "COLLECT"
+                ],
+                [
+                    865.13,
+                    2303.63,
+                    "COLLECT"
+                ],
+                [
+                    873.38,
+                    2296.13,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2CoreMineOriginiumEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley2CoreMineOriginiumEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley2Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-聚宝窟外大世界（10100030017）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley2Grass2Goto": {
+        "desc": "采集景玉谷-聚宝窟外大世界附近的 int_doodad_grass_2，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        813.75,
+                        2314.25
+                    ]
+                },
+                [
+                    813.75,
+                    2314.25,
+                    "COLLECT"
+                ],
+                [
+                    815.4,
+                    2316.38,
+                    "COLLECT"
+                ],
+                [
+                    842.3,
+                    2343.71,
+                    "COLLECT"
+                ],
+                [
+                    841.27,
+                    2345.66,
+                    "COLLECT"
+                ],
+                [
+                    843.11,
+                    2350.31,
+                    "COLLECT"
+                ],
+                [
+                    848.2,
+                    2343.68,
+                    "COLLECT"
+                ],
+                [
+                    850.33,
+                    2263.47,
+                    "COLLECT"
+                ],
+                [
+                    852.15,
+                    2263.34,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley2Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley2Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-聚宝窟外大世界（10100030017）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley2Insect1Goto": {
+        "desc": "采集景玉谷-聚宝窟外大世界附近的 int_doodad_insect_1，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        797.24,
+                        2296.98
+                    ]
+                },
+                [
+                    797.24,
+                    2296.98,
+                    "COLLECT"
+                ],
+                [
+                    831.46,
+                    2246.33,
+                    "COLLECT"
+                ],
+                [
+                    832.17,
+                    2250.14,
+                    "COLLECT"
+                ],
+                [
+                    827.14,
+                    2258.39,
+                    "COLLECT"
+                ],
+                [
+                    817.7,
+                    2306.11,
+                    "COLLECT"
+                ],
+                [
+                    819.57,
+                    2307.36,
+                    "COLLECT"
+                ],
+                [
+                    828.11,
+                    2312.06,
+                    "COLLECT"
+                ],
+                [
+                    858.51,
+                    2383.54,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley2Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley2Insect2Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-聚宝窟外大世界（10100030017）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2Insect2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley2Insect2Goto": {
+        "desc": "采集景玉谷-聚宝窟外大世界附近的 int_doodad_insect_2，共 9 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        793.18,
+                        2302.57
+                    ]
+                },
+                [
+                    793.18,
+                    2302.57,
+                    "COLLECT"
+                ],
+                [
+                    793.64,
+                    2291.47,
+                    "COLLECT"
+                ],
+                [
+                    821.86,
+                    2308.32,
+                    "COLLECT"
+                ],
+                [
+                    825.18,
+                    2308.88,
+                    "COLLECT"
+                ],
+                [
+                    874.11,
+                    2298.69,
+                    "COLLECT"
+                ],
+                [
+                    875.12,
+                    2296.43,
+                    "COLLECT"
+                ],
+                [
+                    859.13,
+                    2293.76,
+                    "COLLECT"
+                ],
+                [
+                    858.75,
+                    2289.89,
+                    "COLLECT"
+                ],
+                [
+                    829.7,
+                    2253.35,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2Insect2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley2Insect2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley2OreClusterOriginiumStart": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-聚宝窟外大世界（10100030017）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2OreClusterOriginiumGoto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley2OreClusterOriginiumGoto": {
+        "desc": "采集景玉谷-聚宝窟外大世界附近的 int_doodad_ore_cluster_originium，共 42 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        753.42,
+                        2263.39
+                    ]
+                },
+                [
+                    753.42,
+                    2263.39,
+                    "COLLECT"
+                ],
+                [
+                    754.29,
+                    2261.04,
+                    "COLLECT"
+                ],
+                [
+                    752.21,
+                    2260.95,
+                    "COLLECT"
+                ],
+                [
+                    749.53,
+                    2261.41,
+                    "COLLECT"
+                ],
+                [
+                    749.49,
+                    2262.7,
+                    "COLLECT"
+                ],
+                [
+                    747.32,
+                    2262.45,
+                    "COLLECT"
+                ],
+                [
+                    743.15,
+                    2262.68,
+                    "COLLECT"
+                ],
+                [
+                    742.26,
+                    2263.23,
+                    "COLLECT"
+                ],
+                [
+                    741.96,
+                    2261.71,
+                    "COLLECT"
+                ],
+                [
+                    739.13,
+                    2263.69,
+                    "COLLECT"
+                ],
+                [
+                    737.93,
+                    2262.88,
+                    "COLLECT"
+                ],
+                [
+                    739.72,
+                    2260.77,
+                    "COLLECT"
+                ],
+                [
+                    738.38,
+                    2256.94,
+                    "COLLECT"
+                ],
+                [
+                    737.82,
+                    2256.12,
+                    "COLLECT"
+                ],
+                [
+                    737.73,
+                    2254.97,
+                    "COLLECT"
+                ],
+                [
+                    738.97,
+                    2254.45,
+                    "COLLECT"
+                ],
+                [
+                    740.31,
+                    2256.48,
+                    "COLLECT"
+                ],
+                [
+                    740.61,
+                    2254.75,
+                    "COLLECT"
+                ],
+                [
+                    744.02,
+                    2254.22,
+                    "COLLECT"
+                ],
+                [
+                    745.32,
+                    2255.37,
+                    "COLLECT"
+                ],
+                [
+                    745.88,
+                    2256.19,
+                    "COLLECT"
+                ],
+                [
+                    746.47,
+                    2253.7,
+                    "COLLECT"
+                ],
+                [
+                    747.89,
+                    2253.79,
+                    "COLLECT"
+                ],
+                [
+                    748.18,
+                    2255.73,
+                    "COLLECT"
+                ],
+                [
+                    751,
+                    2255.5,
+                    "COLLECT"
+                ],
+                [
+                    751.29,
+                    2256.8,
+                    "COLLECT"
+                ],
+                [
+                    752.18,
+                    2257.15,
+                    "COLLECT"
+                ],
+                [
+                    754.29,
+                    2257.39,
+                    "COLLECT"
+                ],
+                [
+                    754.46,
+                    2254.46,
+                    "COLLECT"
+                ],
+                [
+                    755.24,
+                    2256.15,
+                    "COLLECT"
+                ],
+                [
+                    863.73,
+                    2302.97,
+                    "COLLECT"
+                ],
+                [
+                    863.82,
+                    2304.12,
+                    "COLLECT"
+                ],
+                [
+                    864.38,
+                    2304.94,
+                    "COLLECT"
+                ],
+                [
+                    866.31,
+                    2304.48,
+                    "COLLECT"
+                ],
+                [
+                    865.91,
+                    2302.75,
+                    "COLLECT"
+                ],
+                [
+                    864.97,
+                    2302.45,
+                    "COLLECT"
+                ],
+                [
+                    872.63,
+                    2297.44,
+                    "COLLECT"
+                ],
+                [
+                    872.07,
+                    2296.62,
+                    "COLLECT"
+                ],
+                [
+                    871.98,
+                    2295.47,
+                    "COLLECT"
+                ],
+                [
+                    873.22,
+                    2294.95,
+                    "COLLECT"
+                ],
+                [
+                    874.16,
+                    2295.25,
+                    "COLLECT"
+                ],
+                [
+                    874.56,
+                    2296.98,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley2OreClusterOriginiumEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley2OreClusterOriginiumEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

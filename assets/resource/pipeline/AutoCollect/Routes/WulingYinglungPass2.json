@@ -1,0 +1,190 @@
+{
+    "AutoCollectRouteWulingYinglungPass2Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-应龙主营大世界（10200030169）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass2Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass2Grass1Goto": {
+        "desc": "采集应龙关-应龙主营大世界附近的 int_doodad_grass_1，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1127.47,
+                        806.7
+                    ]
+                },
+                [
+                    1127.47,
+                    806.7,
+                    "COLLECT"
+                ],
+                [
+                    1129.72,
+                    808.35,
+                    "COLLECT"
+                ],
+                [
+                    1129.21,
+                    809.2,
+                    "COLLECT"
+                ],
+                [
+                    1139.09,
+                    811.9,
+                    "COLLECT"
+                ],
+                [
+                    1139.63,
+                    810.98,
+                    "COLLECT"
+                ],
+                [
+                    1132.61,
+                    786,
+                    "COLLECT"
+                ],
+                [
+                    1199.33,
+                    783.85,
+                    "COLLECT"
+                ],
+                [
+                    1200.28,
+                    783.35,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass2Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass2Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingYinglungPass2Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-应龙主营大世界（10200030169）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass2"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass2Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass2Grass2Goto": {
+        "desc": "采集应龙关-应龙主营大世界附近的 int_doodad_grass_2，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1086.83,
+                        802.82
+                    ]
+                },
+                [
+                    1086.83,
+                    802.82,
+                    "COLLECT"
+                ],
+                [
+                    1086.34,
+                    804.14,
+                    "COLLECT"
+                ],
+                [
+                    1085.98,
+                    788.29,
+                    "COLLECT"
+                ],
+                [
+                    1086.46,
+                    786.99,
+                    "COLLECT"
+                ],
+                [
+                    1215.77,
+                    772.73,
+                    "COLLECT"
+                ],
+                [
+                    1193.03,
+                    807.09,
+                    "COLLECT"
+                ],
+                [
+                    1204.9,
+                    842.13,
+                    "COLLECT"
+                ],
+                [
+                    1204.15,
+                    842.56,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass2Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass2Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

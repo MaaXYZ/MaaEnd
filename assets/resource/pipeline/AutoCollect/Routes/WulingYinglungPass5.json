@@ -1,0 +1,181 @@
+{
+    "AutoCollectRouteWulingYinglungPass5Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到应龙关-应龙档案室大世界（10200030151）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingYinglungPass5"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass5Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingYinglungPass5Grass2Goto": {
+        "desc": "采集应龙关-应龙档案室大世界附近的 int_doodad_grass_2，共 25 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1213.65,
+                        902.97
+                    ]
+                },
+                [
+                    1213.65,
+                    902.97,
+                    "COLLECT"
+                ],
+                [
+                    1212.69,
+                    902.53,
+                    "COLLECT"
+                ],
+                [
+                    1204.9,
+                    842.13,
+                    "COLLECT"
+                ],
+                [
+                    1204.15,
+                    842.56,
+                    "COLLECT"
+                ],
+                [
+                    1183.66,
+                    885.24,
+                    "COLLECT"
+                ],
+                [
+                    1183.85,
+                    886.07,
+                    "COLLECT"
+                ],
+                [
+                    1180.45,
+                    887.23,
+                    "COLLECT"
+                ],
+                [
+                    1160.61,
+                    926.6,
+                    "COLLECT"
+                ],
+                [
+                    1160.84,
+                    927.61,
+                    "COLLECT"
+                ],
+                [
+                    1159.79,
+                    935.11,
+                    "COLLECT"
+                ],
+                [
+                    1163.83,
+                    962.29,
+                    "COLLECT"
+                ],
+                [
+                    1161.02,
+                    968.8,
+                    "COLLECT"
+                ],
+                [
+                    1166.44,
+                    969.46,
+                    "COLLECT"
+                ],
+                [
+                    1166.59,
+                    970.62,
+                    "COLLECT"
+                ],
+                [
+                    1207.88,
+                    962.1,
+                    "COLLECT"
+                ],
+                [
+                    1209.97,
+                    953.58,
+                    "COLLECT"
+                ],
+                [
+                    1208.81,
+                    952.63,
+                    "COLLECT"
+                ],
+                [
+                    1222.51,
+                    943.3,
+                    "COLLECT"
+                ],
+                [
+                    1223.38,
+                    943.79,
+                    "COLLECT"
+                ],
+                [
+                    1227.93,
+                    936.26,
+                    "COLLECT"
+                ],
+                [
+                    1240.67,
+                    976.98,
+                    "COLLECT"
+                ],
+                [
+                    1241.27,
+                    977.86,
+                    "COLLECT"
+                ],
+                [
+                    1239.19,
+                    977.08,
+                    "COLLECT"
+                ],
+                [
+                    1212.3,
+                    989.58,
+                    "COLLECT"
+                ],
+                [
+                    1212.64,
+                    990.52,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingYinglungPass5Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingYinglungPass5Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

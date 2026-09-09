@@ -1,0 +1,537 @@
+{
+    "AutoCollectRouteWulingJingyuValley7Flower3Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-迷踪林大世界（10100020350）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Flower3Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley7Flower3Goto": {
+        "desc": "采集景玉谷-迷踪林大世界附近的 int_doodad_flower_3，共 7 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        763.13,
+                        2612.45
+                    ]
+                },
+                [
+                    763.13,
+                    2612.45,
+                    "COLLECT"
+                ],
+                [
+                    765.08,
+                    2616.76,
+                    "COLLECT"
+                ],
+                [
+                    765.61,
+                    2616.44,
+                    "COLLECT"
+                ],
+                [
+                    767.17,
+                    2559.3,
+                    "COLLECT"
+                ],
+                [
+                    767.41,
+                    2557.45,
+                    "COLLECT"
+                ],
+                [
+                    767.9,
+                    2557.37,
+                    "COLLECT"
+                ],
+                [
+                    769.45,
+                    2557.18,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Flower3End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley7Flower3End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley7Grass1Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-迷踪林大世界（10100020350）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Grass1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley7Grass1Goto": {
+        "desc": "采集景玉谷-迷踪林大世界附近的 int_doodad_grass_1，共 8 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        764.34,
+                        2577.73
+                    ]
+                },
+                [
+                    764.34,
+                    2577.73,
+                    "COLLECT"
+                ],
+                [
+                    764.7,
+                    2571.21,
+                    "COLLECT"
+                ],
+                [
+                    772.55,
+                    2549.83,
+                    "COLLECT"
+                ],
+                [
+                    779.16,
+                    2585.56,
+                    "COLLECT"
+                ],
+                [
+                    782.39,
+                    2589.65,
+                    "COLLECT"
+                ],
+                [
+                    785.09,
+                    2597.13,
+                    "COLLECT"
+                ],
+                [
+                    786.04,
+                    2597.02,
+                    "COLLECT"
+                ],
+                [
+                    841.17,
+                    2599.94,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Grass1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley7Grass1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley7Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-迷踪林大世界（10100020350）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley7Grass2Goto": {
+        "desc": "采集景玉谷-迷踪林大世界附近的 int_doodad_grass_2，共 12 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        777.8,
+                        2595.41
+                    ]
+                },
+                [
+                    777.8,
+                    2595.41,
+                    "COLLECT"
+                ],
+                [
+                    784.71,
+                    2583.66,
+                    "COLLECT"
+                ],
+                [
+                    772.49,
+                    2578.39,
+                    "COLLECT"
+                ],
+                [
+                    717.01,
+                    2602.88,
+                    "COLLECT"
+                ],
+                [
+                    716.63,
+                    2600.23,
+                    "COLLECT"
+                ],
+                [
+                    718.88,
+                    2594.22,
+                    "COLLECT"
+                ],
+                [
+                    718.96,
+                    2593.43,
+                    "COLLECT"
+                ],
+                [
+                    734.46,
+                    2526.57,
+                    "COLLECT"
+                ],
+                [
+                    736.06,
+                    2524.72,
+                    "COLLECT"
+                ],
+                [
+                    735.47,
+                    2524.44,
+                    "COLLECT"
+                ],
+                [
+                    720.83,
+                    2517.18,
+                    "COLLECT"
+                ],
+                [
+                    720.44,
+                    2516.76,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley7Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley7Insect1Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-迷踪林大世界（10100020350）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Insect1Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley7Insect1Goto": {
+        "desc": "采集景玉谷-迷踪林大世界附近的 int_doodad_insect_1，共 16 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        772.24,
+                        2594.17
+                    ]
+                },
+                [
+                    772.24,
+                    2594.17,
+                    "COLLECT"
+                ],
+                [
+                    762.62,
+                    2612.39,
+                    "COLLECT"
+                ],
+                [
+                    758.84,
+                    2619.96,
+                    "COLLECT"
+                ],
+                [
+                    765.06,
+                    2621.76,
+                    "COLLECT"
+                ],
+                [
+                    801.12,
+                    2601.22,
+                    "COLLECT"
+                ],
+                [
+                    793.5,
+                    2597.05,
+                    "COLLECT"
+                ],
+                [
+                    782.68,
+                    2590.58,
+                    "COLLECT"
+                ],
+                [
+                    779.81,
+                    2580.2,
+                    "COLLECT"
+                ],
+                [
+                    770.51,
+                    2571.7,
+                    "COLLECT"
+                ],
+                [
+                    769.86,
+                    2570.4,
+                    "COLLECT"
+                ],
+                [
+                    774.06,
+                    2537.34,
+                    "COLLECT"
+                ],
+                [
+                    768.32,
+                    2530.5,
+                    "COLLECT"
+                ],
+                [
+                    772.3,
+                    2528.56,
+                    "COLLECT"
+                ],
+                [
+                    779.45,
+                    2524.82,
+                    "COLLECT"
+                ],
+                [
+                    782.89,
+                    2528.99,
+                    "COLLECT"
+                ],
+                [
+                    784.99,
+                    2518.42,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Insect1End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley7Insect1End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingJingyuValley7Spcstone13Start": {
+        "desc": "AutoCollect 采集路线：传送到景玉谷-迷踪林大世界（10100020350）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingJingyuValley7"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Spcstone13Goto"
+        ]
+    },
+    "AutoCollectRouteWulingJingyuValley7Spcstone13Goto": {
+        "desc": "采集景玉谷-迷踪林大世界附近的 int_doodad_spcstone_1_3，共 10 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        722.54,
+                        2564.14
+                    ]
+                },
+                [
+                    722.54,
+                    2564.14,
+                    "COLLECT"
+                ],
+                [
+                    720.44,
+                    2563.34,
+                    "COLLECT"
+                ],
+                [
+                    720.55,
+                    2562.45,
+                    "COLLECT"
+                ],
+                [
+                    717.01,
+                    2559.64,
+                    "COLLECT"
+                ],
+                [
+                    720.72,
+                    2559.9,
+                    "COLLECT"
+                ],
+                [
+                    721.88,
+                    2556.59,
+                    "COLLECT"
+                ],
+                [
+                    723.08,
+                    2554.16,
+                    "COLLECT"
+                ],
+                [
+                    724.52,
+                    2555.7,
+                    "COLLECT"
+                ],
+                [
+                    725.71,
+                    2554.01,
+                    "COLLECT"
+                ],
+                [
+                    730.41,
+                    2554.22,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingJingyuValley7Spcstone13End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingJingyuValley7Spcstone13End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}

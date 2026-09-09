@@ -1,0 +1,270 @@
+{
+    "AutoCollectRouteWulingSwordVaultDale1Grass2Start": {
+        "desc": "AutoCollect 采集路线：传送到藏剑谷-东谷遗迹大世界（25000000345）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSwordVaultDale1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSwordVaultDale1Grass2Goto"
+        ]
+    },
+    "AutoCollectRouteWulingSwordVaultDale1Grass2Goto": {
+        "desc": "采集藏剑谷-东谷遗迹大世界附近的 int_doodad_grass_2，共 11 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1849.84,
+                        2778.4
+                    ]
+                },
+                [
+                    1849.84,
+                    2778.4,
+                    "COLLECT"
+                ],
+                [
+                    1849.34,
+                    2784.13,
+                    "COLLECT"
+                ],
+                [
+                    1876.4,
+                    2777.5,
+                    "COLLECT"
+                ],
+                [
+                    1895.92,
+                    2771.28,
+                    "COLLECT"
+                ],
+                [
+                    1891.08,
+                    2732.73,
+                    "COLLECT"
+                ],
+                [
+                    1886.59,
+                    2730.96,
+                    "COLLECT"
+                ],
+                [
+                    1829.1,
+                    2690.87,
+                    "COLLECT"
+                ],
+                [
+                    1745.08,
+                    2820.12,
+                    "COLLECT"
+                ],
+                [
+                    1761.78,
+                    2832.72,
+                    "COLLECT"
+                ],
+                [
+                    1768.87,
+                    2844.33,
+                    "COLLECT"
+                ],
+                [
+                    1774.08,
+                    2844.68,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSwordVaultDale1Grass2End"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSwordVaultDale1Grass2End": {
+        "pre_delay": 0,
+        "post_delay": 0
+    },
+    "AutoCollectRouteWulingSwordVaultDale1OreClusterCopperStart": {
+        "desc": "AutoCollect 采集路线：传送到藏剑谷-东谷遗迹大世界（25000000345）",
+        "enabled": false,
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "SubTask",
+        "custom_action_param": {
+            "sub": [
+                "SceneEnterWorldWulingSwordVaultDale1"
+            ]
+        },
+        "post_delay": 0,
+        "next": [
+            "AutoCollectRouteWulingSwordVaultDale1OreClusterCopperGoto"
+        ]
+    },
+    "AutoCollectRouteWulingSwordVaultDale1OreClusterCopperGoto": {
+        "desc": "采集藏剑谷-东谷遗迹大世界附近的 int_doodad_ore_cluster_copper，共 21 个",
+        "pre_delay": 0,
+        "action": "Custom",
+        "custom_action": "MapNavigateAction",
+        "custom_action_param": {
+            "path": [
+                {
+                    "action": "ZONE",
+                    "zone_id": "Wuling_Base"
+                },
+                {
+                    "action": "NAVMESH",
+                    "target": [
+                        1746.07,
+                        2744.73
+                    ]
+                },
+                [
+                    1746.07,
+                    2744.73,
+                    "COLLECT"
+                ],
+                [
+                    1744.59,
+                    2747.65,
+                    "COLLECT"
+                ],
+                [
+                    1744.3,
+                    2745.07,
+                    "COLLECT"
+                ],
+                [
+                    1745.97,
+                    2743.1,
+                    "COLLECT"
+                ],
+                [
+                    1744.79,
+                    2742.54,
+                    "COLLECT"
+                ],
+                [
+                    1743.42,
+                    2743.41,
+                    "COLLECT"
+                ],
+                [
+                    1743.32,
+                    2744.24,
+                    "COLLECT"
+                ],
+                [
+                    1740.03,
+                    2740.56,
+                    "COLLECT"
+                ],
+                [
+                    1745.77,
+                    2736.47,
+                    "COLLECT"
+                ],
+                [
+                    1744.96,
+                    2736.25,
+                    "COLLECT"
+                ],
+                [
+                    1744.29,
+                    2734.77,
+                    "COLLECT"
+                ],
+                [
+                    1745.01,
+                    2733.68,
+                    "COLLECT"
+                ],
+                [
+                    1746.64,
+                    2733.81,
+                    "COLLECT"
+                ],
+                [
+                    1746.72,
+                    2735.61,
+                    "COLLECT"
+                ],
+                [
+                    1820.17,
+                    2693.45,
+                    "COLLECT"
+                ],
+                [
+                    1820.25,
+                    2692.15,
+                    "COLLECT"
+                ],
+                [
+                    1821.72,
+                    2691.45,
+                    "COLLECT"
+                ],
+                [
+                    1821.49,
+                    2694.4,
+                    "COLLECT"
+                ],
+                [
+                    1822.3,
+                    2694.18,
+                    "COLLECT"
+                ],
+                [
+                    1822.7,
+                    2692.96,
+                    "COLLECT"
+                ],
+                [
+                    1826.13,
+                    2692.41,
+                    "COLLECT"
+                ]
+            ]
+        },
+        "post_delay": 0,
+        "rate_limit": 0,
+        "next": [
+            "AutoCollectRouteWulingSwordVaultDale1OreClusterCopperEnd"
+        ],
+        "focus": {
+            "Node.Action.Succeeded": {
+                "trace": true
+            },
+            "Node.Action.Failed": {
+                "trace": true
+            }
+        }
+    },
+    "AutoCollectRouteWulingSwordVaultDale1OreClusterCopperEnd": {
+        "pre_delay": 0,
+        "post_delay": 0
+    }
+}
