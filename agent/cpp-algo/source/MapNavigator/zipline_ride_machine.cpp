@@ -511,7 +511,7 @@ StageResult ZiplineRideMachine::TickLanded(const ZiplineObservation& obs, IZipli
 }
 
 // 决策表。到了就交回; 滑错了先滑回来再按预算重试; 没发出去换一档俯仰, 档用完先重新站一次上索点,
-// 再不行这根索就是滑不动; 定位对不上给一次冷启动的机会, 超时就丢
+// 再不行这根索就是滑不动, 人留在架子上等重规划; 定位对不上给一次冷启动的机会, 超时就丢
 StageResult ZiplineRideMachine::Classify(IZiplineObserver& observer, IZiplineActuator& actuator, Clock::time_point now)
 {
     EnterStage(ZiplineStage::Classified, now);
@@ -590,8 +590,13 @@ StageResult ZiplineRideMachine::Classify(IZiplineObserver& observer, IZiplineAct
             LogWarn << "zipline/no_launch/restand" << VAR(plan_.restand.has_value());
             return NeedsReposition { .restand = plan_.restand };
         }
+        // 人根本没滑出去, 还站在上索架上。先下来再重规划要白付一次上索, 而重规划本身就会看新路线
+        // 用不用得上脚下这根架子, 用不上时才下来
         CommitRecord(HopOutcome::NoLaunch, now);
-        return StartDismount(actuator, ReplanRequested { .still_on_tower = false }, now);
+        parked_on_ = plan_.mount;
+        pending_exit_ = ReplanRequested { .still_on_tower = true, .on_tower = plan_.mount };
+        EnterStage(ZiplineStage::Handoff, now);
+        return Handoff(now);
     }
     case LandingClass::Unknown: {
         if (!unknown_deadline_) {
