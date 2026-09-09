@@ -27,6 +27,14 @@ function readAdbPipeline(...segments) {
     return readJsonc(new URL(`../../../assets/resource_adb/pipeline/${segments.join("/")}`, import.meta.url));
 }
 
+test("ADB does not run the mouse cursor reset as a touch move", () => {
+    const base = readGeneratedPipeline("Interface", "MouseMoveReset.json");
+    const adb = readAdbPipeline("Interface", "MouseMoveReset.json");
+
+    assert.equal(base.MouseMoveReset.action, "TouchMove");
+    assert.equal(adb.MouseMoveReset.action, "DoNothing");
+});
+
 function readGeneratedTask() {
     return readJsonc(new URL("../../../assets/tasks/DeliveryJobs.json", import.meta.url));
 }
