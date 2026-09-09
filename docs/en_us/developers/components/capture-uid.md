@@ -124,5 +124,6 @@ The action executes in the following order:
 | CreditShopping | `agent/go-service/creditshopping/action_record.go` | Go API (`Capture`) | Correlate UID when recording shelf snapshots |
 | AccountSwitch | `assets/resource/pipeline/AccountSwitch.json` (`__AccountSwitchClearUidCache` node) | Pipeline (`clear_cache`) | Clear cache after switching accounts |
 | MapNavigator | `assets/resource/pipeline/Common/AccountIdentity.json` | Resource shared state node | Automatically select zipline records for the current account |
+| ZiplineImport (Linux) | `agent/go-service/ziplineimport/parse.go` | Go API (`AccountIDFromRawUID`) | Derive the same account identity from the web `roleId` and store zipline records per account |
 
 After `AccountSwitch` succeeds, it also resets scene-image initialization. The next scene task in the same queue therefore captures the new UID instead of reusing the previous account identity.

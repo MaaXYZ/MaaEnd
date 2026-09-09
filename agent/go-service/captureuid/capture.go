@@ -37,9 +37,6 @@ var (
 	capturedUidMu sync.Mutex
 
 	uidDigitRe = regexp.MustCompile(`\d+`)
-
-	// loadSaltFunc 是加载（或首次生成）盐的注入点，单元测试可替换为固定盐。
-	loadSaltFunc = loadOrCreateSalt
 )
 
 // Capture 捕获玩家 UID，并按 outputType 返回格式化结果。
@@ -120,6 +117,37 @@ func GetCachedUID(outputType OutputType) string {
 	return uid
 }
 
+// IsValidRawUID reports whether uid is a raw 8–12 digit game UID or web roleId.
+// CaptureUid and ZiplineImport share this check so a value accepted on one side can
+// always be converted to the same account identity on the other.
+func IsValidRawUID(uid string) bool {
+	if len(uid) < 8 || len(uid) > 12 {
+		return false
+	}
+	for i := 0; i < len(uid); i++ {
+		if uid[i] < '0' || uid[i] > '9' {
+			return false
+		}
+	}
+	return true
+}
+
+// AccountIDFromRawUID validates a raw UID / roleId and returns the pseudonymous account
+// identity SHA-256(uid + salt)[:16]. The salt is the shared debug/record/random_salt.txt,
+// so CaptureUid (in-game UID) and ZiplineImport (web roleId) derive the same identity for
+// the same account.
+func AccountIDFromRawUID(uid string) (string, error) {
+	if !IsValidRawUID(uid) {
+		return "", fmt.Errorf("raw uid must be 8-12 digits")
+	}
+	salt, err := loadOrCreateSalt()
+	if err != nil {
+		return "", fmt.Errorf("salt load/create failed: %w", err)
+	}
+	hash := sha256.Sum256([]byte(uid + salt))
+	return hex.EncodeToString(hash[:])[:16], nil
+}
+
 // formatUID 将原始 UID 数字按 outputType 转换为输出格式。
 // hashed 保持原算法 SHA-256(uid+盐) 前 16 位十六进制；masked 保留首尾各 3 位；
 // raw 原样返回；空字符串与 "unknown" 在所有模式下原样透传。
@@ -134,12 +162,7 @@ func formatUID(raw string, outputType OutputType) (string, error) {
 	}
 	switch outputType {
 	case OutputTypeHashed:
-		salt, err := loadSaltFunc()
-		if err != nil {
-			return "", fmt.Errorf("salt load/create failed: %w", err)
-		}
-		hash := sha256.Sum256([]byte(raw + salt))
-		return hex.EncodeToString(hash[:])[:16], nil
+		return AccountIDFromRawUID(raw)
 	case OutputTypeMasked:
 		return maskUID(raw), nil
 	default:
