@@ -873,13 +873,14 @@ bool NavigationStateMachine::HandleZiplineRecoveryReplan()
     const bool on_tower = runtime_state_.IsZiplineMounted();
     const navmesh::WorldPoint fix { .x = position_->x, .y = position_->y };
     const auto snap = NavmeshSnapAt(param_, position_->zone_id, fix, param_.navmesh_snap_radius);
-    const bool fresh_fix = !position_provider_->LastCaptureWasHeld();
     const bool on_mesh = on_tower || (snap && snap->distance <= param_.navmesh_snap_radius);
-    if (!fresh_fix || !on_mesh) {
+    // 滑行期间的跟踪结果不可用, 只接受新鲜定位。贴不回可走面的定位同样接受: 它表示落点不在路面
+    // 上(落到未登记的架子、崖边未铺面处), 坐标本身仍然有效, 重展开时规划会吸附回最近的可走面。
+    if (position_provider_->LastCaptureWasHeld()) {
         ++recovery.rejected_fixes;
         if (recovery.rejected_fixes == 1) {
-            LogWarn << "Zipline recovery rejected an untrusted position; forcing another global locate." << VAR(fresh_fix) << VAR(on_mesh)
-                    << VAR(position_->x) << VAR(position_->y) << VAR(position_->zone_id);
+            LogWarn << "Zipline recovery rejected a stale position; forcing another global locate." << VAR(on_mesh) << VAR(position_->x)
+                    << VAR(position_->y) << VAR(position_->zone_id);
         }
         recovery.stable_hits = 0;
         position_provider_->ResetTracking();
@@ -903,16 +904,17 @@ bool NavigationStateMachine::HandleZiplineRecoveryReplan()
     LogInfo << "Zipline recovery position stabilized." << VAR(elapsed_ms) << VAR(recovery.stable_hits) << VAR(recovery.rejected_fixes)
             << VAR(position_->x) << VAR(position_->y) << VAR(position_->zone_id);
 
-    // 站在架子上哪个点都走不到, 剩余展开路径直接作废, 只能重展开
-    bool rejoined = false;
-    if (!on_tower) {
+    // 剩余展开是按「从链尾落点出发」算的, 实际未抵达该点时它与当前位置无关: 可接入点可能在另
+    // 一侧, 沿途会撞上原本要用索越过的障碍。先回作者路线从当前位置重新展开, 判死的那一跳已记入
+    // 账本, 规划会绕开它另选链路。
+    bool rejoined = TryReplanRemainingAuthoredRoute("zipline_recovery_reexpand");
+    // 重展开失败才退回旧展开: 当前位置有可走面且不在架子上时, 它至少是一条经过规划的路径。
+    if (!rejoined && !on_tower && on_mesh) {
         const std::optional<DynamicAnchor> anchor =
             ResolveReachableNavmeshAnchor(param_, session_, *position_, session_->current_node_idx(), "zipline_recovery");
         rejoined = anchor && TryApplyDynamicOverlayToAnchor("zipline_recovery", anchor->first, anchor->second);
     }
-    // 链尾落点规划出的剩余展开路径从半路的架子上可能一个点都够不着; 那不代表导航失败, 只代表
-    // 这份展开作废了 —— 回到作者的原始路线重新展开剩余部分, 刚判死的那跳已经记在账本里。
-    if (!rejoined && !TryReplanRemainingAuthoredRoute("zipline_recovery_reexpand")) {
+    if (!rejoined) {
         if (on_tower) {
             semantic_nodes::LeaveZiplineTower(BuildSemanticContext(
                 action_wrapper_,
