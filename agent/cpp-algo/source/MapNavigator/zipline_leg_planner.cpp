@@ -6,9 +6,11 @@
 #include <limits>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <queue>
 #include <system_error>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include <MaaUtils/Logger.h>
@@ -245,15 +247,76 @@ double PolylineLength(const navmesh::WorldPath& path)
 
 constexpr size_t kNoTower = std::numeric_limits<size_t>::max();
 
+// 索线中段横向近到这个距离还有另一根同型通电架子，就判这条直索不成立：滑行会终止在中间那根上。
+// 实测终止在中间架子的两条索，拦路架横向距离 11.23 / 10.14；实证滑到落点的索中段 30 内无架子。
+// 两组样本之间 13.2~15.3 存在空隙，取空隙下沿。
+constexpr double kRopeInterceptLateralWu = 12.0;
+
+// 地形高出索线超过这个量就判这条索挂不成。实测可用区间 (1.06, 8.64)：被游戏判为路径受阻的一对
+// 顶起 8.64，同场景可通行的两对是 1.06 / 0.94。全局分布在此区间连续，取值属工程折中。
+constexpr double kRopeTerrainRiseWu = 6.0;
+
+// 候选图分两档。certain 只收锚点原距离即在索长以内的边；其余边靠锚点格位的不确定半宽才够得上，
+// 是否真挂着索无法确定，单列一档，仅在确定边到不了目标时启用。
+struct ZipLinkGraph
+{
+    std::vector<std::vector<size_t>> all;
+    std::vector<std::vector<size_t>> certain;
+};
+
+void DropEdge(std::vector<std::vector<size_t>>& links, size_t a, size_t b)
+{
+    const auto drop = [](std::vector<size_t>& outgoing, size_t target) {
+        outgoing.erase(std::remove(outgoing.begin(), outgoing.end(), target), outgoing.end());
+    };
+    drop(links[a], b);
+    drop(links[b], a);
+}
+
+// from→to 的索中段是否有另一根架子拦着。拦路架需离两端各超过一个拦截半径，更贴近端点的即端点
+// 自身，无需为此另设参数。nodes 已完成通电筛选，未通电的架子不承载索，也就不构成拦截。
+bool RopeIntercepted(const std::vector<zipline::ZiplineNode>& nodes, size_t from, size_t to)
+{
+    const double dx = nodes[to].world_x - nodes[from].world_x;
+    const double dz = nodes[to].world_z - nodes[from].world_z;
+    const double span = std::hypot(dx, dz);
+    if (span <= 2.0 * kRopeInterceptLateralWu) {
+        return false;
+    }
+    for (size_t k = 0; k < nodes.size(); ++k) {
+        if (k == from || k == to || nodes[k].template_id != nodes[from].template_id || nodes[k].level_id != nodes[from].level_id) {
+            continue;
+        }
+        const double offset_x = nodes[k].world_x - nodes[from].world_x;
+        const double offset_z = nodes[k].world_z - nodes[from].world_z;
+        const double along = (offset_x * dx + offset_z * dz) / span;
+        if (along <= kRopeInterceptLateralWu || along >= span - kRopeInterceptLateralWu) {
+            continue;
+        }
+        const double lateral_x = offset_x - dx * along / span;
+        const double lateral_z = offset_z - dz * along / span;
+        if (std::hypot(lateral_x, lateral_z) <= kRopeInterceptLateralWu) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // 哪两根架子之间挂着索，记录本身没说，这里按几何推断：同一种架子、同一层、任一可能中心的
 // 世界距离不超过这种架子的索长上限，就当它们之间有一条候选索。索不分上下行，所以两个方向
 // 都算。位置含糊时优先保留候选；推错后执行侧会封掉失败边并重新规划，推漏则整条连续链都无法发现。
-std::vector<std::vector<size_t>> BuildLinks(
+//
+// 中段站着另一根架子的直索需要剔除：滑行终止在中间那根上，这条边的实际形态是经过它的两跳链。
+// 保留它会让求解器用一条不存在的索胜过真实的链。
+ZipLinkGraph BuildLinks(
     const std::vector<zipline::ZiplineNode>& nodes,
     const std::vector<double>& span_limit,
     const std::vector<std::array<int, 2>>& footprints)
 {
-    std::vector<std::vector<size_t>> links(nodes.size());
+    ZipLinkGraph graph;
+    graph.all.resize(nodes.size());
+    graph.certain.resize(nodes.size());
+    size_t intercepted = 0;
     for (size_t i = 0; i < nodes.size(); ++i) {
         if (span_limit[i] <= 0.0) {
             continue;
@@ -262,20 +325,31 @@ std::vector<std::vector<size_t>> BuildLinks(
             if (nodes[i].template_id != nodes[j].template_id || nodes[i].level_id != nodes[j].level_id) {
                 continue;
             }
-            const double span_squared = minimum_possible_world_span_squared(
-                nodes[j].world_x - nodes[i].world_x,
-                nodes[j].world_y - nodes[i].world_y,
-                nodes[j].world_z - nodes[i].world_z,
-                footprints[i],
-                footprints[j]);
+            const double anchor_delta_x = nodes[j].world_x - nodes[i].world_x;
+            const double delta_y = nodes[j].world_y - nodes[i].world_y;
+            const double anchor_delta_z = nodes[j].world_z - nodes[i].world_z;
+            const double span_squared =
+                minimum_possible_world_span_squared(anchor_delta_x, delta_y, anchor_delta_z, footprints[i], footprints[j]);
             if (span_squared > span_limit[i] * span_limit[i]) {
                 continue;
             }
-            links[i].push_back(j);
-            links[j].push_back(i);
+            if (RopeIntercepted(nodes, i, j)) {
+                ++intercepted;
+                continue;
+            }
+            graph.all[i].push_back(j);
+            graph.all[j].push_back(i);
+            const double anchor_span_squared = anchor_delta_x * anchor_delta_x + delta_y * delta_y + anchor_delta_z * anchor_delta_z;
+            if (anchor_span_squared <= span_limit[i] * span_limit[i]) {
+                graph.certain[i].push_back(j);
+                graph.certain[j].push_back(i);
+            }
         }
     }
-    return links;
+    if (intercepted != 0) {
+        LogDebug << "ZiplineRoute: dropped the straight ropes intercepted by another tower." << VAR(intercepted);
+    }
+    return graph;
 }
 
 // 从 source 出发，沿索能到的每一根架子和到它最省的滑法。到不了的架子留 infinity。
@@ -573,10 +647,48 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
         // 上索到落地这一整段，已经含上索和沿途每一次换乘。
         double zip_cost = 0.0;
         double lower_bound = 0.0;
+        // 该链解自确定边子图。还原整条链与列举备选架子时须使用同一张图。
+        bool certain = false;
     };
 
     // 一条路线用几条索由代价决定，不设跳数上限：换乘要收钱，划不来的长链自己就被淘汰了。
-    std::vector<std::vector<size_t>> links = BuildLinks(nodes, span_limit, footprints);
+    ZipLinkGraph graph = BuildLinks(nodes, span_limit, footprints);
+
+    const auto drop_from_graph = [&graph](size_t a, size_t b) {
+        DropEdge(graph.all, a, b);
+        DropEdge(graph.certain, a, b);
+    };
+
+    // 两根架子之间隔着地形时挂不住索。每条边只量一次，两个方向一并删除。
+    {
+        std::vector<std::pair<size_t, size_t>> pairs;
+        std::vector<NavmeshAirLine> lines;
+        for (size_t i = 0; i < graph.all.size(); ++i) {
+            for (const size_t j : graph.all[i]) {
+                if (j <= i) {
+                    continue;
+                }
+                pairs.emplace_back(i, j);
+                lines.push_back(NavmeshAirLine {
+                    .a = ToWorld(nodes[i]),
+                    .a_height = nodes[i].height,
+                    .b = ToWorld(nodes[j]),
+                    .b_height = nodes[j].height,
+                });
+            }
+        }
+        const std::vector<std::optional<double>> rises = NavmeshLineRises(param, locator_zone, lines);
+        size_t blocked = 0;
+        for (size_t index = 0; index < pairs.size(); ++index) {
+            if (rises[index] && *rises[index] > kRopeTerrainRiseWu) {
+                drop_from_graph(pairs[index].first, pairs[index].second);
+                ++blocked;
+            }
+        }
+        if (blocked != 0) {
+            LogDebug << "ZiplineRoute: dropped the ropes blocked by terrain." << VAR(blocked) << VAR(pairs.size());
+        }
+    }
 
     // 执行侧账本里滑不动、滑错、落地丢了的跳直接从连通图里拿掉。索不分上下行, 一根滑不动的索
     // 反着大概率也滑不动, 两个方向一起封。
@@ -584,53 +696,63 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
         const auto near_tower = [&nodes](size_t tower, const ZiplineNodeRef& ref) {
             return std::hypot(nodes[tower].x - ref.x, nodes[tower].y - ref.y) <= kZiplineHopBanMatchWu;
         };
-        size_t banned_edges = 0;
-        for (size_t i = 0; i < links.size(); ++i) {
-            std::vector<size_t>& outgoing = links[i];
-            outgoing.erase(
-                std::remove_if(
-                    outgoing.begin(),
-                    outgoing.end(),
-                    [&](size_t j) {
-                        for (const ZiplineHopRecord& record : param.zipline_ledger) {
-                            if (!IsZiplineRopeFailure(record.outcome)) {
-                                continue;
-                            }
-                            const ZiplineNodeRef& from = record.plan.mount;
-                            const ZiplineNodeRef& to = record.plan.landing;
-                            if ((near_tower(i, from) && near_tower(j, to)) || (near_tower(i, to) && near_tower(j, from))) {
-                                ++banned_edges;
-                                return true;
-                            }
-                        }
-                        return false;
-                    }),
-                outgoing.end());
+        std::vector<std::pair<size_t, size_t>> banned;
+        for (size_t i = 0; i < graph.all.size(); ++i) {
+            for (const size_t j : graph.all[i]) {
+                if (j <= i) {
+                    continue;
+                }
+                for (const ZiplineHopRecord& record : param.zipline_ledger) {
+                    if (!IsZiplineRopeFailure(record.outcome)) {
+                        continue;
+                    }
+                    const ZiplineNodeRef& from = record.plan.mount;
+                    const ZiplineNodeRef& to = record.plan.landing;
+                    if ((near_tower(i, from) && near_tower(j, to)) || (near_tower(i, to) && near_tower(j, from))) {
+                        banned.emplace_back(i, j);
+                        break;
+                    }
+                }
+            }
+        }
+        for (const auto& edge : banned) {
+            drop_from_graph(edge.first, edge.second);
         }
         LogInfo << "ZiplineRoute: dropped the hops the runtime already gave up on." << VAR(param.zipline_ledger.size())
-                << VAR(banned_edges);
+                << VAR(banned.size());
     }
 
     std::vector<Candidate> candidates;
     std::vector<double> chain_cost;
     std::vector<size_t> chain_prev;
+    std::vector<double> certain_cost;
+    std::vector<size_t> certain_prev;
     for (size_t i = 0; i < nodes.size(); ++i) {
         // 这根架子连白送一整段滑行都够不着收益门槛，从它起头的所有链就都不必算了。
-        if (!can_board[i] || links[i].empty() || lb_from_start[i] + cost.mount_penalty >= gain_threshold) {
+        if (!can_board[i] || graph.all[i].empty() || lb_from_start[i] + cost.mount_penalty >= gain_threshold) {
             continue;
         }
 
-        SolveZipChains(nodes, links, cost, i, &chain_cost, &chain_prev);
+        SolveZipChains(nodes, graph.certain, cost, i, &certain_cost, &certain_prev);
+        SolveZipChains(nodes, graph.all, cost, i, &chain_cost, &chain_prev);
         for (size_t j = 0; j < nodes.size(); ++j) {
-            if (j == i || !can_land[j] || !std::isfinite(chain_cost[j])) {
+            if (j == i || !can_land[j]) {
                 continue;
             }
-            const double zip_cost = cost.mount_penalty - cost.transfer_penalty + chain_cost[j];
+            // 确定边能到达就用确定边，即使它比不确定的直索多几跳、代价更高。多跳可达优于一条
+            // 可能不存在的索：推断错误要整段重新规划，代价高于多出的那几跳。
+            const bool certain = std::isfinite(certain_cost[j]);
+            const double chain = certain ? certain_cost[j] : chain_cost[j];
+            if (!std::isfinite(chain)) {
+                continue;
+            }
+            const double zip_cost = cost.mount_penalty - cost.transfer_penalty + chain;
             const double lower_bound = lb_from_start[i] + zip_cost + lb_to_goal[j];
             if (lower_bound >= gain_threshold) {
                 continue;
             }
-            candidates.push_back(Candidate { .mount = i, .dismount = j, .zip_cost = zip_cost, .lower_bound = lower_bound });
+            candidates.push_back(
+                Candidate { .mount = i, .dismount = j, .zip_cost = zip_cost, .lower_bound = lower_bound, .certain = certain });
         }
     }
 
@@ -756,6 +878,7 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
     }
 
     // 中间经过哪几根架子到这时才还原：候选是成对枚举出来的，逐个存下整条链纯属浪费。
+    const std::vector<std::vector<size_t>>& links = best_candidate->certain ? graph.certain : graph.all;
     SolveZipChains(nodes, links, cost, best_candidate->mount, &chain_cost, &chain_prev);
     std::vector<size_t> chain;
     for (size_t at = best_candidate->dismount; at != kNoTower; at = chain_prev[at]) {
