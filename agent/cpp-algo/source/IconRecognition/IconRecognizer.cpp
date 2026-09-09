@@ -750,7 +750,12 @@ public:
                 std::optional<double> transfer_foreground_texture;
                 if (request.grid_type == GridType::Transfer) {
                     const auto texture_started = performance ? PerformanceClock::now() : PerformanceClock::time_point {};
-                    transfer_foreground_texture = detail::ForegroundTextureScore(image, cell.cell_box, request.grid_type, cell.texture_roi);
+                    transfer_foreground_texture = detail::ForegroundTextureScore(
+                        image,
+                        cell.cell_box,
+                        request.grid_type,
+                        cell.texture_roi,
+                        detail::TextureBoundaryMode::SourceContext);
                     if (performance) {
                         performance->foreground_texture_ms += ElapsedMilliseconds(texture_started);
                     }
