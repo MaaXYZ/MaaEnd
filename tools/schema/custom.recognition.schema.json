@@ -359,7 +359,14 @@
                                 "maximum": 1,
                                 "default": 0.9,
                                 "title": "Threshold",
-                                "description": "TemplateMatch threshold. Score >= threshold means the list is complete (return true/hit). Below threshold recaptures OverrideImage and returns false/miss so Pipeline can keep scrolling. Default 0.9. Recognition region uses the native recognition roi (V2: recognition.param.roi, sibling of custom_recognition; exposed as arg.Roi), not this param. Place this recognition before the swipe node; callers must use post_wait_freezes on the swipe so recognition runs only after the screen is still."
+                                "description": "TemplateMatch threshold. Score >= threshold means the frame is unchanged; the list is complete after unchanged_required consecutive matches. Below threshold recaptures OverrideImage and returns false/miss so Pipeline can keep scrolling. Default 0.9. Recognition region uses the native recognition roi (V2: recognition.param.roi, sibling of custom_recognition; exposed as arg.Roi), not this param. Place this recognition before the swipe node; callers must use post_wait_freezes on the swipe so recognition runs only after the screen is still."
+                            },
+                            "unchanged_required": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "default": 1,
+                                "title": "Unchanged confirmations",
+                                "description": "Number of consecutive unchanged post-swipe frames required before the list is considered complete. A changed frame resets the count. Default 1 preserves existing behavior."
                             }
                         }
                     }

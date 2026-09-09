@@ -181,7 +181,8 @@
         "recognition": "Custom",
         "custom_recognition": "ListCompleteRecognition",
         "custom_recognition_param": {
-            "threshold": 0.98
+            "threshold": 0.98,
+            "unchanged_required": 2
         },
         "roi": [
             34,
@@ -234,11 +235,12 @@
         ]
     },
     "DeliveryJobsItemListAtBottom": {
-        "desc": "当前优先级货物未找到且本地仓储列表已滚动到底部",
+        "desc": "当前优先级货物未找到且本地仓储列表连续两次向上滑动后画面未变",
         "recognition": "Custom",
         "custom_recognition": "ListCompleteRecognition",
         "custom_recognition_param": {
-            "threshold": 0.98
+            "threshold": 0.98,
+            "unchanged_required": 2
         },
         "roi": [
             34,
