@@ -1,7 +1,6 @@
 package autostockpile
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -97,31 +96,6 @@ type SelectionConfig struct {
 
 // PriceLimitConfig 按档位 ID 保存商品购买阈值。
 type PriceLimitConfig map[string]int
-
-// UnmarshalJSON 支持将数字或数字字符串形式的阈值反序列化为 PriceLimitConfig。
-func (c *PriceLimitConfig) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		*c = nil
-		return nil
-	}
-
-	raw := make(map[string]json.RawMessage)
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return err
-	}
-
-	parsed := make(PriceLimitConfig, len(raw))
-	for key, value := range raw {
-		threshold, err := parsePositiveThresholdValue("price_limits."+key, value)
-		if err != nil {
-			return err
-		}
-		parsed[key] = threshold
-	}
-
-	*c = parsed
-	return nil
-}
 
 // Validate 校验 RecognitionResult 是否满足新契约约束。
 func (r RecognitionResult) Validate() error {

@@ -1,10 +1,8 @@
 package autostockpile
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -49,50 +47,4 @@ func newThresholdConfigError(field string, err error) error {
 	}
 
 	return &thresholdConfigError{field: field, err: err}
-}
-
-func parsePositiveThresholdValue(field string, data json.RawMessage) (int, error) {
-	var stringValue string
-	if err := json.Unmarshal(data, &stringValue); err == nil {
-		if strings.TrimSpace(stringValue) == "" {
-			return 0, newThresholdConfigError(field, fmt.Errorf("must not be empty"))
-		}
-
-		parsed, parseErr := strconv.Atoi(stringValue)
-		if parseErr != nil {
-			return 0, newThresholdConfigError(field, fmt.Errorf("invalid integer string %q", stringValue))
-		}
-		if parsed <= 0 {
-			return 0, newThresholdConfigError(field, fmt.Errorf("must be greater than 0"))
-		}
-		return parsed, nil
-	}
-
-	parsed, err := parsePriceLimitValue(data)
-	if err != nil {
-		return 0, newThresholdConfigError(field, err)
-	}
-	if parsed <= 0 {
-		return 0, newThresholdConfigError(field, fmt.Errorf("must be greater than 0"))
-	}
-
-	return parsed, nil
-}
-
-func parsePriceLimitValue(data json.RawMessage) (int, error) {
-	var intValue int
-	if err := json.Unmarshal(data, &intValue); err == nil {
-		return intValue, nil
-	}
-
-	var stringValue string
-	if err := json.Unmarshal(data, &stringValue); err == nil {
-		parsed, parseErr := strconv.Atoi(stringValue)
-		if parseErr != nil {
-			return 0, fmt.Errorf("invalid integer string %q", stringValue)
-		}
-		return parsed, nil
-	}
-
-	return 0, fmt.Errorf("must be an integer or integer string")
 }
