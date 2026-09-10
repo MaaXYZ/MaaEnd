@@ -219,6 +219,64 @@ std::optional<navmesh::WorldPoint> MountStandPoint(
     return stand;
 }
 
+// 上索依次走到哪。坐标记的是随朝向变化的角格锚点, 设备模型占着锚点四周哪一格未知; 互动要人面朝
+// 设备且身位与模型有交集, 走到锚点上两条都不一定成立, 所以把各个可能的中心格排成候选逐个试。
+// 取中心格而不取更深处: 行进中的提示预筛按到航点的距离开窗, 目标越往模型里推, 身位被挡住那一刻
+// 离航点越远, 越容易落在窗外。顺着进场方向的那个排前面, 少一次掉头。
+std::vector<navmesh::WorldPoint> MountSpots(
+    const NaviParam& param,
+    const std::string& locator_zone,
+    const zipline::ZiplineFrame& frame,
+    const zipline::ZiplineNode& tower,
+    const std::array<int, 2>& footprint,
+    const navmesh::WorldPoint& approach_from,
+    const std::vector<navmesh::WorldPoint>& supplies)
+{
+    const navmesh::WorldPoint anchor = ToWorld(tower);
+    const double half_x = grid_half_span(footprint[0]);
+    const double half_z = grid_half_span(footprint[1]);
+    // 进场方向取最后一段走路; 起点已经站在架子跟前时这两个分量都是零, 排序退化成固定顺序
+    const double toward_x = anchor.x - approach_from.x;
+    const double toward_y = anchor.y - approach_from.y;
+    const std::array<double, 2> signs { 1.0, -1.0 };
+    const size_t x_count = half_x > 0.0 ? signs.size() : 1;
+    const size_t z_count = half_z > 0.0 ? signs.size() : 1;
+    std::vector<std::pair<double, navmesh::WorldPoint>> ranked;
+    for (size_t xi = 0; xi < x_count; ++xi) {
+        for (size_t zi = 0; zi < z_count; ++zi) {
+            // 偏移量在原始世界坐标里按格算, 再走投影拿到像素: 地图比例不进这里
+            const zipline::ZiplineMark shifted {
+                .template_id = tower.template_id,
+                .level_id = tower.level_id,
+                .x = tower.world_x + signs[xi] * half_x,
+                .y = tower.world_y,
+                .z = tower.world_z + signs[zi] * half_z,
+            };
+            const navmesh::WorldPoint spot = ToWorld(frame.project(shifted));
+            const auto snap = NavmeshSnapAt(param, locator_zone, spot, kMountStandSnapRadiusPx, tower.height);
+            if (!snap || snap->distance > kMountStandSnapTolPx || std::abs(snap->height - tower.height) > navmesh::kBaseNavFloorBand) {
+                continue;
+            }
+            ranked.emplace_back((spot.x - anchor.x) * toward_x + (spot.y - anchor.y) * toward_y, spot);
+        }
+    }
+    std::stable_sort(ranked.begin(), ranked.end(), [](const auto& lhs, const auto& rhs) { return lhs.first > rhs.first; });
+    std::vector<navmesh::WorldPoint> spots;
+    for (const auto& entry : ranked) {
+        spots.push_back(entry.second);
+    }
+    if (spots.empty()) {
+        // 只占一格时锚点就是中心; 几个中心格全贴不住同一层的面时也只剩它
+        spots.push_back(anchor);
+    }
+    if (const std::optional<navmesh::WorldPoint> stand = MountStandPoint(param, locator_zone, tower, supplies)) {
+        spots.push_back(*stand);
+    }
+    LogDebug << "ZiplineRoute: stand points to try at the mount tower" << VAR(spots.size()) << VAR(anchor.x) << VAR(anchor.y) << VAR(half_x)
+             << VAR(half_z);
+    return spots;
+}
+
 // 森空岛只给随朝向变化的角格锚点，双方中心在每条水平轴上都可能朝彼此靠近各自的
 // 占地半宽。高度坐标不受朝向影响，原样计入三维距离。返回平方值供配对内层循环直接比较。
 constexpr double minimum_possible_world_span_squared(
@@ -449,6 +507,20 @@ private:
 
 } // namespace
 
+ZiplineNodeRef ToNodeRef(const zipline::ZiplineNode& node)
+{
+    ZiplineNodeRef ref;
+    ref.level_id = node.level_id;
+    ref.world_x = node.world_x;
+    ref.world_y = node.world_y;
+    ref.world_z = node.world_z;
+    ref.has_world = true;
+    ref.x = node.x;
+    ref.y = node.y;
+    ref.height = node.height;
+    return ref;
+}
+
 void ResetZiplineOutcome()
 {
     g_zipline_used = false;
@@ -638,6 +710,23 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
     }
     if (cut_off != 0) {
         LogDebug << "ZiplineRoute: these ziplines share no walkable ground with either end" << VAR(cut_off) << VAR(nodes.size());
+    }
+    // 执行侧每个站位都走到过、一次上索提示都没出来的架子, 这一趟不再当上索点。当落点照旧:
+    // 人是从索上落到架子上的, 上不去跟够不着是两件事
+    size_t unboardable = 0;
+    for (const ZiplineHopRecord& record : param.zipline_ledger) {
+        if (record.outcome != HopOutcome::Unboardable) {
+            continue;
+        }
+        for (size_t i = 0; i < nodes.size(); ++i) {
+            if (can_board[i] && ToNodeRef(nodes[i]).SameTower(record.plan.mount)) {
+                can_board[i] = false;
+                ++unboardable;
+            }
+        }
+    }
+    if (unboardable != 0) {
+        LogInfo << "ZiplineRoute: left out the towers the runtime never managed to board." << VAR(unboardable) << VAR(nodes.size());
     }
     // 一头都接不上时后面配对必然是空的。链中间的架子仍然全留着，那些是从索上落下去的。
     if (std::none_of(can_board.begin(), can_board.end(), [](bool v) { return v; })
@@ -954,7 +1043,16 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
         }
     }
     // 只有链首那一根要按提示上索, 中途都是从索上落到下一根架子上的
-    best->mount_restand = MountStandPoint(param, locator_zone, best->towers.front(), supply_points);
+    const navmesh::WorldPoint& approach_from =
+        best->approach.points.size() >= 2 ? best->approach.points[best->approach.points.size() - 2] : start;
+    best->mount_spots = MountSpots(
+        param,
+        locator_zone,
+        *frame,
+        best->towers.front(),
+        data->frames.footprint(best->towers.front().template_id),
+        approach_from,
+        supply_points);
 
     LogInfo << "ZiplineRoute: picked" << VAR(walking_baseline_available) << VAR(baseline_length) << VAR(best->cost)
             << VAR(best->towers.size()) << VAR(best->towers.front().x) << VAR(best->towers.front().y) << VAR(best->towers.back().x)

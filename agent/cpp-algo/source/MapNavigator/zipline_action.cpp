@@ -130,6 +130,20 @@ public:
         return obs;
     }
 
+    // 两个信号按代价从低到高求值: 右上角按钮在架上收起, 故地面判据命中即判定角色在地面; 未命中时
+    // 再读底部操作引导, 命中「离开滑索架」的片段才判定已上架
+    MountVerdict CheckMounted() override
+    {
+        if (ctx_.maa_context == nullptr) {
+            return MountVerdict::Unclear;
+        }
+        if (RunNodeAndReportHit(ctx_.maa_context, kZiplineOnGroundEntryNode, kZiplineOnGroundNode, "{}")) {
+            return MountVerdict::OnGround;
+        }
+        const bool hint = RunNodeAndReportHit(ctx_.maa_context, kZiplineOnTowerHintEntryNode, kZiplineOnTowerHintNode, "{}");
+        return hint ? MountVerdict::OnTower : MountVerdict::Unclear;
+    }
+
     void ResetTracking() override { ctx_.position_provider->ResetTracking(); }
 
 private:
@@ -181,6 +195,8 @@ public:
         const int units = static_cast<int>(std::lround(-delta_deg * ctx_.action_wrapper->DefaultPitchUnitsPerDegree()));
         return units == 0 || ctx_.action_wrapper->SendViewDeltaSync(0, units);
     }
+
+    bool PressMount() override { return PressMountPrompt(ctx_.maa_context); }
 
     // 起滑就是对着瞄好的方向按一下左键
     void FireLaunch() override
@@ -288,26 +304,43 @@ Result FinishHop(const Context& ctx, const HopCompleted& done)
     return result;
 }
 
-// 上索点站得不对, 人已经下来了。面板给的是离身位最近的那台设备, 原地重按拿到的还是同一个答案:
-// 有备用站位就改瞄它(从供电桩那侧让开一点, 顺带也更近了), 没有就只把判定圈收紧, 让人把差的那点走完
-Result Reposition(const Context& ctx, const NeedsReposition& need)
+} // namespace
+
+// 这个站位上没出提示。面板给的是离身位最近的那台设备, 原地重按拿到的还是同一个答案, 所以改瞄
+// 计划里的下一个站位, 走过去的这一路提示预筛照样开着, 先冒出来就先按下去。站位全试过还不出提示
+// 就把这根架子记成上不去, 退索走路
+Result AdvanceMountSpot(const Context& ctx, const Waypoint& waypoint, const char* reason)
 {
-    Result result;
-    result.consumed = true;
-    result.stay_in_current_tick = true;
-    ctx.runtime_state->zipline_approach.press_missed = true;
-    const bool restood = need.restand && ctx.session->RetargetCurrentWaypoint(need.restand->x, need.restand->y, "zipline_mount_restand");
-    LogWarn << "Action: ZIPLINE never left this stand; re-mounting after a short walk." << VAR(restood) << VAR(kZiplineRestandBandWu);
+    ZiplineApproachState& approach = ctx.runtime_state->zipline_approach;
+    const size_t spot_count = waypoint.zipline_hop ? waypoint.zipline_hop->mount_spots.size() : 0;
+    const size_t cursor = waypoint.zipline_hop ? approach.MountSpotCursor(waypoint.zipline_hop->mount) : 0;
+    if (cursor + 1 >= spot_count) {
+        if (waypoint.zipline_hop) {
+            ctx.runtime_state->zipline_ride.MarkMountUnreachable(*waypoint.zipline_hop);
+        }
+        return AbandonZipline(ctx, "zipline_prompt_missing", "no mount prompt from any stand point at this tower");
+    }
+
+    approach.spot_index = cursor + 1;
+    approach.press_missed = true;
+    const ZiplineMountSpot& spot = waypoint.zipline_hop->mount_spots[approach.spot_index];
+    const bool retargeted = ctx.session->RetargetCurrentWaypoint(spot.x, spot.y, reason);
+    // 顶在设备上走不动也算这个站位试过了。硬时钟不归零, 下一拍就会把剩下的站位一口气烧光
+    ctx.session->ResetHardProgress();
+    LogWarn << "Action: ZIPLINE no mount prompt here; walking to the next stand point." << VAR(reason) << VAR(retargeted)
+            << VAR(approach.spot_index) << VAR(spot_count) << VAR(spot.x) << VAR(spot.y);
     ctx.runtime_state->route.Reset();
     ctx.runtime_state->route.startup_anchor_pos = *ctx.position;
     ctx.runtime_state->route.startup_anchor_initialized = true;
     ctx.runtime_state->route.startup_motion_confirmed = true;
     ctx.position_provider->ResetTracking();
-    SelectPhaseForCurrentWaypoint(ctx, "zipline_mount_restand");
+    SelectPhaseForCurrentWaypoint(ctx, reason);
+
+    Result result;
+    result.consumed = true;
+    result.stay_in_current_tick = true;
     return result;
 }
-
-} // namespace
 
 bool CurrentHopStartsUnderfoot(const Context& ctx)
 {
@@ -368,16 +401,12 @@ Result StartZiplineHop(const Context& ctx, const Waypoint& waypoint, double actu
                 LogInfo << "Zipline mount pre-filter did not hold up; keeping the approach." << VAR(actual_distance);
                 return result;
             }
-            // 认不出只有两种走法: 人还差一点点没走到跟前, 或者架子边上那根供电桩把面板占着。两种都
-            // 得靠挪身位解决, 所以记一笔交回导航, 预筛一路开着, 提示先冒出来就先按下去
-            if (!ctx.runtime_state->zipline_approach.press_missed) {
-                LogInfo << "No mount prompt at the tower; walking a bit around it for another look." << VAR(actual_distance);
-                return Reposition(ctx, NeedsReposition { .restand = waypoint.zipline_hop->restand });
-            }
-            return AbandonZipline(ctx, "zipline_prompt_missing", "no mount prompt at the tower");
+            // 认不出都得靠挪身位解决: 人差一点点没走到跟前、站位猜的方向上没有设备模型、或者架子
+            // 边上那根供电桩把面板占着。交回导航换下一个站位, 预筛一路开着, 提示先冒出来就先按下去
+            LogInfo << "No mount prompt at this stand point; moving on to the next one." << VAR(actual_distance);
+            return AdvanceMountSpot(ctx, waypoint, "zipline_mount_no_prompt");
         }
-        // 交互键已经发出去了, 从这里起就当人已经站在架子上: 认错方向的代价是走不动路, 反过来白按
-        // 一次右键什么也不会发生。真没站上去由阶段机认出来(怎么发射都不动), 下来重新站一次
+        // 此处只负责发出上索按键, 是否已上架由阶段机的 Mounting 段判定; 判定落定前不瞄准也不发射
         ctx.runtime_state->zipline_approach.press_missed = false;
     }
 
@@ -418,8 +447,8 @@ Result TickZiplineRide(const Context& ctx)
             replan->still_on_tower ? "waiting on the tower for a new route" : "this hop is dead, re-routing from the ground",
             replan->still_on_tower);
     }
-    if (const auto* need = std::get_if<NeedsReposition>(&outcome)) {
-        return Reposition(ctx, *need);
+    if (std::get_if<NeedsReposition>(&outcome) != nullptr) {
+        return AdvanceMountSpot(ctx, ctx.session->CurrentWaypoint(), "zipline_mount_unmounted");
     }
     result.stay_in_current_tick = true;
     utils::SleepFor(kZiplineRideRetryIntervalMs);

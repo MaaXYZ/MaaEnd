@@ -20,9 +20,9 @@ struct NaviPosition
     std::chrono::steady_clock::time_point timestamp;
 };
 
-// 上索认不出提示时的备用站位。面板给的是离身位最近的那台设备, 架子边上贴着供电桩时会被它抢走,
-// 这个点从供电桩那侧让开一点点, 让架子重新成为最近的那个。
-struct ZiplineRestand
+// 上索要走到的一个站位。坐标记录的是随朝向变化的角格锚点, 设备模型占着锚点四周哪一格未知,
+// 所以候选是各个可能的中心格; 末位那个从供电桩一侧让开, 让架子重新成为离身位最近的设备。
+struct ZiplineMountSpot
 {
     double x = 0.0;
     double y = 0.0;

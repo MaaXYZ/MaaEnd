@@ -62,6 +62,8 @@ const char* StageName(ZiplineStage stage)
     switch (stage) {
     case ZiplineStage::Idle:
         return "idle";
+    case ZiplineStage::Mounting:
+        return "mounting";
     case ZiplineStage::OnTower:
         return "on_tower";
     case ZiplineStage::Aiming:
@@ -128,6 +130,8 @@ LandingClass ClassifyLanding(
 void ZiplineRideMachine::Begin(const ZiplineHopPlan& plan)
 {
     const auto now = Clock::now();
+    // 链中续跳与滑回原架时角色已在架上, 直接进入瞄准; 其余情况调用方刚发出上索按键, 需先确认已上架
+    const bool standing = OnTower();
     // 上索点重新站过一次再回来的是同一跳, 记录接着写; 换了跳就把上一跳按下索了结
     const bool resume = hop_open_ && plan_.mount.SameTower(plan.mount) && plan_.landing.SameTower(plan.landing);
     if (!resume) {
@@ -152,8 +156,8 @@ void ZiplineRideMachine::Begin(const ZiplineHopPlan& plan)
     unknown_deadline_.reset();
     pending_exit_ = {};
     LogInfo << "zipline/begin" << VAR(resume) << VAR(plan_.mount.x) << VAR(plan_.mount.y) << VAR(plan_.landing.x) << VAR(plan_.landing.y)
-            << VAR(plan_.planned_elevation_deg) << VAR(plan_.siblings.size()) << VAR(plan_.chain_continues);
-    EnterStage(ZiplineStage::OnTower, now);
+            << VAR(plan_.planned_elevation_deg) << VAR(plan_.siblings.size()) << VAR(plan_.chain_continues) << VAR(standing);
+    EnterStage(standing ? ZiplineStage::OnTower : ZiplineStage::Mounting, now);
 }
 
 StageResult ZiplineRideMachine::Tick(IZiplineObserver& observer, IZiplineActuator& actuator)
@@ -174,6 +178,8 @@ StageResult ZiplineRideMachine::Tick(IZiplineObserver& observer, IZiplineActuato
 
     const ZiplineObservation obs = observer.Observe(KnownNodes());
     switch (stage_) {
+    case ZiplineStage::Mounting:
+        return TickMounting(obs, observer, actuator);
     case ZiplineStage::Aiming:
     case ZiplineStage::ReturnAiming:
         return TickAiming(obs, actuator);
@@ -202,6 +208,7 @@ void ZiplineRideMachine::Dismount(IZiplineActuator& actuator)
     Reset();
 }
 
+// Mounting 不计入在架上: 该阶段正在判定是否已上架, 计入会退回到按键即认定
 bool ZiplineRideMachine::OnTower() const
 {
     return parked_on_.has_value() || stage_ == ZiplineStage::OnTower || stage_ == ZiplineStage::Aiming || stage_ == ZiplineStage::Fired
@@ -233,7 +240,9 @@ void ZiplineRideMachine::Reset()
     pitch_tier_ = 0;
     returning_ = false;
     hop_retry_count_ = 0;
-    mount_retry_used_ = false;
+    mount_presses_ = 0;
+    on_tower_hits_ = 0;
+    on_ground_hits_ = 0;
     discovered_towers_.clear();
     parked_on_.reset();
     launch_fix_.reset();
@@ -317,6 +326,93 @@ double ZiplineRideMachine::AimBiasDeg() const
         return 0.0;
     }
     return delta > 0.0 ? -kZiplineAimToleranceDeg / 2.0 : kZiplineAimToleranceDeg / 2.0;
+}
+
+// 上索按键发出后, 先确认已上架再放开俯仰与左键。两个判定各需连续若干帧一致才落定。位移只作否决用:
+// 角色被架子锁住时无法移动, 故能移动即判定在地面, 零位移本身是二义的
+StageResult ZiplineRideMachine::TickMounting(const ZiplineObservation& obs, IZiplineObserver& observer, IZiplineActuator& actuator)
+{
+    const auto now = obs.at;
+    const int64_t elapsed_ms = StageElapsedMs(now);
+    const bool walking = obs.fix && last_fix_ && DistanceWu(*obs.fix, *last_fix_) >= kZiplineMountMinMoveWu;
+    if (obs.fix) {
+        last_fix_ = obs.fix;
+    }
+    const MountVerdict verdict = walking ? MountVerdict::OnGround : observer.CheckMounted();
+    // settle 之内的地面读数不予采信: 按钮尚未收起时, 角色可能正在上架过程中。故这段时间内的读数
+    // 一律不计入连续帧数, 重按所依据的若干帧全部取自窗口之后
+    const bool settled = elapsed_ms >= kZiplineMountSettleMs;
+    on_tower_hits_ = verdict == MountVerdict::OnTower ? on_tower_hits_ + 1 : 0;
+    on_ground_hits_ = verdict == MountVerdict::OnGround && settled ? on_ground_hits_ + 1 : 0;
+
+    if (on_tower_hits_ >= kZiplineMountOnTowerFixes) {
+        LogInfo << "zipline/mount/confirmed" << VAR(elapsed_ms) << VAR(mount_presses_);
+        EnterStage(ZiplineStage::OnTower, now);
+        return {};
+    }
+    // 余速未停时不重按: 带着惯性发出的交互正是这一跳落空的成因, 此时重按同样不会生效。一路都在动
+    // 说明人没被架子锁住, 窗口耗满就交回导航换站位 —— 这个相位外头没有看门狗, 等不到别人来收场
+    if (walking) {
+        if (elapsed_ms <= kZiplineMountWindowMs) {
+            return {};
+        }
+        LogWarn << "zipline/mount/still_moving" << VAR(elapsed_ms) << VAR(mount_presses_);
+        CommitRecord(HopOutcome::NotMounted, now);
+        EnterStage(ZiplineStage::Idle, now);
+        return NeedsReposition {};
+    }
+    if (on_ground_hits_ >= kZiplineMountOnGroundFixes) {
+        return Remount(actuator, "zipline/mount/on_ground", now);
+    }
+    // 两个信号都未命中在窗口内只当过渡态, 等窗口耗满再判定
+    if (elapsed_ms <= kZiplineMountWindowMs) {
+        return {};
+    }
+    // 窗口耗满时架上一侧的连续读数仍在累计: 等它满足或中断, 避免在上架完成的瞬间重按上索键
+    if (verdict == MountVerdict::OnTower) {
+        return {};
+    }
+    // 窗口耗满、两个信号都未命中且无位移: 按「已被架子锁住而提示漏读」处理, 先发下索键回到可判定的地面态
+    // 再重规划, 避免在位置未定的状态下继续瞄准和发射
+    if (verdict == MountVerdict::Unclear) {
+        LogWarn << "zipline/mount/unreadable" << VAR(elapsed_ms) << VAR(mount_presses_);
+        CommitRecord(HopOutcome::NotMounted, now);
+        return StartDismount(actuator, ReplanRequested { .still_on_tower = false }, now);
+    }
+    return Remount(actuator, "zipline/mount/window_expired", now);
+}
+
+// 判定未上架后的第一级处置是重按上索键。两道防护避免对已上架的角色重按: 地面态须由 InWorld 命中,
+// 以及识别不到架子的交互提示时不发按键。预算用尽仍未上架才交回导航, 由其调整站位后重来
+StageResult ZiplineRideMachine::Remount(IZiplineActuator& actuator, const char* reason, Clock::time_point now)
+{
+    // elapsed_ms 是这次按键到判定未上架的实际耗时, settle 与窗口两个时限按它核准
+    const int64_t elapsed_ms = StageElapsedMs(now);
+    if (mount_presses_ < kZiplineMountPressBudget && actuator.PressMount()) {
+        ++mount_presses_;
+        on_tower_hits_ = 0;
+        on_ground_hits_ = 0;
+        LogWarn << "zipline/mount/repress" << VAR(reason) << VAR(elapsed_ms) << VAR(mount_presses_);
+        EnterStage(ZiplineStage::Mounting, now);
+        return {};
+    }
+    LogWarn << "zipline/mount/unmounted" << VAR(reason) << VAR(elapsed_ms) << VAR(mount_presses_) << VAR(plan_.mount_spots.size());
+    CommitRecord(HopOutcome::NotMounted, now);
+    EnterStage(ZiplineStage::Idle, now);
+    return NeedsReposition {};
+}
+
+// 这根架子的站位全试过了, 一次提示都没出来。记一笔让重规划别再拿它当上索点; 当落点不受影响
+void ZiplineRideMachine::MarkMountUnreachable(const ZiplineHopPlan& plan)
+{
+    const Clock::time_point now = Clock::now();
+    ZiplineHopRecord record;
+    record.plan = plan;
+    record.outcome = HopOutcome::Unboardable;
+    record.began_at = now;
+    record.ended_at = now;
+    ledger_.push_back(record);
+    LogWarn << "zipline/mount/unboardable" << VAR(plan.mount.x) << VAR(plan.mount.y) << VAR(plan.mount_spots.size()) << VAR(ledger_.size());
 }
 
 StageResult ZiplineRideMachine::TickOnTower(IZiplineActuator& actuator, Clock::time_point now)
@@ -448,7 +544,7 @@ StageResult ZiplineRideMachine::TickFired(const ZiplineObservation& obs, IZiplin
             EnterStage(ZiplineStage::Landed, now);
             return {};
         }
-        if (elapsed_ms > kZiplineMountConfirmMs) {
+        if (elapsed_ms > kZiplineLaunchConfirmMs) {
             last_fix_ = obs.fix;
             LogWarn << "zipline/fired/no_launch" << VAR(moved) << VAR(elapsed_ms) << VAR(pitch_tier_);
             return Classify(observer, actuator, now);
@@ -581,14 +677,6 @@ StageResult ZiplineRideMachine::Classify(IZiplineObserver& observer, IZiplineAct
         if (returning_) {
             CommitRecord(HopOutcome::WrongRope, now);
             return StartDismount(actuator, ChainAbandoned { "zipline/return/no_launch" }, now);
-        }
-        if (!mount_retry_used_) {
-            mount_retry_used_ = true;
-            pitch_tier_ = 0;
-            actuator.Dismount();
-            EnterStage(ZiplineStage::Idle, now);
-            LogWarn << "zipline/no_launch/restand" << VAR(plan_.restand.has_value());
-            return NeedsReposition { .restand = plan_.restand };
         }
         // 人根本没滑出去, 还站在上索架上。先下来再重规划要白付一次上索, 而重规划本身就会看新路线
         // 用不用得上脚下这根架子, 用不上时才下来

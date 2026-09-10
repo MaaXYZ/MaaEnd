@@ -310,8 +310,16 @@ constexpr int32_t kZiplineSettleFixes = 4;
 constexpr int32_t kZiplineDismountHoldMs = 80;
 // 索没通电、两端根本没挂索时起滑是空响, 人还站在架子上。滑一趟是大位移, 所以「过了确认时间
 // 还在原地」与「滑起来了但没到落点」分得开, 不必耗满整个滑行超时。两个值待实机核准
-constexpr int32_t kZiplineMountConfirmMs = 5000;
+constexpr int32_t kZiplineLaunchConfirmMs = 5000;
 constexpr double kZiplineMountMinMoveWu = 3.0;
+// 上索确认要求两个信号同时成立: 右上角按钮在架上收起, 底部操作引导出现「离开滑索架」。两侧各需连续
+// 若干帧一致, 架上一侧多要一帧。按键到按钮收起的延迟未经实测, settle 为其预留时间, 其间的地面读数
+// 不予采信。误判为已上架会使后续整条链建立在错误前提上, 故取偏保守的阈值。五个值待实机核准
+constexpr int32_t kZiplineMountSettleMs = 600;
+constexpr int32_t kZiplineMountWindowMs = 2000;
+constexpr int32_t kZiplineMountOnTowerFixes = 3;
+constexpr int32_t kZiplineMountOnGroundFixes = 2;
+constexpr int32_t kZiplineMountPressBudget = 2;
 // 同一个上索点最多让重规划试这么多次, 再要重规划就当这根架子够不着, 退索改走路。楔死看门狗
 // 6s 重规划一次、12s 掐掉整趟导航, 所以这里必须小到能在它掐之前让出路来。滑索省下的那点路
 // 远不值一次导航失败, 判错方向只损失一段捷径
@@ -338,6 +346,10 @@ constexpr int32_t kZiplineAbandonWalkFallbackCount = 3;
 // 判定圈收到这里, 让人真把那点距离走完(有备用站位就是走过去, 没有就是再走近点)。
 // 再往下收就到定位噪声底下了, 收不拢只会白等看门狗
 constexpr double kZiplineRestandBandWu = 1.0;
+// 顶在设备上走不动时换下一个站位的门限。这时到点判定过不去、提示也没出来, 再等下去先招来的是
+// 恢复阶梯 —— 它跳一下、挪一下设备, 把这一轮的站位拖走, 所以必须抢在它前面动手
+constexpr int32_t kZiplineMountSpotStallMs = 2000;
+static_assert(kZiplineMountSpotStallMs < kObstacleRecoveryMinTriggerMs);
 // 滑错索又滑回来之后, 同一跳最多再试这么多次, 用完就站在架子上等换路
 constexpr int32_t kZiplineHopRetryBudget = 2;
 // 下索键按完等定位稳定的基准时长: 两倍还不稳再按一次, 四倍还不稳当卡住
@@ -381,6 +393,12 @@ constexpr const char* kZiplineMountRecognitionNode = "MapNavigatorZiplineMount";
 constexpr const char* kZiplineMountExitNode = "MapNavigatorZiplineMountEnd";
 constexpr const char* kZiplineMountScanNode = "MapNavigatorZiplineMountScan";
 constexpr const char* kZiplinePitchResetNode = "MapNavigatorZiplinePitchReset";
+// 上索判定的两个信号, 同样各配一个 Start 节点。地面判据的识别逻辑引自 Interface/InScene 的
+// 公开节点 InWorld, 在 pipeline 里包一层, 使未命中记在 MapNavigator 自己的节点名下
+constexpr const char* kZiplineOnGroundEntryNode = "MapNavigatorZiplineOnGroundStart";
+constexpr const char* kZiplineOnGroundNode = "MapNavigatorZiplineOnGround";
+constexpr const char* kZiplineOnTowerHintEntryNode = "MapNavigatorZiplineOnTowerHintStart";
+constexpr const char* kZiplineOnTowerHintNode = "MapNavigatorZiplineOnTowerHint";
 constexpr int32_t kPromptPostSleepMs = 80;
 
 // Resolution every pipeline ROI is authored against; the scanner rescales it to whatever the frame really is.

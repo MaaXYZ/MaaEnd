@@ -16,6 +16,8 @@ class IZiplineObserver
 public:
     virtual ~IZiplineObserver() = default;
     virtual ZiplineObservation Observe(const std::vector<ZiplineNodeRef>& hint_nodes) = 0;
+    // 判定角色在架上还是在地面。仅在上索确认期间调用: 一次调用要跑识别, 开销高于一帧定位
+    virtual MountVerdict CheckMounted() = 0;
     virtual void ResetTracking() = 0;
 };
 
@@ -28,6 +30,8 @@ public:
     // 只发一个后端批次, 返回实际发出的度数; 发不出去返回空
     virtual std::optional<double> TurnYaw(double delta_deg) = 0;
     virtual bool TurnPitch(double delta_deg) = 0;
+    // 重按上索键。识别不到架子的交互提示时不发按键, 返回值为是否识别到
+    virtual bool PressMount() = 0;
     virtual void FireLaunch() = 0;
     virtual void Dismount() = 0;
     virtual void Wait(int32_t ms) = 0;
@@ -43,8 +47,8 @@ LandingClass ClassifyLanding(
     bool riding_entered,
     ZiplineNodeRef* reached);
 
-// 一跳滑索从站上架子到交还导航的阶段机。上索键、下索键按出去就当成了, 之后只看定位:
-// 起滑后连着定位不到就是滑出去了, 定位回来并停稳就是落地了, 落在哪由分类决定。
+// 一跳滑索从上索按键到交还导航的阶段机。按键后先确认已上架, 再放开俯仰与左键; 此后只依据定位:
+// 起滑后连续定位失败即判定在滑行, 定位恢复并停稳即判定落地, 落点归属由分类决定。
 // 每跳的发射与结果记进账本, 规划器据此排掉滑不动/滑错的索
 class ZiplineRideMachine
 {
@@ -54,6 +58,8 @@ public:
     StageResult Tick(IZiplineObserver& observer, IZiplineActuator& actuator);
     // 外部要人立刻下来(丢链、换路)。跳还开着就按 Dismounted 记账
     void Dismount(IZiplineActuator& actuator);
+    // 上索点的每个站位都走到过却一次提示都没出来, 由导航侧判定后记账
+    void MarkMountUnreachable(const ZiplineHopPlan& plan);
 
     bool OnTower() const;
     std::optional<ZiplineNodeRef> TowerUnderfoot() const;
@@ -75,6 +81,8 @@ private:
     std::vector<ZiplineNodeRef> KnownNodes() const;
     double AimBiasDeg() const;
 
+    StageResult TickMounting(const ZiplineObservation& obs, IZiplineObserver& observer, IZiplineActuator& actuator);
+    StageResult Remount(IZiplineActuator& actuator, const char* reason, Clock::time_point now);
     StageResult TickOnTower(IZiplineActuator& actuator, Clock::time_point now);
     StageResult TickAiming(const ZiplineObservation& obs, IZiplineActuator& actuator);
     StageResult TickFired(const ZiplineObservation& obs, IZiplineObserver& observer, IZiplineActuator& actuator);
@@ -101,7 +109,10 @@ private:
     int pitch_tier_ = 0;
     bool returning_ = false;
     int hop_retry_count_ = 0;
-    bool mount_retry_used_ = false;
+    // 上索确认: 本次站位已发出的上索按键次数, 两个判定各自的连续成立帧数
+    int mount_presses_ = 0;
+    int on_tower_hits_ = 0;
+    int on_ground_hits_ = 0;
     std::vector<ZiplineNodeRef> discovered_towers_;
     // 交回导航后人还站着的架子
     std::optional<ZiplineNodeRef> parked_on_;

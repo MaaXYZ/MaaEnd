@@ -821,6 +821,7 @@ bool NavigationStateMachine::GiveUpUnreachableZipline(const char* reason)
         approach.anchor_index = anchor->first;
         approach.replans = 0;
         approach.press_missed = false;
+        approach.spot_index = 0;
     }
     if (++approach.replans <= kZiplineApproachReplanBudget) {
         return false;
@@ -1435,6 +1436,20 @@ bool NavigationStateMachine::TickNavigate()
         }
         if (prompt_result.consumed) {
             return true;
+        }
+    }
+
+    // 顶在设备上走不动时也要换站位: 这时到点判定过不去、提示也没出来, 等下去先招来的是恢复阶梯,
+    // 它跳一下、挪一下设备, 把这一轮的站位拖走。提示在就先按(上面那段), 所以这里排在它后面。
+    // 只管站位跟前这一小片: 进场路上被地形卡住时换站位解决不了, 还会把硬时钟一直按回零, 让阶梯饿死
+    if (waypoint.action == ActionType::ZIPLINE && !runtime_state_.IsZiplineMounted() && waypoint.zipline_hop) {
+        const size_t cursor = runtime_state_.zipline_approach.MountSpotCursor(waypoint.zipline_hop->mount);
+        if (cursor + 1 < waypoint.zipline_hop->mount_spots.size() && route.waypoint_distance <= kZiplineWalkEnterBandWu
+            && session_->HardStalledMs(now) >= kZiplineMountSpotStallMs) {
+            const semantic_nodes::Result advanced = semantic_nodes::AdvanceMountSpot(semantic_ctx, waypoint, "zipline_mount_spot_stalled");
+            if (advanced.consumed) {
+                return true;
+            }
         }
     }
 
