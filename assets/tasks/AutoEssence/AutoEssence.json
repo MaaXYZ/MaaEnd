@@ -258,6 +258,15 @@
                     "name": "Random",
                     "label": "$option.AutoEssenceMenu.cases.Random.label",
                     "description": "$option.AutoEssenceMenu.cases.Random.description",
+                    // 随机模式不配置预刻写词条：跳过条件检查/调整，直接开刷；
+                    // 未选词条时由 AutoEssenceDismissWarningPreEngrave 关闭警告弹窗
+                    "pipeline_override": {
+                        "AutoEssenceClickEssenceStartPrepare": {
+                            "next": [
+                                "AutoEssenceClickEssenceStartButton"
+                            ]
+                        }
+                    },
                     "option": [
                         "AutoEssenceChooseLocation",
                         "AutoEssenceObtainMode",
