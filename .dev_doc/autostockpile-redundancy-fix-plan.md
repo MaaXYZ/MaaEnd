@@ -68,11 +68,11 @@ pnpm check && pnpm test
 | H5 | 去掉恒为真的 `if priceChanged` 包装 | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
 | H6 | 删除不可达的 Skip 数量模式整链 | 已完成 | B3 | `a111add6` | `（本次提交）` |
 | H7 | `resolveQuantityDecision` 改写为二分支 | 已完成 | B3 | `a111add6` | `（本次提交）` |
-| H8 | 删除 `len(roi) != 4` 恒假检查 | 未进行 | B4 | — | — |
-| H9 | `filteredRecognitionResults` 直接返回字段 | 未进行 | B4 | — | — |
+| H8 | 删除 `len(roi) != 4` 恒假检查 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| H9 | `filteredRecognitionResults` 直接返回字段 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
 | H10 | 删除 `resolveDailyStoragePathFunc` 间接层 | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
-| H11 | 删除 `buildSelectionPipelineOverride` 的无用 ctx | 未进行 | B4 | — | — |
-| H12 | 删除三处恒真的下标/边界守卫 | 未进行 | B4 | — | — |
+| H11 | 删除 `buildSelectionPipelineOverride` 的无用 ctx | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| H12 | 删除三处恒真的下标/边界守卫 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
 
 ### 2.2 Medium（10 项）
 
@@ -81,13 +81,13 @@ pnpm check && pnpm test
 | M1 | 改用 SDK `AsCustom()` 解包，删手写重复实现 | 已完成 | B3 | `a111add6` | `（本次提交）` |
 | M2 | `recognitionParamROI` 类型 switch 收窄为 TemplateMatch | 已完成 | B3 | `a111add6` | `（本次提交）` |
 | M3 | 删除不可达的 `threshold <= 0` 检查 | 已完成 | B3 | `a111add6` | `（本次提交）` |
-| M4 | `validateItemMap` 由 3 次收敛为入口 1 次 | 未进行 | B4 | — | — |
-| M5 | 统一 `result.Data` 判空语义（信不变式） | 未进行 | B4 | — | — |
-| M6 | `resolveOverflow` 删除布尔返回值 | 未进行 | B4 | — | — |
-| M7 | 删除 `reconcile` 的重复深拷贝 | 未进行 | B4 | — | — |
-| M8 | `writeFileAtomic` 提取到公共包复用 | 未进行 | B4 | — | — |
-| M9 | 收敛导出面（小写化 + 内联薄封装） | 未进行 | B4 | — | — |
-| M10 | 删除 `screencapShelf` 无效的 `img == nil` 检查 | 未进行 | B4 | — | — |
+| M4 | `validateItemMap` 由 3 次收敛为入口 1 次 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| M5 | 统一 `result.Data` 判空语义（信不变式） | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| M6 | `resolveOverflow` 删除布尔返回值 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| M7 | 删除 `reconcile` 的重复深拷贝 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| M8 | `writeFileAtomic` 提取到公共包复用 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| M9 | 收敛导出面（小写化 + 内联薄封装） | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
+| M10 | 删除 `screencapShelf` 无效的 `img == nil` 检查 | 已完成 | B4 | `de52d8e1` | `（本次提交）` |
 
 批次与提交的对应关系（每个批次两个提交）：
 
@@ -96,7 +96,7 @@ pnpm check && pnpm test
 | B1 | H1、H2 | `b616249c` | `（本次提交）` |
 | B2 | H3、H4、H5、H10 | `b53c7b12` | `（本次提交）` |
 | B3 | H6、H7、M1、M2、M3 | `a111add6` | `（本次提交）` |
-| B4 | H8、H9、H11、H12、M4–M10 | — | — |
+| B4 | H8、H9、H11、H12、M4–M10 | `de52d8e1` | `（本次提交）` |
 
 ---
 
