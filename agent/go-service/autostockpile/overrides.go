@@ -7,14 +7,14 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func buildSelectionPipelineOverride(_ *maa.Context, selection SelectionResult, decision quantityDecision) (map[string]any, error) {
+func buildSelectionPipelineOverride(selection SelectionResult, decision quantityDecision) (map[string]any, error) {
 	override := map[string]any{
 		relayNodeDecisionReadyNodeName: map[string]any{
 			"enabled": false,
 		},
 		selectedGoodsClickNodeName: map[string]any{
 			"enabled":  true,
-			"template": []string{BuildTemplatePath(selection.ProductID)},
+			"template": []string{buildTemplatePath(selection.ProductID)},
 		},
 		skipNodeName: map[string]any{
 			"enabled": false,
@@ -121,9 +121,6 @@ func overrideSelectedGoodsClickROIY(ctx *maa.Context, y int) error {
 	roi, err := recognitionParamROI(node)
 	if err != nil {
 		return err
-	}
-	if len(roi) != 4 {
-		return fmt.Errorf("invalid roi length %d", len(roi))
 	}
 
 	roi = append([]int(nil), roi...)

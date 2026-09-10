@@ -61,10 +61,7 @@ func (a *SelectItemAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 		return false
 	}
 
-	goodsCount := 0
-	if result.Data != nil {
-		goodsCount = len(result.Data.Goods)
-	}
+	goodsCount := len(result.Data.Goods)
 
 	log.Info().
 		Str("component", "autostockpile").
@@ -197,7 +194,7 @@ func (a *SelectItemAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 		}
 	}
 
-	override, err := buildSelectionPipelineOverride(ctx, selection, quantityDecision)
+	override, err := buildSelectionPipelineOverride(selection, quantityDecision)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -229,7 +226,7 @@ func (a *SelectItemAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	quantityLog := log.Info().
 		Str("component", "autostockpile").
 		Str("selection_mode", selectionMode).
-		Str("template", BuildTemplatePath(selection.ProductID)).
+		Str("template", buildTemplatePath(selection.ProductID)).
 		Str("tier", selection.CanonicalName).
 		Int("threshold", selection.Threshold).
 		Int("price", selection.CurrentPrice).
@@ -249,8 +246,8 @@ func (a *SelectItemAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	return true
 }
 
-// SelectBestProduct 按阈值与利润分数选择当前应购买的最佳商品。
-func SelectBestProduct(data RecognitionData, cfg SelectionConfig, bypassThresholdFilter bool) (SelectionResult, error) {
+// selectBestProduct 按阈值与利润分数选择当前应购买的最佳商品。
+func selectBestProduct(data RecognitionData, cfg SelectionConfig, bypassThresholdFilter bool) (SelectionResult, error) {
 	if len(data.Goods) == 0 {
 		return SelectionResult{Selected: false, Reason: i18n.T("autostockpile.no_goods_recognized")}, nil
 	}

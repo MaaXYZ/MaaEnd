@@ -20,10 +20,7 @@ func filteredRecognitionResults(detail *maa.RecognitionDetail) []*maa.Recognitio
 	if detail == nil || detail.Results == nil {
 		return nil
 	}
-	if len(detail.Results.Filtered) > 0 {
-		return detail.Results.Filtered
-	}
-	return nil
+	return detail.Results.Filtered
 }
 
 func filteredOCRCandidates(detail *maa.RecognitionDetail) []*maa.OCRResult {

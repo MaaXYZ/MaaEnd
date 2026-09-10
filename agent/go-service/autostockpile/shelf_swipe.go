@@ -46,9 +46,6 @@ func screencapShelf(ctx *maa.Context) (image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	if img == nil {
-		return nil, fmt.Errorf("cached image is nil")
-	}
 	return img, nil
 }
 

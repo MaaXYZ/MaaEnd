@@ -90,7 +90,8 @@ func (a *ReconcileDecisionAction) Run(ctx *maa.Context, arg *maa.CustomActionArg
 		return true
 	}
 
-	updatedData := copyRecognitionData(state.RawRecognitionData)
+	// getDecisionState 已返回深拷贝，setDecisionState 入参也会再拷贝，此处就地修改不会污染全局状态。
+	updatedData := state.RawRecognitionData
 	matched := false
 	for i := range updatedData.Goods {
 		if updatedData.Goods[i].ID != state.CurrentDecision.Selection.ProductID {
@@ -203,7 +204,7 @@ func (a *ReconcileDecisionAction) Run(ctx *maa.Context, arg *maa.CustomActionArg
 		return true
 	}
 
-	override, err := buildSelectionPipelineOverride(ctx, newSelection, newQuantityDecision)
+	override, err := buildSelectionPipelineOverride(newSelection, newQuantityDecision)
 	if err != nil {
 		log.Error().
 			Err(err).

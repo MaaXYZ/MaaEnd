@@ -39,13 +39,12 @@ func (r *ItemValueChangeRecognition) Run(ctx *maa.Context, arg *maa.CustomRecogn
 		Str("region", region).
 		Msg("goods region resolved")
 
-	overflowDetected := false
 	overflowAmount := 0
 	overflowCurrent := 0
 	overflowAbortReason := AbortReasonNone
 	if cur, max, plus, ok := runOverflowDetailOCR(ctx, arg.Img); ok {
 		overflowCurrent = cur
-		overflowDetected, overflowAmount = resolveOverflow(cur, max, plus)
+		overflowAmount = resolveOverflow(cur, max, plus)
 
 		log.Info().
 			Str("component", autoStockpileComponent).
@@ -53,7 +52,7 @@ func (r *ItemValueChangeRecognition) Run(ctx *maa.Context, arg *maa.CustomRecogn
 			Int("overflow_max", max).
 			Int("overflow_plus", plus).
 			Int("overflow_amount", overflowAmount).
-			Bool("overflow_detected", overflowDetected).
+			Bool("overflow_detected", overflowAmount > 0).
 			Msg("overflow detail parsed")
 
 		overflowAbortReason = resolveAbortReasonFromOverflowCurrent(cur)
@@ -76,18 +75,7 @@ func (r *ItemValueChangeRecognition) Run(ctx *maa.Context, arg *maa.CustomRecogn
 		return buildAbortedRecognitionResult(arg, overflowAbortReason)
 	}
 
-	itemMap := GetItemMap()
-	if err := validateItemMap(itemMap); err != nil {
-		nameCount, idCount := itemMapCounts(itemMap)
-		log.Error().
-			Err(err).
-			Str("component", autoStockpileComponent).
-			Str("step", "load_item_map").
-			Int("name_count", nameCount).
-			Int("id_count", idCount).
-			Msg("item_map is unavailable")
-		return nil, false
-	}
+	itemMap := getItemMap()
 
 	resultGoods, secondPageOnlyIDs, goodsAbortReason, scanErr := scanGoodsWithOptionalSecondPage(ctx, arg.Img, region, itemMap)
 	if goodsAbortReason != AbortReasonNone {

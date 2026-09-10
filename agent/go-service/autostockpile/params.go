@@ -65,7 +65,7 @@ func resolveGoodsRegionFromCustomActionParam(raw any) (string, error) {
 		return "", fmt.Errorf("custom_action_param.Region is empty")
 	}
 
-	itemMap := GetItemMap()
+	itemMap := getItemMap()
 	if err := validateItemMap(itemMap); err != nil {
 		return "", fmt.Errorf("item_map unavailable: %w", err)
 	}

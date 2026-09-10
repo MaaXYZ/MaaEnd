@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"sort"
 	"time"
+
+	"github.com/MaaXYZ/MaaEnd/agent/go-service/pkg/fsutil"
 )
 
 const (
@@ -96,46 +98,9 @@ func upsertDailyStorageRecord(path string, record dailyStorageRecord) error {
 		return fmt.Errorf("marshal daily storage: %w", err)
 	}
 	content = append(content, '\n')
-	if err := writeFileAtomic(path, content, 0644); err != nil {
+	if err := fsutil.WriteFileAtomic(path, content, 0644); err != nil {
 		return fmt.Errorf("write daily storage: %w", err)
 	}
-
-	return nil
-}
-
-func writeFileAtomic(path string, content []byte, perm os.FileMode) error {
-	dir := filepath.Dir(path)
-	tmp, err := os.CreateTemp(dir, "."+filepath.Base(path)+".*.tmp")
-	if err != nil {
-		return err
-	}
-	tmpPath := tmp.Name()
-	cleanup := true
-	defer func() {
-		if cleanup {
-			_ = os.Remove(tmpPath)
-		}
-	}()
-
-	if _, err := tmp.Write(content); err != nil {
-		_ = tmp.Close()
-		return err
-	}
-	if err := tmp.Chmod(perm); err != nil {
-		_ = tmp.Close()
-		return err
-	}
-	if err := tmp.Sync(); err != nil {
-		_ = tmp.Close()
-		return err
-	}
-	if err := tmp.Close(); err != nil {
-		return err
-	}
-	if err := os.Rename(tmpPath, path); err != nil {
-		return err
-	}
-	cleanup = false
 
 	return nil
 }

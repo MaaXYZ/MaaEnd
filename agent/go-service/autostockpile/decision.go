@@ -3,7 +3,7 @@ package autostockpile
 import "errors"
 
 func computeDecision(data RecognitionData, cfg SelectionConfig, bypassThresholdFilter bool) (SelectionResult, quantityDecision, error) {
-	selection, err := SelectBestProduct(data, cfg, bypassThresholdFilter)
+	selection, err := selectBestProduct(data, cfg, bypassThresholdFilter)
 	if err != nil {
 		return SelectionResult{}, quantityDecision{}, err
 	}

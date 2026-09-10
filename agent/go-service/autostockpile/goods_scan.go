@@ -44,9 +44,6 @@ func scanGoodsOnImage(ctx *maa.Context, img image.Image, region string, itemMap 
 	if ctx == nil || img == nil {
 		return nil, AbortReasonGoodsOCRUnavailableWarn, fmt.Errorf("ctx or image is nil")
 	}
-	if err := validateItemMap(itemMap); err != nil {
-		return nil, AbortReasonNone, err
-	}
 
 	goodsROI := resolveGoodsRecognitionROI(ctx, img)
 	prices, ocrNames, goodsOCRAbortReason, goodsOCRErr := runGoodsOCR(ctx, img, goodsROI, itemMap)
@@ -117,7 +114,7 @@ func scanGoodsOnImage(ctx *maa.Context, img image.Image, region string, itemMap 
 
 	goods := make([]goodsCandidate, 0, len(candidateIDs))
 	for _, id := range candidateIDs {
-		templatePath := BuildTemplatePath(id)
+		templatePath := buildTemplatePath(id)
 
 		detail, recErr := runGoodsTemplateMatch(ctx, img, templatePath, goodsROI)
 		if recErr != nil {
@@ -135,7 +132,7 @@ func scanGoodsOnImage(ctx *maa.Context, img image.Image, region string, itemMap 
 		}
 
 		itemName := itemMap.IDToName[id]
-		tier := ParseTierFromID(id)
+		tier := parseTierFromID(id)
 
 		goods = append(goods, goodsCandidate{
 			item: GoodsItem{
@@ -301,7 +298,7 @@ func runGoodsOCR(ctx *maa.Context, img image.Image, goodsROI []int, itemMap *Ite
 			continue
 		}
 
-		id, name, matched := MatchGoodsName(text, itemMap, 2)
+		id, name, matched := matchGoodsName(text, itemMap, 2)
 		if !matched {
 			continue
 		}
@@ -315,7 +312,7 @@ func runGoodsOCR(ctx *maa.Context, img image.Image, goodsROI []int, itemMap *Ite
 		ocrNames = append(ocrNames, ocrNameCandidate{
 			id:   id,
 			name: name,
-			tier: ParseTierFromID(id),
+			tier: parseTierFromID(id),
 			box:  result.Box,
 		})
 	}
@@ -363,9 +360,7 @@ func bindPriceToGoods(goods goodsCandidate, prices []priceCandidate, used []bool
 	if !ok {
 		return 0, false
 	}
-	if bestIdx < len(used) {
-		used[bestIdx] = true
-	}
+	used[bestIdx] = true
 
 	log.Info().
 		Str("component", autoStockpileComponent).
@@ -403,9 +398,7 @@ func bindPriceToOCRGoods(goods ocrNameCandidate, prices []priceCandidate, used [
 	if !ok {
 		return 0, false
 	}
-	if bestIdx < len(used) {
-		used[bestIdx] = true
-	}
+	used[bestIdx] = true
 
 	log.Info().
 		Str("component", autoStockpileComponent).
@@ -427,6 +420,7 @@ func findBestPriceCandidate(prices []priceCandidate, used []bool, candidateDista
 	bestDistance := 0
 
 	for i, price := range prices {
+		// used 由调用方以 len(prices) 构造，此守卫仅防御两者长度不一致的意外情况。
 		if i < len(used) && used[i] {
 			continue
 		}
