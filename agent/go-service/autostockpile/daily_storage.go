@@ -14,8 +14,6 @@ const (
 	maxDailyStorageDateCount = 120
 )
 
-var resolveDailyStoragePathFunc = resolveDailyStoragePath
-
 type dailyStorageFile struct {
 	SchemaVersion int                  `json:"schema_version"`
 	Records       []dailyStorageRecord `json:"records"`
@@ -61,7 +59,7 @@ func storeDailyGoodsPrices(enabled bool, now time.Time, loc *time.Location, regi
 		Goods:      cloneGoodsItems(data.Goods),
 	}
 
-	path := resolveDailyStoragePathFunc()
+	path := resolveDailyStoragePath()
 	return upsertDailyStorageRecord(path, record)
 }
 

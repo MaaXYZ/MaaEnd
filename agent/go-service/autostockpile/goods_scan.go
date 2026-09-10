@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"image"
 	"math"
-	"math/rand"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,10 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const (
-	maxGoodsPriceDistance = 120
-	testPricesEnvVar      = "MAAEND_AUTOSTOCKPILE_RECOGNITION_TEST_PRICES"
-)
+const maxGoodsPriceDistance = 120
 
 type goodsCandidate struct {
 	item GoodsItem
@@ -26,7 +21,6 @@ type goodsCandidate struct {
 
 type priceCandidate struct {
 	value int
-	text  string
 	box   maa.Rect
 }
 
@@ -302,7 +296,6 @@ func runGoodsOCR(ctx *maa.Context, img image.Image, goodsROI []int, itemMap *Ite
 
 			prices = append(prices, priceCandidate{
 				value: price,
-				text:  priceText,
 				box:   result.Box,
 			})
 			continue
@@ -345,78 +338,6 @@ func validateRecognizedGoodsTiers(goods []GoodsItem) error {
 	}
 
 	return nil
-}
-
-func applyTestPricesIfEnabled(goods []GoodsItem) {
-	if os.Getenv(testPricesEnvVar) == "" {
-		return
-	}
-
-	if len(goods) == 0 {
-		return
-	}
-
-	if len(goods) == 1 {
-		goods[0].Price = 200
-		log.Info().
-			Str("component", autoStockpileComponent).
-			Str("goods_id", goods[0].ID).
-			Str("goods_name", goods[0].Name).
-			Int("new_price", 200).
-			Msg("test price rewrite applied (1 item)")
-		return
-	}
-
-	indices := make([]int, len(goods))
-	for i := range indices {
-		indices[i] = i
-	}
-
-	rand.Shuffle(len(indices), func(i, j int) {
-		indices[i], indices[j] = indices[j], indices[i]
-	})
-
-	targetCount100 := 2
-	targetCount200 := 1
-
-	if len(goods) == 2 {
-		targetCount100 = 1
-		targetCount200 = 1
-	} else if len(goods) >= 3 {
-		targetCount100 = 2
-		targetCount200 = 1
-	}
-
-	count100 := 0
-	for i := 0; i < len(indices) && count100 < targetCount100; i++ {
-		goods[indices[i]].Price = 100
-		log.Info().
-			Str("component", autoStockpileComponent).
-			Str("goods_id", goods[indices[i]].ID).
-			Str("goods_name", goods[indices[i]].Name).
-			Int("new_price", 100).
-			Msg("test price rewrite applied (100)")
-		count100++
-	}
-
-	count200 := 0
-	for i := targetCount100; i < len(indices) && count200 < targetCount200; i++ {
-		goods[indices[i]].Price = 200
-		log.Info().
-			Str("component", autoStockpileComponent).
-			Str("goods_id", goods[indices[i]].ID).
-			Str("goods_name", goods[indices[i]].Name).
-			Int("new_price", 200).
-			Msg("test price rewrite applied (200)")
-		count200++
-	}
-
-	log.Info().
-		Str("component", autoStockpileComponent).
-		Int("total_goods", len(goods)).
-		Int("modified_count_100", count100).
-		Int("modified_count_200", count200).
-		Msg("test price rewrite finished")
 }
 
 func bindPriceToGoods(goods goodsCandidate, prices []priceCandidate, used []bool) (int, bool) {

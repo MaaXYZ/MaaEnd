@@ -117,8 +117,6 @@ func (r *ItemValueChangeRecognition) Run(ctx *maa.Context, arg *maa.CustomRecogn
 		return buildAbortedRecognitionResult(arg, AbortReasonGoodsTierInvalidFatal)
 	}
 
-	applyTestPricesIfEnabled(resultGoods)
-
 	resultPayload := RecognitionResult{
 		Data: &RecognitionData{
 			Quota: QuotaInfo{

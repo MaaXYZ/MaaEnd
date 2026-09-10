@@ -136,9 +136,7 @@ func (a *ReconcileDecisionAction) Run(ctx *maa.Context, arg *maa.CustomActionArg
 		maafocus.Print(ctx, i18n.T("autostockpile.fallback_purchase", newSelection.ProductName, newSelection.CurrentPrice))
 	}
 
-	if priceChanged {
-		maafocus.Print(ctx, i18n.T("autostockpile.reconcile_price_corrected", oldPrice, price))
-	}
+	maafocus.Print(ctx, i18n.T("autostockpile.reconcile_price_corrected", oldPrice, price))
 
 	isEquivalent := newSelection.Selected &&
 		newSelection.ProductID == state.CurrentDecision.Selection.ProductID &&
