@@ -32,7 +32,12 @@ func (a *SelectItemAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 		return false
 	}
 
-	detailJSON := extractCustomRecognitionDetailJSON(arg.RecognitionDetail)
+	detailJSON := ""
+	if arg.RecognitionDetail != nil && arg.RecognitionDetail.Results != nil && arg.RecognitionDetail.Results.Best != nil {
+		if customResult, ok := arg.RecognitionDetail.Results.Best.AsCustom(); ok && customResult != nil {
+			detailJSON = customResult.Detail
+		}
+	}
 	if detailJSON == "" {
 		log.Error().
 			Str("component", "autostockpile").
@@ -170,27 +175,6 @@ func (a *SelectItemAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 				Str("component", "autostockpile").
 				Str("node", arg.CurrentTaskName).
 				Msg("failed to enable skip branch")
-			return false
-		}
-		return true
-	}
-
-	if quantityDecision.Mode == quantityModeSkip {
-		log.Info().
-			Str("component", "autostockpile").
-			Str("selection_mode", formatSelectionMode(selection, *data)).
-			Str("quantity_mode", string(quantityDecision.Mode)).
-			Str("quantity_reason", quantityDecision.Reason).
-			Int("quota_current", data.Quota.Current).
-			Int("quota_overflow", data.Quota.Overflow).
-			Msg("quantity decision requested skip short-circuit")
-		maafocus.Print(ctx, i18n.T("autostockpile.hit_but_skip", quantityDecision.Reason))
-		if err := overrideSkipBranch(ctx); err != nil {
-			log.Error().
-				Err(err).
-				Str("component", "autostockpile").
-				Str("node", arg.CurrentTaskName).
-				Msg("failed to enable quantity skip branch")
 			return false
 		}
 		return true

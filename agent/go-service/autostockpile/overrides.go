@@ -141,27 +141,11 @@ func recognitionParamROI(node *maa.Node) ([]int, error) {
 		return nil, fmt.Errorf("node %s missing recognition param", selectedGoodsClickNodeName)
 	}
 
-	var target maa.Target
-	switch param := node.Recognition.Param.(type) {
-	case *maa.TemplateMatchParam:
-		target = param.ROI
-	case *maa.FeatureMatchParam:
-		target = param.ROI
-	case *maa.ColorMatchParam:
-		target = param.ROI
-	case *maa.OCRParam:
-		target = param.ROI
-	case *maa.NeuralNetworkClassifyParam:
-		target = param.ROI
-	case *maa.NeuralNetworkDetectParam:
-		target = param.ROI
-	case *maa.CustomRecognitionParam:
-		target = param.ROI
-	default:
+	param, ok := node.Recognition.Param.(*maa.TemplateMatchParam)
+	if !ok || param == nil {
 		return nil, fmt.Errorf("node %s has unsupported recognition param type %T", selectedGoodsClickNodeName, node.Recognition.Param)
 	}
-
-	rect, err := target.AsRect()
+	rect, err := param.ROI.AsRect()
 	if err != nil {
 		return nil, fmt.Errorf("node %s roi: %w", selectedGoodsClickNodeName, err)
 	}

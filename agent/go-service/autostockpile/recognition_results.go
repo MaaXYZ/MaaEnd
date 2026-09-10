@@ -1,7 +1,6 @@
 package autostockpile
 
 import (
-	"encoding/json"
 	"regexp"
 	"strings"
 
@@ -16,23 +15,6 @@ const (
 	ocrTextPolicyFilteredOnly ocrTextPolicy = iota
 	ocrTextPolicyBestOnly
 )
-
-func extractCustomRecognitionDetailJSON(detail *maa.RecognitionDetail) string {
-	if detail == nil || detail.DetailJson == "" {
-		return ""
-	}
-
-	var wrapped struct {
-		Best struct {
-			Detail json.RawMessage `json:"detail"`
-		} `json:"best"`
-	}
-	if err := json.Unmarshal([]byte(detail.DetailJson), &wrapped); err == nil && len(wrapped.Best.Detail) > 0 {
-		return rawJSONToString(wrapped.Best.Detail)
-	}
-
-	return detail.DetailJson
-}
 
 func filteredRecognitionResults(detail *maa.RecognitionDetail) []*maa.RecognitionResult {
 	if detail == nil || detail.Results == nil {
@@ -121,18 +103,4 @@ func resultsFromBest(best *maa.RecognitionResult) []*maa.RecognitionResult {
 		return nil
 	}
 	return []*maa.RecognitionResult{best}
-}
-
-func rawJSONToString(raw json.RawMessage) string {
-	if len(raw) == 0 {
-		return ""
-	}
-	if raw[0] == '"' {
-		var value string
-		if err := json.Unmarshal(raw, &value); err != nil {
-			return string(raw)
-		}
-		return value
-	}
-	return string(raw)
 }
