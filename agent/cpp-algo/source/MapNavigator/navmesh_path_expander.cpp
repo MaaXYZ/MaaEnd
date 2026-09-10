@@ -871,19 +871,6 @@ bool TryAppendZiplineLeg(
     const navmesh::WorldPoint mount = route->approach.points.back();
     // 头一跳瞄第一个站位, 而不是架子坐标本身: 那是个角格锚点, 走到它跟前常常碰不到设备模型
     const navmesh::WorldPoint mount_spot = route->mount_spots.empty() ? mount : route->mount_spots.front();
-    auto ToNodeRef = [](const zipline::ZiplineNode& node) -> ZiplineNodeRef {
-        ZiplineNodeRef ref;
-        ref.level_id = node.level_id;
-        ref.world_x = node.world_x;
-        ref.world_y = node.world_y;
-        ref.world_z = node.world_z;
-        ref.has_world = true;
-        ref.x = node.x;
-        ref.y = node.y;
-        ref.height = node.height;
-        return ref;
-    };
-
     // 一跳一个航点。中途落在下一根架子上, 人就站在下一跳的上索点上, 所以跳与跳之间不插走路点
     for (size_t hop = 0; hop + 1 < route->towers.size(); ++hop) {
         const zipline::ZiplineNode& from = route->towers[hop];

@@ -313,14 +313,15 @@ Result AdvanceMountSpot(const Context& ctx, const Waypoint& waypoint, const char
 {
     ZiplineApproachState& approach = ctx.runtime_state->zipline_approach;
     const size_t spot_count = waypoint.zipline_hop ? waypoint.zipline_hop->mount_spots.size() : 0;
-    if (approach.spot_index + 1 >= spot_count) {
+    const size_t cursor = waypoint.zipline_hop ? approach.MountSpotCursor(waypoint.zipline_hop->mount) : 0;
+    if (cursor + 1 >= spot_count) {
         if (waypoint.zipline_hop) {
             ctx.runtime_state->zipline_ride.MarkMountUnreachable(*waypoint.zipline_hop);
         }
         return AbandonZipline(ctx, "zipline_prompt_missing", "no mount prompt from any stand point at this tower");
     }
 
-    ++approach.spot_index;
+    approach.spot_index = cursor + 1;
     approach.press_missed = true;
     const ZiplineMountSpot& spot = waypoint.zipline_hop->mount_spots[approach.spot_index];
     const bool retargeted = ctx.session->RetargetCurrentWaypoint(spot.x, spot.y, reason);

@@ -8,6 +8,7 @@
 #include "../Navmesh/BaseNavPlanner.h"
 #include "../Zipline/ZiplineFrames.h"
 #include "navmesh_diagnostics.h"
+#include "zipline_types.h"
 
 namespace mapnavigator
 {
@@ -48,6 +49,10 @@ struct ZiplineRoute
     // 仅 WebUI 预览请求收集；只含最终选中方案的接近段和离索段。
     std::vector<NavmeshRouteDiagnostic> diagnostics;
 };
+
+// 把标定里的一根架子转成执行侧认身份用的引用。身份判定靠世界坐标，漏掉任何一个分量都会让
+// SameTower 悄悄退化成按像素认架子，所以两侧共用这一份映射。
+ZiplineNodeRef ToNodeRef(const zipline::ZiplineNode& node);
 
 // 在本区找一条滑索路线：纯走路可达时只返回显著更省的方案；纯走路不可达时返回能把
 // 起终两侧可走面接起来的最低成本连续链。没有可用方案、该区没标定过、或请求没开滑索时返回 nullopt。

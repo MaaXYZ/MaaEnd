@@ -507,6 +507,20 @@ private:
 
 } // namespace
 
+ZiplineNodeRef ToNodeRef(const zipline::ZiplineNode& node)
+{
+    ZiplineNodeRef ref;
+    ref.level_id = node.level_id;
+    ref.world_x = node.world_x;
+    ref.world_y = node.world_y;
+    ref.world_z = node.world_z;
+    ref.has_world = true;
+    ref.x = node.x;
+    ref.y = node.y;
+    ref.height = node.height;
+    return ref;
+}
+
 void ResetZiplineOutcome()
 {
     g_zipline_used = false;
@@ -705,16 +719,7 @@ std::optional<ZiplineRoute> PlanZiplineRoute(
             continue;
         }
         for (size_t i = 0; i < nodes.size(); ++i) {
-            ZiplineNodeRef probe;
-            probe.level_id = nodes[i].level_id;
-            probe.world_x = nodes[i].world_x;
-            probe.world_y = nodes[i].world_y;
-            probe.world_z = nodes[i].world_z;
-            probe.has_world = true;
-            probe.x = nodes[i].x;
-            probe.y = nodes[i].y;
-            probe.height = nodes[i].height;
-            if (can_board[i] && probe.SameTower(record.plan.mount)) {
+            if (can_board[i] && ToNodeRef(nodes[i]).SameTower(record.plan.mount)) {
                 can_board[i] = false;
                 ++unboardable;
             }

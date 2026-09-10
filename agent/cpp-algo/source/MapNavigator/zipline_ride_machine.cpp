@@ -350,9 +350,16 @@ StageResult ZiplineRideMachine::TickMounting(const ZiplineObservation& obs, IZip
         EnterStage(ZiplineStage::OnTower, now);
         return {};
     }
-    // 余速未停时不重按: 带着惯性发出的交互正是这一跳落空的成因, 此时重按同样不会生效
+    // 余速未停时不重按: 带着惯性发出的交互正是这一跳落空的成因, 此时重按同样不会生效。一路都在动
+    // 说明人没被架子锁住, 窗口耗满就交回导航换站位 —— 这个相位外头没有看门狗, 等不到别人来收场
     if (walking) {
-        return {};
+        if (elapsed_ms <= kZiplineMountWindowMs) {
+            return {};
+        }
+        LogWarn << "zipline/mount/still_moving" << VAR(elapsed_ms) << VAR(mount_presses_);
+        CommitRecord(HopOutcome::NotMounted, now);
+        EnterStage(ZiplineStage::Idle, now);
+        return NeedsReposition {};
     }
     if (on_ground_hits_ >= kZiplineMountOnGroundFixes) {
         return Remount(actuator, "zipline/mount/on_ground", now);
