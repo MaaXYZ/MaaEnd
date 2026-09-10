@@ -76,7 +76,8 @@ enum class HopOutcome
 {
     Completed,
     WrongRope,  // 滑错过, 滑回后重试仍没到
-    NoLaunch,   // 每档俯仰都没发出去: 索被挡、没上去, 观测上同形, 不再分
+    NoLaunch,   // 在架上逐档俯仰都发射过, 索未起滑: 索被挡或未通电
+    NotMounted, // 上索按键发出后未上架: 这根索尚未试过, 架子本身也不判死
     Lost,       // 落地定位一直对不上
     Dismounted, // 主动下索交给恢复
 };
@@ -95,10 +96,11 @@ struct ZiplineHopRecord
 // 一趟导航里每一跳的记录。规划器据此排掉滑不动/滑错的索, 主状态机据此决定要不要整段退回走路
 using HopLedger = std::vector<ZiplineHopRecord>;
 
-// 上索键、下索键按出去就当成了, 没有二次确认的阶段
+// 上索按键后须先经 Mounting 才判定在架上; 下索按键发出即判定已下架, 只等定位稳定
 enum class ZiplineStage
 {
     Idle,
+    Mounting,     // 上索按键已发出, 正在判定是否已上架
     OnTower,      // 站在架子上, 准备这一次发射
     Aiming,       // 闭环转 yaw, 开环俯仰, 然后左键
     Fired,        // 已左键, 等定位断掉(滑出去了)或位置离开起点
@@ -109,6 +111,14 @@ enum class ZiplineStage
     Dismounting,  // 已发下索键, 等定位稳定
     Handoff,      // 把出口事件交回导航
     Failed,
+};
+
+// 角色在架上还是在地面。两个信号都未命中即 Unclear: 窗口耗满之前它只表示继续等下一帧
+enum class MountVerdict
+{
+    OnTower,
+    OnGround,
+    Unclear,
 };
 
 // 一帧观测。fix 只在定位到且不是 held 时有值, 朝向就是 fix 的角度

@@ -130,6 +130,20 @@ public:
         return obs;
     }
 
+    // 两个信号按代价从低到高求值: 右上角按钮在架上收起, 故地面判据命中即判定角色在地面; 未命中时
+    // 再读底部操作引导, 命中「离开滑索架」的片段才判定已上架
+    MountVerdict CheckMounted() override
+    {
+        if (ctx_.maa_context == nullptr) {
+            return MountVerdict::Unclear;
+        }
+        if (RunNodeAndReportHit(ctx_.maa_context, kZiplineOnGroundEntryNode, kZiplineOnGroundNode, "{}")) {
+            return MountVerdict::OnGround;
+        }
+        const bool hint = RunNodeAndReportHit(ctx_.maa_context, kZiplineOnTowerHintEntryNode, kZiplineOnTowerHintNode, "{}");
+        return hint ? MountVerdict::OnTower : MountVerdict::Unclear;
+    }
+
     void ResetTracking() override { ctx_.position_provider->ResetTracking(); }
 
 private:
@@ -181,6 +195,8 @@ public:
         const int units = static_cast<int>(std::lround(-delta_deg * ctx_.action_wrapper->DefaultPitchUnitsPerDegree()));
         return units == 0 || ctx_.action_wrapper->SendViewDeltaSync(0, units);
     }
+
+    bool PressMount() override { return PressMountPrompt(ctx_.maa_context); }
 
     // 起滑就是对着瞄好的方向按一下左键
     void FireLaunch() override
@@ -376,8 +392,7 @@ Result StartZiplineHop(const Context& ctx, const Waypoint& waypoint, double actu
             }
             return AbandonZipline(ctx, "zipline_prompt_missing", "no mount prompt at the tower");
         }
-        // 交互键已经发出去了, 从这里起就当人已经站在架子上: 认错方向的代价是走不动路, 反过来白按
-        // 一次右键什么也不会发生。真没站上去由阶段机认出来(怎么发射都不动), 下来重新站一次
+        // 此处只负责发出上索按键, 是否已上架由阶段机的 Mounting 段判定; 判定落定前不瞄准也不发射
         ctx.runtime_state->zipline_approach.press_missed = false;
     }
 
