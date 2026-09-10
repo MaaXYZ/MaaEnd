@@ -63,14 +63,14 @@ pnpm check && pnpm test
 | --- | --- | --- | --- | --- | --- |
 | H1 | 删除死的阈值 JSON 配置入口链 | 已完成 | B1 | `b616249c` | `（本次提交）` |
 | H2 | 删除 `parsePriceLimitValue`（随 H1，无独立提交） | 已完成 | B1 | `b616249c` | `（本次提交）` |
-| H3 | 删除测试价格注入（环境变量整链） | 未进行 | B2 | — | — |
-| H4 | 删除只写不读的 `priceCandidate.text` | 未进行 | B2 | — | — |
-| H5 | 去掉恒为真的 `if priceChanged` 包装 | 未进行 | B2 | — | — |
+| H3 | 删除测试价格注入（环境变量整链） | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
+| H4 | 删除只写不读的 `priceCandidate.text` | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
+| H5 | 去掉恒为真的 `if priceChanged` 包装 | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
 | H6 | 删除不可达的 Skip 数量模式整链 | 未进行 | B3 | — | — |
 | H7 | `resolveQuantityDecision` 改写为二分支 | 未进行 | B3 | — | — |
 | H8 | 删除 `len(roi) != 4` 恒假检查 | 未进行 | B4 | — | — |
 | H9 | `filteredRecognitionResults` 直接返回字段 | 未进行 | B4 | — | — |
-| H10 | 删除 `resolveDailyStoragePathFunc` 间接层 | 未进行 | B2 | — | — |
+| H10 | 删除 `resolveDailyStoragePathFunc` 间接层 | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
 | H11 | 删除 `buildSelectionPipelineOverride` 的无用 ctx | 未进行 | B4 | — | — |
 | H12 | 删除三处恒真的下标/边界守卫 | 未进行 | B4 | — | — |
 
@@ -94,7 +94,7 @@ pnpm check && pnpm test
 | 批次 | 内容 | 提交一（修复） | 提交二（状态同步） |
 | --- | --- | --- | --- |
 | B1 | H1、H2 | `b616249c` | `（本次提交）` |
-| B2 | H3、H4、H5、H10 | — | — |
+| B2 | H3、H4、H5、H10 | `b53c7b12` | `（本次提交）` |
 | B3 | H6、H7、M1、M2、M3 | — | — |
 | B4 | H8、H9、H11、H12、M4–M10 | — | — |
 
