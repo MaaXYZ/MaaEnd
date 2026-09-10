@@ -134,13 +134,9 @@
                     },
                     "option": [
                         "AutoStockReserveValleyIV",
-                        "AutoStockBuyDailyGoodsValleyIV",
-                        "AutoStockBuyDailyGoodsValleyIVEngravingPermitLimit",
-                        "AutoStockBuyDailyGoodsValleyIVFoodAndBuffLimit",
-                        "AutoStockBuyStockFactoryGoodsValleyIV",
-                        "AutoStockBuyStockFactoryGoodsValleyIVDetectorCompassLimit",
-                        "AutoStockBuyCulturalGoodsValleyIV",
-                        "AutoStockBuyCulturalGoodsValleyIVGiftLimit",
+                        "AutoStockBuyDailyGoodsValleyIVGroup",
+                        "AutoStockBuyStockFactoryGoodsValleyIVGroup",
+                        "AutoStockBuyCulturalGoodsValleyIVGroup",
                         "AutoStockUseDiscountsValleyIV"
                     ]
                 },
@@ -175,6 +171,25 @@
                     }
                 }
             }
+        },
+        "AutoStockBuyDailyGoodsValleyIVGroup": {
+            "type": "switch",
+            "label": "$task.AutoStockStaple.option.AutoStockBuyDailyGoodsValleyIVGroup.label",
+            "description": "$task.AutoStockStaple.option.AutoStockBuyDailyGoodsValleyIVGroup.description",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoStockBuyDailyGoodsValleyIV",
+                        "AutoStockBuyDailyGoodsValleyIVEngravingPermitLimit",
+                        "AutoStockBuyDailyGoodsValleyIVFoodAndBuffLimit"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
         },
         "AutoStockBuyDailyGoodsValleyIV": {
             "type": "checkbox",
@@ -464,6 +479,24 @@
                 }
             }
         },
+        "AutoStockBuyStockFactoryGoodsValleyIVGroup": {
+            "type": "switch",
+            "label": "$task.AutoStockStaple.option.AutoStockBuyStockFactoryGoodsValleyIVGroup.label",
+            "description": "$task.AutoStockStaple.option.AutoStockBuyStockFactoryGoodsValleyIVGroup.description",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoStockBuyStockFactoryGoodsValleyIV",
+                        "AutoStockBuyStockFactoryGoodsValleyIVDetectorCompassLimit"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
+        },
         "AutoStockBuyStockFactoryGoodsValleyIV": {
             "type": "checkbox",
             "label": "$task.AutoStockStaple.option.AutoStockBuyStockFactoryGoodsValleyIV.label",
@@ -562,6 +595,24 @@
                     }
                 }
             }
+        },
+        "AutoStockBuyCulturalGoodsValleyIVGroup": {
+            "type": "switch",
+            "label": "$task.AutoStockStaple.option.AutoStockBuyCulturalGoodsValleyIVGroup.label",
+            "description": "$task.AutoStockStaple.option.AutoStockBuyCulturalGoodsValleyIVGroup.description",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoStockBuyCulturalGoodsValleyIV",
+                        "AutoStockBuyCulturalGoodsValleyIVGiftLimit"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
         },
         "AutoStockBuyCulturalGoodsValleyIV": {
             "type": "checkbox",
@@ -1044,14 +1095,9 @@
                     },
                     "option": [
                         "AutoStockReserveWuling",
-                        "AutoStockBuyDailyGoodsWuling",
-                        "AutoStockBuyDailyGoodsWulingEngravingPermitLimit",
-                        "AutoStockBuyDailyGoodsWulingFoodAndBuffLimit",
-                        "AutoStockBuyStockFactoryGoodsWuling",
-                        "AutoStockBuyStockFactoryGoodsWulingArtificingCatalystLimit",
-                        "AutoStockBuyStockFactoryGoodsWulingDetectorCompassLimit",
-                        "AutoStockBuyCulturalGoodsWuling",
-                        "AutoStockBuyCulturalGoodsWulingGiftLimit",
+                        "AutoStockBuyDailyGoodsWulingGroup",
+                        "AutoStockBuyStockFactoryGoodsWulingGroup",
+                        "AutoStockBuyCulturalGoodsWulingGroup",
                         "AutoStockUseDiscountsWuling"
                     ]
                 },
@@ -1086,6 +1132,25 @@
                     }
                 }
             }
+        },
+        "AutoStockBuyDailyGoodsWulingGroup": {
+            "type": "switch",
+            "label": "$task.AutoStockStaple.option.AutoStockBuyDailyGoodsWulingGroup.label",
+            "description": "$task.AutoStockStaple.option.AutoStockBuyDailyGoodsWulingGroup.description",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoStockBuyDailyGoodsWuling",
+                        "AutoStockBuyDailyGoodsWulingEngravingPermitLimit",
+                        "AutoStockBuyDailyGoodsWulingFoodAndBuffLimit"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
         },
         "AutoStockBuyDailyGoodsWuling": {
             "type": "checkbox",
@@ -1445,6 +1510,25 @@
                 }
             }
         },
+        "AutoStockBuyStockFactoryGoodsWulingGroup": {
+            "type": "switch",
+            "label": "$task.AutoStockStaple.option.AutoStockBuyStockFactoryGoodsWulingGroup.label",
+            "description": "$task.AutoStockStaple.option.AutoStockBuyStockFactoryGoodsWulingGroup.description",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoStockBuyStockFactoryGoodsWuling",
+                        "AutoStockBuyStockFactoryGoodsWulingArtificingCatalystLimit",
+                        "AutoStockBuyStockFactoryGoodsWulingDetectorCompassLimit"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
+        },
         "AutoStockBuyStockFactoryGoodsWuling": {
             "type": "checkbox",
             "label": "$task.AutoStockStaple.option.AutoStockBuyStockFactoryGoodsWuling.label",
@@ -1632,6 +1716,24 @@
                     }
                 }
             }
+        },
+        "AutoStockBuyCulturalGoodsWulingGroup": {
+            "type": "switch",
+            "label": "$task.AutoStockStaple.option.AutoStockBuyCulturalGoodsWulingGroup.label",
+            "description": "$task.AutoStockStaple.option.AutoStockBuyCulturalGoodsWulingGroup.description",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "option": [
+                        "AutoStockBuyCulturalGoodsWuling",
+                        "AutoStockBuyCulturalGoodsWulingGiftLimit"
+                    ]
+                },
+                {
+                    "name": "No"
+                }
+            ]
         },
         "AutoStockBuyCulturalGoodsWuling": {
             "type": "checkbox",
