@@ -66,8 +66,8 @@ pnpm check && pnpm test
 | H3 | 删除测试价格注入（环境变量整链） | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
 | H4 | 删除只写不读的 `priceCandidate.text` | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
 | H5 | 去掉恒为真的 `if priceChanged` 包装 | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
-| H6 | 删除不可达的 Skip 数量模式整链 | 未进行 | B3 | — | — |
-| H7 | `resolveQuantityDecision` 改写为二分支 | 未进行 | B3 | — | — |
+| H6 | 删除不可达的 Skip 数量模式整链 | 已完成 | B3 | `a111add6` | `（本次提交）` |
+| H7 | `resolveQuantityDecision` 改写为二分支 | 已完成 | B3 | `a111add6` | `（本次提交）` |
 | H8 | 删除 `len(roi) != 4` 恒假检查 | 未进行 | B4 | — | — |
 | H9 | `filteredRecognitionResults` 直接返回字段 | 未进行 | B4 | — | — |
 | H10 | 删除 `resolveDailyStoragePathFunc` 间接层 | 已完成 | B2 | `b53c7b12` | `（本次提交）` |
@@ -78,9 +78,9 @@ pnpm check && pnpm test
 
 | # | 修复主题 | 状态 | 批次 | 修复提交 | 文件同步提交 |
 | --- | --- | --- | --- | --- | --- |
-| M1 | 改用 SDK `AsCustom()` 解包，删手写重复实现 | 未进行 | B3 | — | — |
-| M2 | `recognitionParamROI` 类型 switch 收窄为 TemplateMatch | 未进行 | B3 | — | — |
-| M3 | 删除不可达的 `threshold <= 0` 检查 | 未进行 | B3 | — | — |
+| M1 | 改用 SDK `AsCustom()` 解包，删手写重复实现 | 已完成 | B3 | `a111add6` | `（本次提交）` |
+| M2 | `recognitionParamROI` 类型 switch 收窄为 TemplateMatch | 已完成 | B3 | `a111add6` | `（本次提交）` |
+| M3 | 删除不可达的 `threshold <= 0` 检查 | 已完成 | B3 | `a111add6` | `（本次提交）` |
 | M4 | `validateItemMap` 由 3 次收敛为入口 1 次 | 未进行 | B4 | — | — |
 | M5 | 统一 `result.Data` 判空语义（信不变式） | 未进行 | B4 | — | — |
 | M6 | `resolveOverflow` 删除布尔返回值 | 未进行 | B4 | — | — |
@@ -95,7 +95,7 @@ pnpm check && pnpm test
 | --- | --- | --- | --- |
 | B1 | H1、H2 | `b616249c` | `（本次提交）` |
 | B2 | H3、H4、H5、H10 | `b53c7b12` | `（本次提交）` |
-| B3 | H6、H7、M1、M2、M3 | — | — |
+| B3 | H6、H7、M1、M2、M3 | `a111add6` | `（本次提交）` |
 | B4 | H8、H9、H11、H12、M4–M10 | — | — |
 
 ---
@@ -163,20 +163,21 @@ pnpm check && pnpm test
     - 保留并复核：`overrideSkipBranch` 仍被 `selector.go:167`、`routeSkipWithAbortReason` 使用；`i18n`、`maafocus` 在该文件仍被引用。
 - **验证**：`grep -rn "quantityModeSkip\|hit_but_skip\|qty_overflow_invalid" agent/ assets/` 零命中；`pnpm check`、`pnpm test` 通过。
 
-#### H7. `resolveQuantityDecision` 的 `default` 与 `case 1` 同体且不可达
+#### H7. `resolveQuantityDecision` 的 `default` 分支不可达
 
 - **方案**：`quantity.go:19-28` 改写为：
 
 ```go
 func resolveQuantityDecision(selection SelectionResult, data RecognitionData) quantityDecision {
-	if data.Quota.Overflow > 0 {
-		return resolveOverflowQuantityDecision(data.Quota)
-	}
-	return resolveThresholdQuantityDecision()
+    if selection.CurrentPrice < selection.Threshold {
+        return resolveThresholdQuantityDecision()
+    }
+    return resolveOverflowQuantityDecision(data.Quota)
 }
 ```
 
-- 保留 `selection` 形参；`selection.CurrentPrice < selection.Threshold` 的条件判断被删除，但结果等价（`bypass == false` 时 `SelectBestProduct` 只接受 `score > 0`；`bypass == true` 时必然先命中 overflow）。
+- 保留 `selection` 形参并继续以价格为第一判据：`bypass == false` 时 `SelectBestProduct` 只接受 `score > 0`（必然 `price < threshold`）；`price >= threshold` 只可能来自溢出放行路径（`bypass == true ⇒ Overflow > 0`）。因此 `default` 不可达，删除后与原 `switch` 行为完全一致。
+- **修正记录**：本节初稿曾给出 `if data.Quota.Overflow > 0` 优先的写法。该写法在「`Overflow > 0` 且 `CurrentPrice < Threshold`」时会把数量模式从 `SwipeMax`（低价买满）改为按防溢出数量购买，**并非等价重构**（审计原等价性论证只覆盖了 `bypass == false` 一侧）。经用户确认改用上面保留价格优先判据的二分支实现，详见 §6.9 追加记录。
 - **验证**：`go build -mod=mod ./...` 通过；`grep -rn "resolveQuantityDecision" agent/` 仅 `decision.go` 一处调用。
 
 #### M1. 改用 SDK `AsCustom()` 解包，删手写重复实现
@@ -198,11 +199,11 @@ func resolveQuantityDecision(selection SelectionResult, data RecognitionData) qu
 ```go
 param, ok := node.Recognition.Param.(*maa.TemplateMatchParam)
 if !ok || param == nil {
-	return nil, fmt.Errorf("node %s has unsupported recognition param type %T", selectedGoodsClickNodeName, node.Recognition.Param)
+    return nil, fmt.Errorf("node %s has unsupported recognition param type %T", selectedGoodsClickNodeName, node.Recognition.Param)
 }
 rect, err := param.ROI.AsRect()
 if err != nil {
-	return nil, fmt.Errorf("node %s roi: %w", selectedGoodsClickNodeName, err)
+    return nil, fmt.Errorf("node %s roi: %w", selectedGoodsClickNodeName, err)
 }
 return []int{rect[0], rect[1], rect[2], rect[3]}, nil
 ```
@@ -358,6 +359,8 @@ return []int{rect[0], rect[1], rect[2], rect[3]}, nil
 | 6.8 | 不动 `vendor/`、`go.mod`、`go.sum`，验证统一用 `-mod=mod` | 每批次验证命令按 1.4 执行 |
 
 因此第 6 节不再构成断点；执行中出现**新的**设计取舍时仍按 1.3 硬性约束停下来提问，并把新结论追加到本小节。
+
+**2026-09-10（B3 执行中追加）：H7 方案初稿与现有行为不等价，经用户确认改为真正等价的二分支。** 冲突点：初稿 `if data.Quota.Overflow > 0` 优先，而原 `switch` 以 `selection.CurrentPrice < selection.Threshold` 为第一判据；当 `Overflow > 0` 且选中商品低于阈值时，原实现返回 `SwipeMax`（低价买满），初稿返回「按防溢出数量购买」。用户选择「改成真正等价的二分支（价格优先）」，即仅删除不可达的 `default`、保留价格判据（§3 H7 已同步修正）；H7 仍属等价重构，§4.1 表述继续成立。
 
 ### 6.10 已产生的文档提交
 
