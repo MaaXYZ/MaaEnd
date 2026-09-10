@@ -1104,6 +1104,9 @@
                     "name": "Route4",
                     "label": "$option.AutoCollectRoute4.label",
                     "pipeline_override": {
+                        "AutoCollectRoute4Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute4Start": {
                             "enabled": true
                         }
@@ -1113,6 +1116,9 @@
                     "name": "Route5",
                     "label": "$option.AutoCollectRoute5.label",
                     "pipeline_override": {
+                        "AutoCollectRoute5Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute5Start": {
                             "enabled": true
                         }
@@ -1122,6 +1128,9 @@
                     "name": "Route6",
                     "label": "$option.AutoCollectRoute6.label",
                     "pipeline_override": {
+                        "AutoCollectRoute6Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute6Start": {
                             "enabled": true
                         }
@@ -1131,6 +1140,9 @@
                     "name": "Route13",
                     "label": "$option.AutoCollectRoute13.label",
                     "pipeline_override": {
+                        "AutoCollectRoute13Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute13Start": {
                             "enabled": true
                         }
@@ -1140,6 +1152,9 @@
                     "name": "Route14",
                     "label": "$option.AutoCollectRoute14.label",
                     "pipeline_override": {
+                        "AutoCollectRoute14Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute14Start": {
                             "enabled": true
                         }
@@ -1159,6 +1174,9 @@
                     "name": "CommonRoute1",
                     "label": "$option.AutoCollectCommonRoute1.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute1Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute1Start": {
                             "enabled": true
                         }
@@ -1168,6 +1186,9 @@
                     "name": "CommonRoute2",
                     "label": "$option.AutoCollectCommonRoute2.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute2Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute2Start": {
                             "enabled": true
                         }
@@ -1214,6 +1235,9 @@
                     "name": "Route1",
                     "label": "$option.AutoCollectRoute1.label",
                     "pipeline_override": {
+                        "AutoCollectRoute1Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute1Start": {
                             "enabled": true
                         }
@@ -1223,6 +1247,9 @@
                     "name": "Route2",
                     "label": "$option.AutoCollectRoute2.label",
                     "pipeline_override": {
+                        "AutoCollectRoute2Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute2Start": {
                             "enabled": true
                         }
@@ -1232,6 +1259,9 @@
                     "name": "Route3",
                     "label": "$option.AutoCollectRoute3.label",
                     "pipeline_override": {
+                        "AutoCollectRoute3Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute3Start": {
                             "enabled": true
                         }
@@ -1241,6 +1271,9 @@
                     "name": "Route7",
                     "label": "$option.AutoCollectRoute7.label",
                     "pipeline_override": {
+                        "AutoCollectRoute7Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute7Start": {
                             "enabled": true
                         }
@@ -1250,6 +1283,9 @@
                     "name": "Route8",
                     "label": "$option.AutoCollectRoute8.label",
                     "pipeline_override": {
+                        "AutoCollectRoute8Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute8Start": {
                             "enabled": true
                         }
@@ -1259,6 +1295,9 @@
                     "name": "Route9",
                     "label": "$option.AutoCollectRoute9.label",
                     "pipeline_override": {
+                        "AutoCollectRoute9Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute9Start": {
                             "enabled": true
                         }
@@ -1268,6 +1307,9 @@
                     "name": "Route10",
                     "label": "$option.AutoCollectRoute10.label",
                     "pipeline_override": {
+                        "AutoCollectRoute10Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute10Start": {
                             "enabled": true
                         }
@@ -1277,6 +1319,9 @@
                     "name": "Route11",
                     "label": "$option.AutoCollectRoute11.label",
                     "pipeline_override": {
+                        "AutoCollectRoute11Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute11Start": {
                             "enabled": true
                         }
@@ -1286,6 +1331,9 @@
                     "name": "Route12",
                     "label": "$option.AutoCollectRoute12.label",
                     "pipeline_override": {
+                        "AutoCollectRoute12Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute12Start": {
                             "enabled": true
                         }
@@ -1295,6 +1343,9 @@
                     "name": "Route15",
                     "label": "$option.AutoCollectRoute15.label",
                     "pipeline_override": {
+                        "AutoCollectRoute15Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute15Start": {
                             "enabled": true
                         }
@@ -1304,6 +1355,9 @@
                     "name": "Route16",
                     "label": "$option.AutoCollectRoute16.label",
                     "pipeline_override": {
+                        "AutoCollectRoute16Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute16Start": {
                             "enabled": true
                         }
@@ -1313,6 +1367,9 @@
                     "name": "Route17",
                     "label": "$option.AutoCollectRoute17.label",
                     "pipeline_override": {
+                        "AutoCollectRoute17Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectRoute17Start": {
                             "enabled": true
                         }
@@ -1336,6 +1393,9 @@
                     "name": "CommonRoute3",
                     "label": "$option.AutoCollectCommonRoute3.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute3Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute3Start": {
                             "enabled": true
                         }
@@ -1345,6 +1405,9 @@
                     "name": "CommonRoute4",
                     "label": "$option.AutoCollectCommonRoute4.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute4Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute4Start": {
                             "enabled": true
                         }
@@ -1354,6 +1417,9 @@
                     "name": "CommonRoute5",
                     "label": "$option.AutoCollectCommonRoute5.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute5Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute5Start": {
                             "enabled": true
                         }
@@ -1363,6 +1429,9 @@
                     "name": "CommonRoute6",
                     "label": "$option.AutoCollectCommonRoute6.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute6Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute6Start": {
                             "enabled": true
                         }
@@ -1372,6 +1441,9 @@
                     "name": "CommonRoute7",
                     "label": "$option.AutoCollectCommonRoute7.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute7Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute7Start": {
                             "enabled": true
                         }
@@ -1381,6 +1453,9 @@
                     "name": "CommonRoute8",
                     "label": "$option.AutoCollectCommonRoute8.label",
                     "pipeline_override": {
+                        "AutoCollectCommonRoute8Dispatch": {
+                            "enabled": true
+                        },
                         "AutoCollectCommonRoute8Start": {
                             "enabled": true
                         }
