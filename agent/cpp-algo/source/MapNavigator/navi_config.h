@@ -346,6 +346,10 @@ constexpr int32_t kZiplineAbandonWalkFallbackCount = 3;
 // 判定圈收到这里, 让人真把那点距离走完(有备用站位就是走过去, 没有就是再走近点)。
 // 再往下收就到定位噪声底下了, 收不拢只会白等看门狗
 constexpr double kZiplineRestandBandWu = 1.0;
+// 顶在设备上走不动时换下一个站位的门限。这时到点判定过不去、提示也没出来, 再等下去先招来的是
+// 恢复阶梯 —— 它跳一下、挪一下设备, 把这一轮的站位拖走, 所以必须抢在它前面动手
+constexpr int32_t kZiplineMountSpotStallMs = 2000;
+static_assert(kZiplineMountSpotStallMs < kObstacleRecoveryMinTriggerMs);
 // 滑错索又滑回来之后, 同一跳最多再试这么多次, 用完就站在架子上等换路
 constexpr int32_t kZiplineHopRetryBudget = 2;
 // 下索键按完等定位稳定的基准时长: 两倍还不稳再按一次, 四倍还不稳当卡住

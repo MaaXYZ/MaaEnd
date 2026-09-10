@@ -1467,7 +1467,7 @@ class MapNavigatorApp {
           ...segment,
           from: project(segment.from),
           to: project(segment.to),
-          mount_restand: Array.isArray(segment.mount_restand) ? project(segment.mount_restand) : null,
+          mount_spots: Array.isArray(segment.mount_spots) ? segment.mount_spots.filter(Array.isArray).map(project) : [],
         })),
       failure: failure
         ? {

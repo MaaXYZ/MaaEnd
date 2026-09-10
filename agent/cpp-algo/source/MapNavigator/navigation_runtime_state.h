@@ -287,14 +287,17 @@ struct ZiplineApproachState
 {
     size_t anchor_index = std::numeric_limits<size_t>::max();
     int32_t replans = 0;
-    // 到点按过一次没认出来。原地再按还是同一个答案, 所以改瞄备用站位并收紧判定圈, 让人挪一下再认
+    // 到点按过一次没认出来。原地再按还是同一个答案, 所以改瞄下一个站位并收紧判定圈, 让人挪一下再认
     bool press_missed = false;
+    // 正在试计划里的第几个站位。换架子才回到头, 同一根架子上只往后走, 走完就判这根上不去
+    size_t spot_index = 0;
 
     void Reset()
     {
         anchor_index = std::numeric_limits<size_t>::max();
         replans = 0;
         press_missed = false;
+        spot_index = 0;
     }
 };
 

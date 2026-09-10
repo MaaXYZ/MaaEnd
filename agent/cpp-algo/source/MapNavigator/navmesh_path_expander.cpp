@@ -869,6 +869,8 @@ bool TryAppendZiplineLeg(
     // 上索点自己补, 不让通用追加代劳: 起点已经站在索下时它一个点都不会产出, 而这个点必须存在
     AppendGeneratedNavmeshWaypoints(route->approach, out_path, false, false, &navmesh.planner, route->approach.zone_id);
     const navmesh::WorldPoint mount = route->approach.points.back();
+    // 头一跳瞄第一个站位, 而不是架子坐标本身: 那是个角格锚点, 走到它跟前常常碰不到设备模型
+    const navmesh::WorldPoint mount_spot = route->mount_spots.empty() ? mount : route->mount_spots.front();
     auto ToNodeRef = [](const zipline::ZiplineNode& node) -> ZiplineNodeRef {
         ZiplineNodeRef ref;
         ref.level_id = node.level_id;
@@ -889,8 +891,8 @@ bool TryAppendZiplineLeg(
         const ZiplineNodeRef from_ref = ToNodeRef(from);
         const ZiplineNodeRef to_ref = ToNodeRef(to);
 
-        // 头一跳的上索点取走路那一段的末点, 让两段严丝合缝地接上
-        out_path.emplace_back(hop == 0 ? mount.x : from.x, hop == 0 ? mount.y : from.y, ActionType::ZIPLINE);
+        // 头一跳的上索点接在走路那一段后面, 让两段严丝合缝地接上
+        out_path.emplace_back(hop == 0 ? mount_spot.x : from.x, hop == 0 ? mount_spot.y : from.y, ActionType::ZIPLINE);
         out_path.back().strict_arrival = true;
         out_path.back().target_deck_y = from.height;
         // 仰角只能用世界坐标算: 平面 x/y 是按地图比例缩放过的, 跟高度不同尺, 混着算出来的角
@@ -904,9 +906,11 @@ bool TryAppendZiplineLeg(
         hop_plan.mount = from_ref;
         hop_plan.landing = to_ref;
         hop_plan.planned_elevation_deg = elevation_deg;
-        // 备用站位只挂在链首: 后面那些跳是从索上落下来的, 不再按上索提示
-        if (hop == 0 && route->mount_restand) {
-            hop_plan.restand = ZiplineRestand { .x = route->mount_restand->x, .y = route->mount_restand->y };
+        // 站位表只挂在链首: 后面那些跳是从索上落下来的, 不再按上索提示
+        if (hop == 0) {
+            for (const navmesh::WorldPoint& spot : route->mount_spots) {
+                hop_plan.mount_spots.push_back(ZiplineMountSpot { .x = spot.x, .y = spot.y });
+            }
         }
         if (hop < route->hop_alternates.size()) {
             for (const zipline::ZiplineNode& other : route->hop_alternates[hop]) {
@@ -940,7 +944,8 @@ bool TryAppendZiplineLeg(
     const bool walking_baseline_available = walking != nullptr;
     LogInfo << "Expanded NAVMESH waypoint via zipline." << VAR(state.navmesh_zone) << VAR(state.current_zone)
             << VAR(walking_baseline_available) << VAR(route->cost) << VAR(insert_index) << VAR(out_path.size() - insert_index)
-            << VAR(route->towers.size()) << VAR(mount.x) << VAR(mount.y) << VAR(route->towers.back().x) << VAR(route->towers.back().y);
+            << VAR(route->towers.size()) << VAR(mount_spot.x) << VAR(mount_spot.y) << VAR(route->mount_spots.size())
+            << VAR(route->towers.back().x) << VAR(route->towers.back().y);
     return true;
 }
 

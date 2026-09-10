@@ -389,10 +389,23 @@ StageResult ZiplineRideMachine::Remount(IZiplineActuator& actuator, const char* 
         EnterStage(ZiplineStage::Mounting, now);
         return {};
     }
-    LogWarn << "zipline/mount/unmounted" << VAR(reason) << VAR(elapsed_ms) << VAR(mount_presses_) << VAR(plan_.restand.has_value());
+    LogWarn << "zipline/mount/unmounted" << VAR(reason) << VAR(elapsed_ms) << VAR(mount_presses_) << VAR(plan_.mount_spots.size());
     CommitRecord(HopOutcome::NotMounted, now);
     EnterStage(ZiplineStage::Idle, now);
-    return NeedsReposition { .restand = plan_.restand };
+    return NeedsReposition {};
+}
+
+// 这根架子的站位全试过了, 一次提示都没出来。记一笔让重规划别再拿它当上索点; 当落点不受影响
+void ZiplineRideMachine::MarkMountUnreachable(const ZiplineHopPlan& plan)
+{
+    const Clock::time_point now = Clock::now();
+    ZiplineHopRecord record;
+    record.plan = plan;
+    record.outcome = HopOutcome::Unboardable;
+    record.began_at = now;
+    record.ended_at = now;
+    ledger_.push_back(record);
+    LogWarn << "zipline/mount/unboardable" << VAR(plan.mount.x) << VAR(plan.mount.y) << VAR(plan.mount_spots.size()) << VAR(ledger_.size());
 }
 
 StageResult ZiplineRideMachine::TickOnTower(IZiplineActuator& actuator, Clock::time_point now)

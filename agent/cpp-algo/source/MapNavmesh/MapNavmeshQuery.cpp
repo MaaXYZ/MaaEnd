@@ -650,8 +650,12 @@ json::object BuildRoutePreview(const QueryParam& query)
             { "elevation_deg", hop.planned_elevation_deg },
             { "authored_group_begin", waypoint.authored_group_begin },
         };
-        if (hop.restand) {
-            segment.emplace("mount_restand", json::array { hop.restand->x, hop.restand->y });
+        if (!hop.mount_spots.empty()) {
+            json::array spots;
+            for (const mapnavigator::ZiplineMountSpot& spot : hop.mount_spots) {
+                spots.emplace_back(json::array { spot.x, spot.y });
+            }
+            segment.emplace("mount_spots", std::move(spots));
         }
         zipline_segments.emplace_back(std::move(segment));
         AppendDistinct(all_points, landing);

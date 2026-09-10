@@ -45,8 +45,8 @@ struct ZiplineHopPlan
     std::vector<ZiplineNodeRef> siblings;
     // 索的仰角, 正数往上滑。按两端世界坐标算好, 运行时不再碰单位
     double planned_elevation_deg = 0.0;
-    // 上索认不出提示时的备用站位。架子旁边没有供电结构就不写
-    std::optional<ZiplineRestand> restand;
+    // 上索依次要试的站位, 第一个就是航点本身的落脚点。只有链首那一跳用得上
+    std::vector<ZiplineMountSpot> mount_spots;
     // 落点就是下一跳的上索架: 落地不下索, 直接接着瞄
     bool chain_continues = false;
 };
@@ -75,11 +75,12 @@ struct ZiplineLaunch
 enum class HopOutcome
 {
     Completed,
-    WrongRope,  // 滑错过, 滑回后重试仍没到
-    NoLaunch,   // 在架上逐档俯仰都发射过, 索未起滑: 索被挡或未通电
-    NotMounted, // 上索按键发出后未上架: 这根索尚未试过, 架子本身也不判死
-    Lost,       // 落地定位一直对不上
-    Dismounted, // 主动下索交给恢复
+    WrongRope,   // 滑错过, 滑回后重试仍没到
+    NoLaunch,    // 在架上逐档俯仰都发射过, 索未起滑: 索被挡或未通电
+    NotMounted,  // 上索按键发出后未上架: 这根索尚未试过, 架子本身也不判死
+    Unboardable, // 每个站位都走到过, 一次提示都没出来: 这根架子上不去, 别再拿它当上索点
+    Lost,        // 落地定位一直对不上
+    Dismounted,  // 主动下索交给恢复
 };
 
 struct ZiplineHopRecord
@@ -146,10 +147,9 @@ struct ReplanRequested
     std::optional<ZiplineNodeRef> on_tower;
 };
 
-// 上索点站得不对, 人已经下来了。有备用站位就改瞄它, 没有就只收紧判定圈, 让人挪一下再上一次
+// 上索点站得不对, 人已经下来了。改瞄计划里的下一个站位再上一次
 struct NeedsReposition
 {
-    std::optional<ZiplineRestand> restand;
 };
 
 using StageResult = std::variant<std::monostate, HopCompleted, ChainAbandoned, ReplanRequested, NeedsReposition>;

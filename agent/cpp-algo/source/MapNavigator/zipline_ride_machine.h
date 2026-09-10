@@ -58,6 +58,8 @@ public:
     StageResult Tick(IZiplineObserver& observer, IZiplineActuator& actuator);
     // 外部要人立刻下来(丢链、换路)。跳还开着就按 Dismounted 记账
     void Dismount(IZiplineActuator& actuator);
+    // 上索点的每个站位都走到过却一次提示都没出来, 由导航侧判定后记账
+    void MarkMountUnreachable(const ZiplineHopPlan& plan);
 
     bool OnTower() const;
     std::optional<ZiplineNodeRef> TowerUnderfoot() const;
